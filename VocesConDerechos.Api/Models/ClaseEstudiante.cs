@@ -11,4 +11,6 @@ public class ClaseEstudiante
     public Estudiante Estudiante { get; set; } = null!;
 
     public DateTime FechaIngreso { get; set; } = DateTime.UtcNow;
+
+    public bool Activo { get; set; } = true;
 }
