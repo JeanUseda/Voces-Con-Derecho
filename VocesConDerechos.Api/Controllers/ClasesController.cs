@@ -181,6 +181,36 @@ public class ClasesController : ControllerBase
 
         return Ok(estudiantes);
     }
+
+    // GET: api/clases/1/estudiantes/inactivos
+    [HttpGet("{claseId}/estudiantes/inactivos")]
+    public async Task<IActionResult> GetEstudiantesInactivos(int claseId)
+    {
+        var claseExiste = await _context.Clases
+            .AnyAsync(c => c.Id == claseId);
+
+        if (!claseExiste)
+        {
+            return NotFound("La clase no existe.");
+        }
+
+        var estudiantes = await _context.ClaseEstudiantes
+            .Where(ce =>
+                ce.ClaseId == claseId &&
+                !ce.Activo)
+            .Select(ce => new
+            {
+                ce.EstudianteId,
+                ce.Estudiante.Nombre,
+                ce.Estudiante.Apellido,
+                ce.FechaIngreso,
+                ce.Activo
+            })
+            .ToListAsync();
+
+        return Ok(estudiantes);
+    }
+
     // PATCH: api/clases/1/estudiantes/1/desactivar
     [HttpPatch("{claseId}/estudiantes/{estudianteId}/desactivar")]
     public async Task<IActionResult> DesactivarEstudiante(
@@ -240,6 +270,81 @@ public class ClasesController : ControllerBase
             .ToListAsync();
 
         return Ok(misiones);
+    }
+
+    // POST: api/clases/1/misiones/1
+    [HttpPost("{claseId}/misiones/{misionId}")]
+    public async Task<IActionResult> AsignarMision(
+        int claseId,
+        int misionId)
+    {
+        // Verificar que la clase exista
+        var claseExiste = await _context.Clases
+            .AnyAsync(c => c.Id == claseId);
+
+        if (!claseExiste)
+        {
+            return NotFound("La clase no existe.");
+        }
+
+        // Verificar que la misión exista
+        var misionExiste = await _context.Misiones
+            .AnyAsync(m => m.Id == misionId);
+
+        if (!misionExiste)
+        {
+            return NotFound("La misión no existe.");
+        }
+
+        // Buscar si ya existe la relación
+        var relacion = await _context.ClaseMisiones
+            .FirstOrDefaultAsync(cm =>
+                cm.ClaseId == claseId &&
+                cm.MisionId == misionId);
+
+        // No existe: crear relación
+        if (relacion == null)
+        {
+            relacion = new ClaseMision
+            {
+                ClaseId = claseId,
+                MisionId = misionId,
+                FechaAsignacion = DateTime.UtcNow,
+                Activa = true
+            };
+
+            _context.ClaseMisiones.Add(relacion);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                mensaje = "Misión asignada correctamente.",
+                claseId,
+                misionId,
+                activa = true
+            });
+        }
+
+        // Ya existe y está activa
+        if (relacion.Activa)
+        {
+            return BadRequest("La misión ya está asignada a esta clase.");
+        }
+
+        // Existe pero estaba inactiva: reactivar
+        relacion.Activa = true;
+        relacion.FechaAsignacion = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            mensaje = "Misión reactivada correctamente.",
+            claseId,
+            misionId,
+            activa = true
+        });
     }
 
 }
