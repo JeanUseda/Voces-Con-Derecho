@@ -719,7 +719,59 @@
     </div>
 
 
+    <!-- =====================================
+        MODAL ASIGNAR MISIÓN
+    ====================================== -->
 
+    <div id="asignarMisionModal" class="modal">
+
+        <div class="modal-card" style="max-width: 580px;">
+
+            <button class="close-modal" id="closeAsignarMision">
+                ×
+            </button>
+
+            <div class="modal-header">
+
+                <span class="modal-icon">
+                    ◇
+                </span>
+
+                <h2>
+                    Asignar misión
+                </h2>
+
+                <p id="asignarMisionSubtexto">
+                    Selecciona una misión para asignar a esta clase.
+                </p>
+
+            </div>
+
+            <!-- Lista de misiones -->
+            <div id="listaMisionesAsignar" style="max-height: 400px; overflow-y: auto;">
+
+                <div class="loading">
+                    Cargando misiones...
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end;">
+
+                <button
+                    class="text-button"
+                    id="cancelarAsignarMision"
+                    style="padding: 10px 20px;"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
 

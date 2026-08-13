@@ -1342,3 +1342,592 @@ function escapeHtml(value) {
         );
 
 }
+
+/* =========================================
+   MODAL ASIGNAR MISIÓN
+========================================= */
+
+let claseIdSeleccionada = null;
+let misionesGlobales = [];
+let misionesAsignadasIds = new Set();
+
+// Elementos del modal
+const asignarMisionModal = document.getElementById("asignarMisionModal");
+const listaMisionesAsignar = document.getElementById("listaMisionesAsignar");
+const asignarMisionSubtexto = document.getElementById("asignarMisionSubtexto");
+
+/**
+ * Abre el modal para asignar misiones a una clase
+ */
+async function abrirModalAsignarMision(claseId, claseNombre) {
+
+    claseIdSeleccionada = claseId;
+
+    asignarMisionSubtexto.textContent =
+        `Selecciona una misión para asignar a "${claseNombre}"`;
+
+    asignarMisionModal.classList.add("show");
+
+    await cargarMisionesDisponibles(claseId);
+
+}
+
+/**
+ * Cierra el modal de asignación
+ */
+function cerrarModalAsignarMision() {
+
+    asignarMisionModal.classList.remove("show");
+
+    claseIdSeleccionada = null;
+
+    misionesGlobales = [];
+
+    misionesAsignadasIds = new Set();
+
+}
+
+
+/**
+ * Carga las misiones disponibles y las ya asignadas
+ */
+async function cargarMisionesDisponibles(claseId) {
+
+    listaMisionesAsignar.innerHTML = `
+        <div class="loading">
+            Cargando misiones...
+        </div>
+    `;
+
+    try {
+
+        // Obtener misiones globales y las asignadas a la clase
+        const [misionesResponse, asignadasResponse] = await Promise.all([
+
+            fetch(`${API_URL}/misiones`),
+
+            fetch(`${API_URL}/clases/${claseId}/misiones`)
+
+        ]);
+
+        if (!misionesResponse.ok) {
+
+            throw new Error("Error al cargar misiones.");
+
+        }
+
+        const todasMisiones = await misionesResponse.json();
+
+        // Filtrar solo misiones globales (EsGlobal = true)
+        misionesGlobales = todasMisiones.filter(m => m.esGlobal === true);
+
+        // Obtener IDs de misiones ya asignadas
+        if (asignadasResponse.ok) {
+
+            const asignadas = await asignadasResponse.json();
+
+            misionesAsignadasIds = new Set(
+                asignadas.map(m => m.misionId)
+            );
+
+        }
+
+        renderizarListaMisiones();
+
+    } catch (error) {
+
+        console.error("Error cargando misiones:", error);
+
+        listaMisionesAsignar.innerHTML = `
+
+            <div class="empty-state">
+
+                <strong>
+                    Error al cargar misiones
+                </strong>
+
+                <p>
+                    No se pudieron cargar las misiones disponibles.
+                </p>
+
+                <button
+                    onclick="cargarMisionesDisponibles(${claseId})"
+                    style="
+                        margin-top: 15px;
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 8px;
+                        background: var(--primary);
+                        color: white;
+                        cursor: pointer;
+                        font-weight: 600;
+                    "
+                >
+                    Reintentar
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/**
+ * Renderiza la lista de misiones en el modal
+ */
+function renderizarListaMisiones() {
+
+    if (!misionesGlobales.length) {
+
+        listaMisionesAsignar.innerHTML = `
+
+            <div class="empty-state">
+
+                <strong>
+                    No hay misiones disponibles
+                </strong>
+
+                <p>
+                    No se encontraron misiones globales para asignar.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    listaMisionesAsignar.innerHTML =
+
+        misionesGlobales.map(mision => {
+
+            const yaAsignada =
+                misionesAsignadasIds.has(mision.id);
+
+            return `
+
+                <div
+                    class="mision-asignar-item"
+                    style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        padding: 16px;
+                        border: 1px solid ${yaAsignada ? '#d4edda' : 'var(--border)'};
+                        border-radius: 12px;
+                        margin-bottom: 12px;
+                        background: ${yaAsignada ? '#f0fff4' : 'white'};
+                        transition: 0.2s;
+                    "
+                >
+
+                    <div style="flex: 1;">
+
+                        <div style="display: flex; align-items: center; gap: 12px;">
+
+                            <span style="font-size: 24px;">
+                                ◇
+                            </span>
+
+                            <div>
+
+                                <strong style="font-size: 16px;">
+                                    ${escapeHtml(mision.titulo)}
+                                </strong>
+
+                                <p style="
+                                    margin-top: 4px;
+                                    font-size: 13px;
+                                    color: var(--text-light);
+                                ">
+                                    ${escapeHtml(mision.descripcion) || 'Sin descripción'}
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        ${yaAsignada
+
+                            ? `
+
+                                <span style="
+                                    display: inline-flex;
+                                    align-items: center;
+                                    gap: 6px;
+                                    padding: 6px 14px;
+                                    border-radius: 20px;
+                                    background: #d4edda;
+                                    color: #155724;
+                                    font-size: 13px;
+                                    font-weight: 600;
+                                ">
+                                    ✓ Asignada
+                                </span>
+
+                            `
+
+                            : `
+
+                                <button
+                                    onclick="asignarMisionAClase(${mision.id})"
+                                    class="primary-button"
+                                    style="
+                                        min-height: 38px;
+                                        padding: 0 20px;
+                                        font-size: 13px;
+                                    "
+                                >
+                                    Asignar
+                                </button>
+
+                            `
+
+                        }
+
+                    </div>
+
+                </div>
+
+            `;
+
+        }).join("");
+
+}
+
+
+/**
+ * Asigna una misión a la clase seleccionada
+ */
+async function asignarMisionAClase(misionId) {
+
+    if (!claseIdSeleccionada) {
+
+        alert("No hay una clase seleccionada.");
+
+        return;
+
+    }
+
+    // Buscar el botón clickeado
+    const boton = event?.target;
+
+    const textoOriginal = boton?.textContent || "Asignar";
+
+    if (boton) {
+
+        boton.disabled = true;
+
+        boton.textContent = "Asignando...";
+
+    }
+
+
+    try {
+
+        const response = await fetch(
+
+            `${API_URL}/clases/${claseIdSeleccionada}/misiones/${misionId}`,
+
+            {
+
+                method: "POST",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                }
+
+            }
+
+        );
+
+
+        const data = await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+
+                data.mensaje || "Error al asignar misión."
+
+            );
+
+        }
+
+
+        // Agregar el ID a las asignadas
+        misionesAsignadasIds.add(misionId);
+
+        // Re-renderizar la lista
+        renderizarListaMisiones();
+
+        // Actualizar la lista de misiones de la clase en el detalle
+        if (claseIdSeleccionada) {
+
+            await loadClassMissions(claseIdSeleccionada);
+
+        }
+
+
+        // Mostrar notificación de éxito
+        mostrarNotificacion("✅ Misión asignada correctamente", "success");
+
+
+    } catch (error) {
+
+        console.error("Error asignando misión:", error);
+
+        mostrarNotificacion("❌ " + error.message, "error");
+
+
+        if (boton) {
+
+            boton.disabled = false;
+
+            boton.textContent = textoOriginal;
+
+        }
+
+    }
+
+}
+
+
+/**
+ * Muestra una notificación temporal
+ */
+function mostrarNotificacion(mensaje, tipo = "success") {
+
+    // Eliminar notificaciones existentes
+    const notificacionesAnteriores =
+        document.querySelectorAll(".notificacion-flotante");
+
+    notificacionesAnteriores.forEach(n => n.remove());
+
+
+    const colores = {
+
+        success: "#2ca66f",
+
+        error: "#d9366f",
+
+        info: "#5636c9"
+
+    };
+
+
+    const notificacion = document.createElement("div");
+
+    notificacion.className = "notificacion-flotante";
+
+    notificacion.style.cssText = `
+
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        z-index: 1000;
+        padding: 16px 24px;
+        border-radius: 12px;
+        background: ${colores[tipo] || colores.info};
+        color: white;
+        font-weight: 600;
+        font-size: 15px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        transform: translateX(120%);
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        max-width: 400px;
+    `;
+
+    notificacion.textContent = mensaje;
+
+    document.body.appendChild(notificacion);
+
+
+    // Animación de entrada
+    setTimeout(() => {
+
+        notificacion.style.transform = "translateX(0)";
+
+    }, 50);
+
+
+    // Eliminar después de 4 segundos
+    setTimeout(() => {
+
+        notificacion.style.transform = "translateX(120%)";
+
+        setTimeout(() => {
+
+            notificacion.remove();
+
+        }, 300);
+
+    }, 4000);
+
+}
+
+
+// =========================================
+// EVENTOS DEL MODAL
+// =========================================
+
+// Abrir modal desde el botón en el detalle de clase
+// Esta función se llamará desde el HTML
+function abrirAsignarMisionDesdeDetalle() {
+
+    const claseId = claseIdSeleccionada || 
+        parseInt(document.querySelector("#classDetail")?.dataset?.claseId);
+
+    if (!claseId) {
+
+        alert("No hay una clase seleccionada.");
+
+        return;
+
+    }
+
+    const nombreClase =
+        document.getElementById("detailClassName")?.textContent || "clase";
+
+    abrirModalAsignarMision(claseId, nombreClase);
+
+}
+
+
+// Cerrar modal
+document
+    .getElementById("closeAsignarMision")
+    ?.addEventListener("click", cerrarModalAsignarMision);
+
+
+document
+    .getElementById("cancelarAsignarMision")
+    ?.addEventListener("click", cerrarModalAsignarMision);
+
+
+// Cerrar al hacer clic en el fondo
+asignarMisionModal?.addEventListener("click", (event) => {
+
+    if (event.target === asignarMisionModal) {
+
+        cerrarModalAsignarMision();
+
+    }
+
+});
+
+
+// Cerrar con tecla ESC
+document.addEventListener("keydown", (event) => {
+
+    if (event.key === "Escape" && asignarMisionModal?.classList.contains("show")) {
+
+        cerrarModalAsignarMision();
+
+    }
+
+});
+
+
+/**
+ * Sobrescribir openClass para guardar el ID y agregar el botón de asignar
+ * (Modificación de la función existente)
+ */
+const openClassOriginal = window.openClass;
+
+window.openClass = async function(classId) {
+
+    // Guardar el ID de la clase para usarlo en el modal
+    claseIdSeleccionada = classId;
+
+    // Guardar en el dataset del section para referencia
+    const section = document.getElementById("classDetail");
+
+    if (section) {
+
+        section.dataset.claseId = classId;
+
+    }
+
+    // Llamar a la función original
+    await openClassOriginal(classId);
+
+    // Agregar el botón "Asignar misión" después de cargar
+    agregarBotonAsignarMision();
+
+};
+
+
+/**
+ * Agrega el botón "Asignar misión" al detalle de clase
+ */
+function agregarBotonAsignarMision() {
+
+    const pageHeader =
+        document.querySelector("#classDetail .page-header");
+
+    if (!pageHeader) {
+
+        return;
+
+    }
+
+    // Verificar si el botón ya existe
+    if (document.getElementById("btnAsignarMision")) {
+
+        return;
+
+    }
+
+    // Crear el botón
+    const boton = document.createElement("button");
+
+    boton.id = "btnAsignarMision";
+
+    boton.className = "primary-button";
+
+    boton.innerHTML = `
+        + Asignar misión
+    `;
+
+    boton.style.cssText = `
+        white-space: nowrap;
+    `;
+
+    boton.addEventListener("click", () => {
+
+        const claseId = parseInt(
+            document.querySelector("#classDetail")?.dataset?.claseId
+        );
+
+        if (!claseId) {
+
+            alert("No hay una clase seleccionada.");
+
+            return;
+        }
+
+        const nombreClase =
+            document.getElementById("detailClassName")?.textContent || "clase";
+
+        abrirModalAsignarMision(claseId, nombreClase);
+
+    });
+
+    // Insertar el botón en el header
+    pageHeader.appendChild(boton);
+
+}
