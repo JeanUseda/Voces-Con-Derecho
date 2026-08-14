@@ -4,15 +4,18 @@ public class Profesor
 {
     public int Id { get; set; }
 
-    // Usuario de ASP.NET Identity
-    public string UsuarioId { get; set; } = null!;
-
     public string Nombre { get; set; } = null!;
-    public string Apellido { get; set; } = null!;
+
+    public string Email { get; set; } = null!;
+
+    public string PasswordHash { get; set; } = null!;
+
+    public bool Activo { get; set; } = true;
+
+    public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
 
     // Relaciones
     public ICollection<Clase> Clases { get; set; } = new List<Clase>();
 
     public ICollection<Mision> MisionesCreadas { get; set; } = new List<Mision>();
-
 }

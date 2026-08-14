@@ -20,4 +20,6 @@ public class Mision
     // Clases a las que está asignada
     public ICollection<ClaseMision> Clases { get; set; } =
         new List<ClaseMision>();
+
+    public ICollection<Historia> Historias { get; set; } = new List<Historia>();
 }

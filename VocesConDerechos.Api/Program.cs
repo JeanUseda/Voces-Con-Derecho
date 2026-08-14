@@ -17,6 +17,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // ==========================================
 
 builder.Services.AddControllers();
+
+// ==========================================
+// CORS - DEBE IR ANTES DE CONSTRUIR LA APP
+// ==========================================
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
@@ -27,6 +32,7 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
 // ==========================================
 // SWAGGER
 // ==========================================
@@ -35,21 +41,22 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-app.UseCors("Frontend");
+
 // ==========================================
-// SWAGGER
+// MIDDLEWARES - ORDEN IMPORTANTE
 // ==========================================
 
+// 1. CORS - DEBE IR ANTES DE MapControllers
+app.UseCors("Frontend");
+
+// 2. SWAGGER
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// ==========================================
-// PRUEBA DE CONEXIÓN A POSTGRESQL
-// ==========================================
-
+// 3. PRUEBA DE CONEXIÓN A POSTGRESQL
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -70,10 +77,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// ==========================================
-// API
-// ==========================================
-
+// 4. API - DEBE IR DESPUÉS DE UseCors
 app.MapControllers();
 
 app.Run();

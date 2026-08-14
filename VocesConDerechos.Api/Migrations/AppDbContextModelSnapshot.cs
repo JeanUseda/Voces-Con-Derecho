@@ -90,6 +90,81 @@ namespace VocesConDerechos.Api.Migrations
                     b.ToTable("ClaseMisiones");
                 });
 
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Decision", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("EsCorrecta")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("EscenaId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Puntos")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Retroalimentacion")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("SiguienteEscenaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Texto")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EscenaId");
+
+                    b.HasIndex("SiguienteEscenaId");
+
+                    b.ToTable("Decisiones");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Escena", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Contenido")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EsFinal")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("HistoriaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("ImagenUrl")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Orden")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("PreguntaId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("TienePregunta")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HistoriaId");
+
+                    b.HasIndex("PreguntaId");
+
+                    b.ToTable("Escenas");
+                });
+
             modelBuilder.Entity("VocesConDerechos.Api.Models.Estudiante", b =>
                 {
                     b.Property<int>("Id")
@@ -98,21 +173,101 @@ namespace VocesConDerechos.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("Activo")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Apellido")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("EsSecundaria")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("UsuarioId")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Pin")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Estudiantes");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Historia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Activa")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("MisionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Orden")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PuntosBase")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MisionId");
+
+                    b.ToTable("Historias");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.InsigniaEstudiante", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("EstudianteId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("FechaDesbloqueo")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("MisionId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EstudianteId");
+
+                    b.HasIndex("MisionId");
+
+                    b.ToTable("InsigniasEstudiante");
                 });
 
             modelBuilder.Entity("VocesConDerechos.Api.Models.Mision", b =>
@@ -144,6 +299,29 @@ namespace VocesConDerechos.Api.Migrations
                     b.ToTable("Misiones");
                 });
 
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Pregunta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Enunciado")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Explicacion")
+                        .HasColumnType("text");
+
+                    b.Property<int>("Puntos")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Preguntas");
+                });
+
             modelBuilder.Entity("VocesConDerechos.Api.Models.Profesor", b =>
                 {
                     b.Property<int>("Id")
@@ -152,21 +330,132 @@ namespace VocesConDerechos.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Apellido")
+                    b.Property<bool>("Activo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Nombre")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("UsuarioId")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.ToTable("Profesores");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Progreso", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("text")
+                        .HasDefaultValue("pendiente");
+
+                    b.Property<int>("EstudianteId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("FechaFinalizacion")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("FechaInicio")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("MisionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Puntos")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EstudianteId");
+
+                    b.HasIndex("MisionId");
+
+                    b.ToTable("Progresos");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.ProgresoHistoria", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("Completada")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("EscenaActualId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EstudianteId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("FechaCompletada")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("FechaInicio")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("HistoriaId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PuntosObtenidos")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EscenaActualId");
+
+                    b.HasIndex("EstudianteId");
+
+                    b.HasIndex("HistoriaId");
+
+                    b.ToTable("ProgresoHistorias");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Respuesta", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<bool>("EsCorrecta")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("PreguntaId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Texto")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PreguntaId");
+
+                    b.ToTable("Respuestas");
                 });
 
             modelBuilder.Entity("VocesConDerechos.Api.Models.Clase", b =>
@@ -218,6 +507,72 @@ namespace VocesConDerechos.Api.Migrations
                     b.Navigation("Mision");
                 });
 
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Decision", b =>
+                {
+                    b.HasOne("VocesConDerechos.Api.Models.Escena", "Escena")
+                        .WithMany("Decisiones")
+                        .HasForeignKey("EscenaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VocesConDerechos.Api.Models.Escena", "SiguienteEscena")
+                        .WithMany()
+                        .HasForeignKey("SiguienteEscenaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Escena");
+
+                    b.Navigation("SiguienteEscena");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Escena", b =>
+                {
+                    b.HasOne("VocesConDerechos.Api.Models.Historia", "Historia")
+                        .WithMany("Escenas")
+                        .HasForeignKey("HistoriaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VocesConDerechos.Api.Models.Pregunta", "Pregunta")
+                        .WithMany("Escenas")
+                        .HasForeignKey("PreguntaId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Historia");
+
+                    b.Navigation("Pregunta");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Historia", b =>
+                {
+                    b.HasOne("VocesConDerechos.Api.Models.Mision", "Mision")
+                        .WithMany("Historias")
+                        .HasForeignKey("MisionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Mision");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.InsigniaEstudiante", b =>
+                {
+                    b.HasOne("VocesConDerechos.Api.Models.Estudiante", "Estudiante")
+                        .WithMany()
+                        .HasForeignKey("EstudianteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VocesConDerechos.Api.Models.Mision", "Mision")
+                        .WithMany()
+                        .HasForeignKey("MisionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Estudiante");
+
+                    b.Navigation("Mision");
+                });
+
             modelBuilder.Entity("VocesConDerechos.Api.Models.Mision", b =>
                 {
                     b.HasOne("VocesConDerechos.Api.Models.Profesor", "Profesor")
@@ -228,6 +583,63 @@ namespace VocesConDerechos.Api.Migrations
                     b.Navigation("Profesor");
                 });
 
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Progreso", b =>
+                {
+                    b.HasOne("VocesConDerechos.Api.Models.Estudiante", "Estudiante")
+                        .WithMany("Progresos")
+                        .HasForeignKey("EstudianteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VocesConDerechos.Api.Models.Mision", "Mision")
+                        .WithMany()
+                        .HasForeignKey("MisionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Estudiante");
+
+                    b.Navigation("Mision");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.ProgresoHistoria", b =>
+                {
+                    b.HasOne("VocesConDerechos.Api.Models.Escena", "EscenaActual")
+                        .WithMany()
+                        .HasForeignKey("EscenaActualId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("VocesConDerechos.Api.Models.Estudiante", "Estudiante")
+                        .WithMany()
+                        .HasForeignKey("EstudianteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VocesConDerechos.Api.Models.Historia", "Historia")
+                        .WithMany()
+                        .HasForeignKey("HistoriaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("EscenaActual");
+
+                    b.Navigation("Estudiante");
+
+                    b.Navigation("Historia");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Respuesta", b =>
+                {
+                    b.HasOne("VocesConDerechos.Api.Models.Pregunta", "Pregunta")
+                        .WithMany("Respuestas")
+                        .HasForeignKey("PreguntaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pregunta");
+                });
+
             modelBuilder.Entity("VocesConDerechos.Api.Models.Clase", b =>
                 {
                     b.Navigation("Estudiantes");
@@ -235,14 +647,35 @@ namespace VocesConDerechos.Api.Migrations
                     b.Navigation("Misiones");
                 });
 
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Escena", b =>
+                {
+                    b.Navigation("Decisiones");
+                });
+
             modelBuilder.Entity("VocesConDerechos.Api.Models.Estudiante", b =>
                 {
                     b.Navigation("Clases");
+
+                    b.Navigation("Progresos");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Historia", b =>
+                {
+                    b.Navigation("Escenas");
                 });
 
             modelBuilder.Entity("VocesConDerechos.Api.Models.Mision", b =>
                 {
                     b.Navigation("Clases");
+
+                    b.Navigation("Historias");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Pregunta", b =>
+                {
+                    b.Navigation("Escenas");
+
+                    b.Navigation("Respuestas");
                 });
 
             modelBuilder.Entity("VocesConDerechos.Api.Models.Profesor", b =>

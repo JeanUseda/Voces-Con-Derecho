@@ -34,7 +34,28 @@ public class MisionesController : ControllerBase
 
         return Ok(misiones);
     }
+    // GET: api/misiones/{id}
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetMision(int id)
+    {
+        var mision = await _context.Misiones
+            .Where(m => m.Id == id)
+            .Select(m => new
+            {
+                m.Id,
+                m.Titulo,
+                m.Descripcion,
+                m.EsGlobal
+            })
+            .FirstOrDefaultAsync();
 
+        if (mision == null)
+        {
+            return NotFound(new { mensaje = "Misión no encontrada." });
+        }
+
+    return Ok(mision);
+}
     // POST: api/misiones
     [HttpPost]
     public async Task<IActionResult> CrearMision(CrearMisionDto dto)
