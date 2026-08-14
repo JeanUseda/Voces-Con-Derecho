@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jugar | Voces con Derechos</title>
+
+    <link rel="stylesheet" href="css/jugar-historia.css">
+</head>
+
+<body>
+
+    <div class="jugar-container">
+
+        <!-- Header -->
+        <header class="jugar-header">
+            <a href="dashboardEstudiantes.html" class="btn-volver">
+                ← Volver al dashboard
+            </a>
+            <div class="jugar-info">
+                <span id="historiaTitulo">Cargando historia...</span>
+                <span id="puntosInfo">⭐ 0 puntos</span>
+            </div>
+        </header>
+
+        <!-- Contenido principal -->
+        <main class="jugar-main">
+
+            <!-- Progreso -->
+            <div class="progreso-barra">
+                <div class="progreso-fill" id="progresoFill" style="width: 0%;"></div>
+            </div>
+
+            <!-- Escena -->
+            <div id="escenaContainer" class="escena-container">
+
+                <div class="escena-content">
+
+                    <!-- Texto -->
+                    <div class="escena-texto">
+                        <p id="escenaTexto">Cargando escena...</p>
+                    </div>
+
+                    <!-- Decisiones -->
+                    <div id="decisionesContainer" class="decisiones-container">
+                        <!-- Se llenan dinámicamente -->
+                    </div>
+
+                    <!-- Pregunta (se muestra al final) -->
+                    <div id="preguntaContainer" class="pregunta-container" style="display: none;">
+                        <h3>📝 Pregunta</h3>
+                        <p id="preguntaEnunciado"></p>
+                        <div id="respuestasContainer" class="respuestas-container">
+                            <!-- Se llenan dinámicamente -->
+                        </div>
+                    </div>
+
+                    <!-- Feedback -->
+                    <div id="feedbackContainer" class="feedback-container" style="display: none;">
+                        <div id="feedbackMensaje" class="feedback-mensaje"></div>
+                        <button id="btnContinuar" class="btn-primario" onclick="continuarHistoria()">
+                            Continuar →
+                        </button>
+                    </div>
+
+                    <!-- Resultado final -->
+                    <div id="resultadoContainer" class="resultado-container" style="display: none;">
+                        <div class="resultado-icon">🎉</div>
+                        <h2 id="resultadoTitulo">¡Historia completada!</h2>
+                        <p id="resultadoPuntos">Has ganado 0 puntos</p>
+                        <p id="resultadoMensaje" class="resultado-mensaje"></p>
+                        <button class="btn-primario" onclick="volverDashboard()">
+                            Volver al dashboard
+                        </button>
+                        <button id="btnSiguienteHistoria" class="btn-primario" style="display: none; margin-top: 10px; background: var(--success);">
+                            Siguiente historia →
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="js/jugar-historia.js"></script>
+
+</body>
+</html>
