@@ -1,13 +1,61 @@
 const API_URL = "http://localhost:5019/api";
 
-/*
-    Profesor de prueba
+// ==========================================
+// OBTENER PROFESOR AUTENTICADO
+// ==========================================
 
-    Id = 1
-    Carlos Pérez
-*/
+function obtenerProfesorAutenticado() {
+    const profesorData = localStorage.getItem("profesor");
+    
+    if (!profesorData) {
+        // Si no hay sesión, redirigir al login
+        window.location.href = "login.html";
+        return null;
+    }
 
-const PROFESOR_ID = 1;
+    try {
+        return JSON.parse(profesorData);
+    } catch (error) {
+        console.error("Error al parsear datos del profesor:", error);
+        window.location.href = "login.html";
+        return null;
+    }
+}
+
+// Obtener el profesor actual
+const profesorActual = obtenerProfesorAutenticado();
+
+// Si no hay profesor, no continuar
+if (!profesorActual) {
+    throw new Error("No hay sesión activa");
+}
+
+// Usar el ID del profesor autenticado
+const PROFESOR_ID = profesorActual.id;
+
+// Mostrar nombre del profesor en la UI
+document.addEventListener("DOMContentLoaded", () => {
+    const userNameElement = document.querySelector(".user-info strong");
+    if (userNameElement && profesorActual.nombre) {
+        userNameElement.textContent = profesorActual.nombre;
+    }
+
+    const welcomeElement = document.querySelector(".welcome h1");
+    if (welcomeElement && profesorActual.nombre) {
+        welcomeElement.textContent = `¡Hola, ${profesorActual.nombre}! 👋`;
+    }
+
+    const avatarElement = document.querySelector(".user-avatar");
+    if (avatarElement && profesorActual.nombre) {
+        const iniciales = profesorActual.nombre
+            .split(" ")
+            .map(n => n[0])
+            .join("")
+            .toUpperCase()
+            .slice(0, 2);
+        avatarElement.textContent = iniciales;
+    }
+});
 
 
 /* =========================================
@@ -1277,6 +1325,1149 @@ async function initializeDashboard() {
 
 initializeDashboard();
 
+// =========================================
+// MODAL AGREGAR ESTUDIANTE
+// =========================================
+
+let claseIdSeleccionadaAgregar = null;
+let todosLosEstudiantes = [];
+let estudiantesEnClaseIds = new Set();
+
+// Elementos del modal
+const agregarEstudianteModal = document.getElementById("agregarEstudianteModal");
+const listaEstudiantesAgregar = document.getElementById("listaEstudiantesAgregar");
+const buscadorEstudiantes = document.getElementById("buscadorEstudiantes");
+const agregarEstudianteSubtexto = document.getElementById("agregarEstudianteSubtexto");
+
+/**
+ * Abre el modal para agregar estudiantes a una clase
+ */
+async function abrirModalAgregarEstudiante(claseId, claseNombre) {
+    claseIdSeleccionadaAgregar = claseId;
+
+    agregarEstudianteSubtexto.textContent =
+        `Selecciona un estudiante para agregar a "${claseNombre}"`;
+
+    agregarEstudianteModal.classList.add("show");
+
+    // Limpiar buscador
+    buscadorEstudiantes.value = "";
+
+    await cargarEstudiantesDisponibles(claseId);
+}
+
+/**
+ * Cierra el modal de agregar estudiante
+ */
+function cerrarModalAgregarEstudiante() {
+    agregarEstudianteModal.classList.remove("show");
+    claseIdSeleccionadaAgregar = null;
+    todosLosEstudiantes = [];
+    estudiantesEnClaseIds = new Set();
+    buscadorEstudiantes.value = "";
+}
+
+/**
+ * Carga los estudiantes disponibles y los ya agregados
+ */
+async function cargarEstudiantesDisponibles(claseId) {
+    listaEstudiantesAgregar.innerHTML = `
+        <div class="loading">
+            Cargando estudiantes...
+        </div>
+    `;
+
+    try {
+        // Obtener todos los estudiantes y los de la clase
+        const [estudiantesResponse, claseEstudiantesResponse] = await Promise.all([
+            fetch(`${API_URL}/estudiantes/todos`),
+            fetch(`${API_URL}/clases/${claseId}/estudiantes`)
+        ]);
+
+        if (!estudiantesResponse.ok) {
+            throw new Error("Error al cargar estudiantes.");
+        }
+
+        const todos = await estudiantesResponse.json();
+        todosLosEstudiantes = todos;
+
+        // Obtener IDs de estudiantes ya en la clase
+        if (claseEstudiantesResponse.ok) {
+            const enClase = await claseEstudiantesResponse.json();
+            estudiantesEnClaseIds = new Set(
+                enClase.map(e => e.estudianteId)
+            );
+        }
+
+        renderizarListaEstudiantes(todosLosEstudiantes);
+
+    } catch (error) {
+        console.error("Error cargando estudiantes:", error);
+        listaEstudiantesAgregar.innerHTML = `
+            <div class="empty-state">
+                <strong>Error al cargar estudiantes</strong>
+                <p>No se pudieron cargar los estudiantes disponibles.</p>
+                <button
+                    onclick="cargarEstudiantesDisponibles(${claseId})"
+                    style="
+                        margin-top: 15px;
+                        padding: 10px 20px;
+                        border: none;
+                        border-radius: 8px;
+                        background: var(--primary);
+                        color: white;
+                        cursor: pointer;
+                        font-weight: 600;
+                    "
+                >
+                    Reintentar
+                </button>
+            </div>
+        `;
+    }
+}
+
+/**
+ * Renderiza la lista de estudiantes en el modal
+ */
+function renderizarListaEstudiantes(estudiantes) {
+    if (!estudiantes || !estudiantes.length) {
+        listaEstudiantesAgregar.innerHTML = `
+            <div class="empty-state">
+                <strong>No hay estudiantes disponibles</strong>
+                <p>No se encontraron estudiantes para agregar.</p>
+            </div>
+        `;
+        return;
+    }
+
+    const estudiantesFiltrados = estudiantes.filter(e => {
+        const busqueda = buscadorEstudiantes.value.toLowerCase().trim();
+        if (!busqueda) return true;
+        const nombreCompleto = `${e.nombre} ${e.apellido}`.toLowerCase();
+        return nombreCompleto.includes(busqueda);
+    });
+
+    if (!estudiantesFiltrados.length) {
+        listaEstudiantesAgregar.innerHTML = `
+            <div class="empty-state">
+                <strong>No hay coincidencias</strong>
+                <p>No se encontraron estudiantes con ese nombre.</p>
+            </div>
+        `;
+        return;
+    }
+
+    listaEstudiantesAgregar.innerHTML = estudiantesFiltrados.map(estudiante => {
+        const yaAgregado = estudiantesEnClaseIds.has(estudiante.id);
+        const iniciales = `${estudiante.nombre[0]}${estudiante.apellido[0]}`.toUpperCase();
+
+        return `
+            <div
+                class="estudiante-agregar-item"
+                style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    padding: 14px 16px;
+                    border: 1px solid ${yaAgregado ? '#d4edda' : 'var(--border)'};
+                    border-radius: 12px;
+                    margin-bottom: 10px;
+                    background: ${yaAgregado ? '#f0fff4' : 'white'};
+                    transition: 0.2s;
+                "
+            >
+                <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                    <div style="
+                        width: 38px;
+                        height: 38px;
+                        border-radius: 50%;
+                        background: var(--purple-soft);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight: 700;
+                        color: var(--primary);
+                        font-size: 13px;
+                    ">
+                        ${iniciales}
+                    </div>
+                    <div>
+                        <strong style="font-size: 15px;">
+                            ${escapeHtml(estudiante.nombre)} ${escapeHtml(estudiante.apellido)}
+                        </strong>
+                        <div style="font-size: 12px; color: var(--text-light);">
+                            ${estudiante.email || 'Sin email'}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    ${yaAgregado
+                        ? `
+                            <span style="
+                                display: inline-flex;
+                                align-items: center;
+                                gap: 6px;
+                                padding: 5px 14px;
+                                border-radius: 20px;
+                                background: #d4edda;
+                                color: #155724;
+                                font-size: 12px;
+                                font-weight: 600;
+                            ">
+                                ✓ En clase
+                            </span>
+                        `
+                        : `
+                            <button
+                                onclick="agregarEstudianteAClase(${estudiante.id})"
+                                class="primary-button"
+                                style="
+                                    min-height: 34px;
+                                    padding: 0 18px;
+                                    font-size: 12px;
+                                "
+                            >
+                                Agregar
+                            </button>
+                        `
+                    }
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+/**
+ * Agrega un estudiante a la clase seleccionada
+ */
+async function agregarEstudianteAClase(estudianteId) {
+    if (!claseIdSeleccionadaAgregar) {
+        alert("No hay una clase seleccionada.");
+        return;
+    }
+
+    // Buscar el botón clickeado
+    const boton = event?.target;
+    const textoOriginal = boton?.textContent || "Agregar";
+
+    if (boton) {
+        boton.disabled = true;
+        boton.textContent = "Agregando...";
+    }
+
+    try {
+        const response = await fetch(
+            `${API_URL}/clases/${claseIdSeleccionadaAgregar}/estudiantes?estudianteId=${estudianteId}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.mensaje || "Error al agregar estudiante.");
+        }
+
+        // Agregar el ID a los estudiantes en clase
+        estudiantesEnClaseIds.add(estudianteId);
+
+        // Re-renderizar la lista
+        renderizarListaEstudiantes(todosLosEstudiantes);
+
+        // Actualizar la lista de estudiantes de la clase
+        if (claseIdSeleccionadaAgregar) {
+            await loadClassStudents(claseIdSeleccionadaAgregar);
+            await loadInactiveStudents(claseIdSeleccionadaAgregar);
+            await loadClasses(); // Actualizar estadísticas
+        }
+
+        // Mostrar notificación de éxito
+        mostrarNotificacion("✅ Estudiante agregado correctamente", "success");
+
+    } catch (error) {
+        console.error("Error agregando estudiante:", error);
+        mostrarNotificacion("❌ " + error.message, "error");
+
+        if (boton) {
+            boton.disabled = false;
+            boton.textContent = textoOriginal;
+        }
+    }
+}
+
+// =========================================
+// EVENTOS DEL MODAL
+// =========================================
+
+// Abrir modal desde el detalle de clase
+document.getElementById("openAgregarEstudiante")?.addEventListener("click", () => {
+    const claseId = parseInt(
+        document.querySelector("#classDetail")?.dataset?.claseId
+    );
+
+    if (!claseId) {
+        alert("No hay una clase seleccionada.");
+        return;
+    }
+
+    const nombreClase =
+        document.getElementById("detailClassName")?.textContent || "clase";
+
+    abrirModalAgregarEstudiante(claseId, nombreClase);
+});
+
+// Cerrar modal
+document.getElementById("closeAgregarEstudiante")?.addEventListener("click", cerrarModalAgregarEstudiante);
+document.getElementById("cancelarAgregarEstudiante")?.addEventListener("click", cerrarModalAgregarEstudiante);
+
+// Cerrar al hacer clic en el fondo
+agregarEstudianteModal?.addEventListener("click", (event) => {
+    if (event.target === agregarEstudianteModal) {
+        cerrarModalAgregarEstudiante();
+    }
+});
+
+// Cerrar con tecla ESC
+document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && agregarEstudianteModal?.classList.contains("show")) {
+        cerrarModalAgregarEstudiante();
+    }
+});
+
+// Buscador en tiempo real
+buscadorEstudiantes?.addEventListener("input", () => {
+    renderizarListaEstudiantes(todosLosEstudiantes);
+});
+
+// =========================================
+// NOTIFICACIONES (reutilizar la misma función)
+// =========================================
+
+function mostrarNotificacion(mensaje, tipo = "success") {
+    // Eliminar notificaciones existentes
+    const notificacionesAnteriores =
+        document.querySelectorAll(".notificacion-flotante");
+    notificacionesAnteriores.forEach(n => n.remove());
+
+    const colores = {
+        success: "#2ca66f",
+        error: "#d9366f",
+        info: "#5636c9"
+    };
+
+    const notificacion = document.createElement("div");
+    notificacion.className = "notificacion-flotante";
+    notificacion.style.cssText = `
+        position: fixed;
+        top: 30px;
+        right: 30px;
+        z-index: 1000;
+        padding: 16px 24px;
+        border-radius: 12px;
+        background: ${colores[tipo] || colores.info};
+        color: white;
+        font-weight: 600;<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dashboard | Voces con Derechos</title>
+
+    <link
+        rel="stylesheet"
+        href="css/dashboard.css"
+    >
+
+</head>
+
+
+<body>
+
+    <div class="dashboard">
+
+
+        <!-- =====================================
+             SIDEBAR
+        ====================================== -->
+
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+
+                <img
+                    src="assets/logo.png"
+                    alt="Voces con Derechos"
+                >
+
+            </div>
+
+
+            <nav class="sidebar-menu">
+
+                <a
+                    href="#inicio"
+                    class="menu-item active"
+                    data-section="inicio"
+                >
+                    <span class="menu-icon">⌂</span>
+                    <span>Inicio</span>
+                </a>
+
+
+                <a
+                    href="#clases"
+                    class="menu-item"
+                    data-section="clases"
+                >
+                    <span class="menu-icon">▣</span>
+                    <span>Mis clases</span>
+                </a>
+
+
+                <a
+                    href="#misiones"
+                    class="menu-item"
+                    data-section="misiones"
+                >
+                    <span class="menu-icon">◇</span>
+                    <span>Misiones</span>
+                </a>
+
+
+                <a
+                    href="#estudiantes"
+                    class="menu-item"
+                    data-section="estudiantes"
+                >
+                    <span class="menu-icon">♧</span>
+                    <span>Estudiantes</span>
+                </a>
+
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a href="login.html" class="menu-item" id="cerrarSesion">
+                    <span class="menu-icon">←</span>
+                    <span>Cerrar sesión</span>
+                </a>
+            </div>
+
+        </aside>
+
+
+
+        <!-- =====================================
+             CONTENIDO PRINCIPAL
+        ====================================== -->
+
+        <main class="main-content">
+
+
+            <!-- HEADER -->
+
+            <header class="topbar">
+
+                <div class="mobile-logo">
+
+                    <img
+                        src="assets/logo.png"
+                        alt="Voces con Derechos"
+                    >
+
+                </div>
+
+
+                <div class="topbar-user">
+
+                    <div class="user-avatar">
+                        CP
+                    </div>
+
+                    <div class="user-info">
+
+                        <strong>
+                            Carlos Pérez
+                        </strong>
+
+                        <span>
+                            Profesor
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </header>
+
+
+
+            <!-- =================================
+                 INICIO
+            ================================== -->
+
+            <section
+                id="inicio"
+                class="dashboard-section active-section"
+            >
+
+                <div class="welcome">
+
+                    <div>
+
+                        <span class="section-label">
+                            PANEL DEL PROFESOR
+                        </span>
+
+                        <h1>
+                            ¡Hola, Carlos! 👋
+                        </h1>
+
+                        <p>
+                            Administra tus clases, estudiantes
+                            y misiones desde aquí.
+                        </p>
+
+                    </div>
+
+                    <button
+                        class="primary-button"
+                        id="openCreateClass"
+                    >
+                        + Crear clase
+                    </button>
+
+                </div>
+
+
+                <!-- ESTADÍSTICAS -->
+
+                <div class="stats-grid">
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon purple">
+                            ▣
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Mis clases
+                            </span>
+
+                            <strong id="totalClasses">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon pink">
+                            ♧
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Estudiantes
+                            </span>
+
+                            <strong id="totalStudents">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="stat-card">
+
+                        <div class="stat-icon blue">
+                            ◇
+                        </div>
+
+                        <div>
+
+                            <span>
+                                Misiones
+                            </span>
+
+                            <strong id="totalMissions">
+                                0
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CLASES -->
+
+                <div class="content-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                Mis clases
+                            </h2>
+
+                            <p>
+                                Clases que tienes actualmente.
+                            </p>
+
+                        </div>
+
+                        <button
+                            class="text-button"
+                            data-section="clases"
+                        >
+                            Ver todas →
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="dashboardClasses"
+                        class="classes-grid"
+                    >
+
+                        <div class="loading">
+                            Cargando clases...
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================
+                 MIS CLASES
+            ================================== -->
+
+            <section
+                id="clases"
+                class="dashboard-section"
+            >
+
+                <div class="page-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            GESTIÓN
+                        </span>
+
+                        <h1>
+                            Mis clases
+                        </h1>
+
+                        <p>
+                            Administra tus grupos y estudiantes.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="primary-button"
+                        id="openCreateClass2"
+                    >
+                        + Crear clase
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="allClasses"
+                    class="classes-grid"
+                >
+
+                    <div class="loading">
+                        Cargando clases...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================
+                 DETALLE CLASE
+            ================================== -->
+
+    <section
+        id="classDetail"
+        class="dashboard-section"
+    >
+
+        <!-- VOLVER -->
+        <button
+            class="back-dashboard"
+            id="backToClasses"
+        >
+            ← Volver a mis clases
+        </button>
+
+
+        <!-- INFORMACIÓN DE LA CLASE -->
+        <div class="page-header">
+
+            <div>
+
+                <span class="section-label">
+                    CLASE
+                </span>
+
+                <h1 id="detailClassName">
+                    —
+                </h1>
+
+                <p id="detailClassLevel">
+                    —
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="detail-grid">
+
+
+            <!-- =================================
+                ESTUDIANTES
+            ================================== -->
+
+            <div>
+
+                <!-- ESTUDIANTES ACTIVOS -->
+
+                <div class="content-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                Estudiantes
+                            </h2>
+
+                            <p>
+                                Estudiantes activos pertenecientes a esta clase.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="classStudents"
+                        class="student-list"
+                    >
+
+                        <div class="loading">
+                            Cargando estudiantes...
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ESTUDIANTES INACTIVOS -->
+
+                <div class="content-card">
+
+                    <div class="card-header">
+
+                        <div>
+
+                            <h2>
+                                Estudiantes inactivos
+                            </h2>
+
+                            <p>
+                                Estudiantes que fueron desactivados de esta clase.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="inactiveStudents"
+                        class="student-list"
+                    >
+
+                        <div class="loading">
+                            Cargando estudiantes inactivos...
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+        <!-- =================================
+             MISIONES
+        ================================== -->
+
+        <div class="content-card">
+
+            <div class="card-header">
+
+                <div>
+
+                    <h2>
+                        Misiones asignadas
+                    </h2>
+
+                    <p>
+                        Misiones disponibles para esta clase.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="classMissions"
+                class="mission-list"
+            >
+
+                <div class="loading">
+                    Cargando misiones...
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+</section>
+
+
+
+            <!-- =================================
+                 MISIONES
+            ================================== -->
+
+            <section
+                id="misiones"
+                class="dashboard-section"
+            >
+
+                <div class="page-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            CONTENIDO EDUCATIVO
+                        </span>
+
+                        <h1>
+                            Misiones
+                        </h1>
+
+                        <p>
+                            Consulta las misiones disponibles.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="missionsGrid"
+                    class="missions-grid"
+                >
+
+                    <div class="loading">
+                        Cargando misiones...
+                    </div>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =================================
+                 ESTUDIANTES
+            ================================== -->
+
+            <section
+                id="estudiantes"
+                class="dashboard-section"
+            >
+
+                <div class="page-header">
+
+                    <div>
+
+                        <span class="section-label">
+                            ESTUDIANTES
+                        </span>
+
+                        <h1>
+                            Estudiantes
+                        </h1>
+
+                        <p>
+                            Consulta los estudiantes de tus clases.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="content-card">
+
+                    <div
+                        id="studentsOverview"
+                        class="students-overview"
+                    >
+
+                        <div class="loading">
+                            Cargando estudiantes...
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+        </main>
+
+    </div>
+
+
+
+    <!-- =====================================
+         MODAL CREAR CLASE
+    ====================================== -->
+
+    <div
+        id="createClassModal"
+        class="modal"
+    >
+
+        <div class="modal-card">
+
+            <button
+                class="close-modal"
+                id="closeCreateClass"
+            >
+                ×
+            </button>
+
+
+            <div class="modal-header">
+
+                <span class="modal-icon">
+                    ▣
+                </span>
+
+                <h2>
+                    Crear nueva clase
+                </h2>
+
+                <p>
+                    Crea un grupo para comenzar a organizar
+                    a tus estudiantes.
+                </p>
+
+            </div>
+
+
+            <form id="createClassForm">
+
+                <div class="form-group">
+
+                    <label for="className">
+                        Nombre de la clase
+                    </label>
+
+                    <input
+                        type="text"
+                        id="className"
+                        placeholder="Ej. 4to A"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="classLevel">
+                        Nivel educativo
+                    </label>
+
+                    <select
+                        id="classLevel"
+                        required
+                    >
+
+                        <option value="">
+                            Selecciona un nivel
+                        </option>
+
+                        <option value="Primaria">
+                            Primaria
+                        </option>
+
+                        <option value="Secundaria">
+                            Secundaria
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div
+                    id="createClassMessage"
+                    class="form-message"
+                ></div>
+
+
+                <button
+                    type="submit"
+                    class="primary-button full"
+                >
+                    Crear clase
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================
+        MODAL ASIGNAR MISIÓN
+    ====================================== -->
+
+    <div id="asignarMisionModal" class="modal">
+
+        <div class="modal-card" style="max-width: 580px;">
+
+            <button class="close-modal" id="closeAsignarMision">
+                ×
+            </button>
+
+            <div class="modal-header">
+
+                <span class="modal-icon">
+                    ◇
+                </span>
+
+                <h2>
+                    Asignar misión
+                </h2>
+
+                <p id="asignarMisionSubtexto">
+                    Selecciona una misión para asignar a esta clase.
+                </p>
+
+            </div>
+
+            <!-- Lista de misiones -->
+            <div id="listaMisionesAsignar" style="max-height: 400px; overflow-y: auto;">
+
+                <div class="loading">
+                    Cargando misiones...
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end;">
+
+                <button
+                    class="text-button"
+                    id="cancelarAsignarMision"
+                    style="padding: 10px 20px;"
+                >
+                    Cancelar
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <script src="js/dashboard.js"></script>
+
+</body>
+
+</html>
+        font-size: 15px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        transform: translateX(120%);
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        max-width: 400px;
+    `;
+    notificacion.textContent = mensaje;
+    document.body.appendChild(notificacion);
+
+    setTimeout(() => {
+        notificacion.style.transform = "translateX(0)";
+    }, 50);
+
+    setTimeout(() => {
+        notificacion.style.transform = "translateX(120%)";
+        setTimeout(() => {
+            notificacion.remove();
+        }, 300);
+    }, 4000);
+}
 
 /* =========================================
    UTILIDADES
@@ -1841,6 +3032,63 @@ document.addEventListener("keydown", (event) => {
 
 });
 
+async function openClass(classId) {
+    // Guardar el ID de la clase para usarlo en los modales
+    const section = document.getElementById("classDetail");
+    if (section) {
+        section.dataset.claseId = classId;
+    }
+
+    showSection("classDetail");
+
+    const name = document.getElementById("detailClassName");
+    const level = document.getElementById("detailClassLevel");
+
+    name.textContent = "Cargando...";
+    level.textContent = "";
+
+    try {
+        const response = await fetch(`${API_URL}/clases/${classId}`);
+
+        if (!response.ok) {
+            throw new Error("Clase no encontrada.");
+        }
+
+        const clase = await response.json();
+
+        name.textContent = clase.nombre;
+        level.textContent = `Profesor ID: ${clase.profesorId}`;
+
+        // Cargar datos
+        await Promise.all([
+            loadClassStudents(classId),
+            loadInactiveStudents(classId),
+            loadClassMissions(classId)
+        ]);
+
+        // Actualizar botón "Agregar estudiante"
+        const btnAgregar = document.getElementById("openAgregarEstudiante");
+        if (btnAgregar) {
+            btnAgregar.onclick = () => {
+                const nombreClase = document.getElementById("detailClassName")?.textContent || "clase";
+                abrirModalAgregarEstudiante(classId, nombreClase);
+            };
+        }
+
+        // Actualizar botón "Asignar misión"
+        const btnAsignar = document.getElementById("btnAsignarMision");
+        if (btnAsignar) {
+            btnAsignar.onclick = () => {
+                const nombreClase = document.getElementById("detailClassName")?.textContent || "clase";
+                abrirModalAsignarMision(classId, nombreClase);
+            };
+        }
+
+    } catch (error) {
+        console.error("Error cargando clase:", error);
+        name.textContent = "No se pudo cargar la clase.";
+    }
+}
 
 /**
  * Sobrescribir openClass para guardar el ID y agregar el botón de asignar
@@ -1931,3 +3179,30 @@ function agregarBotonAsignarMision() {
     pageHeader.appendChild(boton);
 
 }
+// =========================================
+// ABRIR ASIGNAR MISIÓN DESDE DETALLE
+// =========================================
+
+function abrirAsignarMisionDesdeDetalle() {
+    const section = document.getElementById("classDetail");
+    const claseId = parseInt(section?.dataset?.claseId);
+
+    if (!claseId) {
+        alert("No hay una clase seleccionada.");
+        return;
+    }
+
+    const nombreClase =
+        document.getElementById("detailClassName")?.textContent || "clase";
+
+    abrirModalAsignarMision(claseId, nombreClase);
+}
+// =========================================
+// CERRAR SESIÓN
+// =========================================
+
+document.getElementById("cerrarSesion")?.addEventListener("click", (event) => {
+    event.preventDefault();
+    localStorage.removeItem("profesor");
+    window.location.href = "login.html";
+});
