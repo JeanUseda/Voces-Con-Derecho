@@ -8,37 +8,37 @@ let progresoEstudiante = [];
 // ELEMENTOS
 // =========================================
 
-const sections = document.querySelectorAll(".dashboard-section");
-const menuItems = document.querySelectorAll(".menu-item[data-section]");
+// const sections = document.querySelectorAll(".dashboard-section");
+// const menuItems = document.querySelectorAll(".menu-item[data-section]");
 
-// =========================================
-// NAVEGACIÓN
-// =========================================
+// // =========================================
+// // NAVEGACIÓN
+// // =========================================
 
-function showSection(sectionId) {
-    sections.forEach(section => {
-        section.classList.remove("active-section");
-    });
+// function showSection(sectionId) {
+//     sections.forEach(section => {
+//         section.classList.remove("active-section");
+//     });
 
-    const section = document.getElementById(sectionId);
-    if (section) {
-        section.classList.add("active-section");
-    }
+//     const section = document.getElementById(sectionId);
+//     if (section) {
+//         section.classList.add("active-section");
+//     }
 
-    menuItems.forEach(item => {
-        item.classList.toggle(
-            "active",
-            item.dataset.section === sectionId
-        );
-    });
-}
+//     menuItems.forEach(item => {
+//         item.classList.toggle(
+//             "active",
+//             item.dataset.section === sectionId
+//         );
+//     });
+// }
 
-menuItems.forEach(item => {
-    item.addEventListener("click", (event) => {
-        event.preventDefault();
-        showSection(item.dataset.section);
-    });
-});
+// menuItems.forEach(item => {
+//     item.addEventListener("click", (event) => {
+//         event.preventDefault();
+//         showSection(item.dataset.section);
+//     });
+// });
 
 // =========================================
 // CERRAR SESIÓN

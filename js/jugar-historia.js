@@ -90,15 +90,20 @@ async function cargarHistoria(historiaId) {
         }
 
         historiaData = await response.json();
-        console.log("Historia cargada:", historiaData);
+        console.log("📖 Historia cargada:", historiaData);
+        console.log("📝 Escenas:", historiaData.escenas);
+        
+        // ✅ Verificar si alguna escena tiene pregunta
+        historiaData.escenas.forEach((e, i) => {
+            if (e.pregunta) {
+                console.log(`✅ Escena ${i+1} tiene pregunta:`, e.pregunta);
+            }
+        });
 
-        // Actualizar título
         document.getElementById("historiaTitulo").textContent = historiaData.titulo;
 
-        // Obtener progreso existente
         await cargarProgresoExistente(historiaId);
 
-        // Cargar primera escena
         if (historiaData.escenas && historiaData.escenas.length > 0) {
             mostrarEscena(historiaData.escenas[0]);
         } else {
@@ -110,6 +115,7 @@ async function cargarHistoria(historiaId) {
         document.getElementById("escenaTexto").textContent = "❌ No se pudo cargar la historia.";
     }
 }
+
 
 // ==========================================
 // CARGAR PROGRESO EXISTENTE
@@ -348,7 +354,7 @@ function mostrarNotificacionInsignia(nombre) {
 }
 
 // ==========================================
-// MOSTRAR ESCENA
+// MOSTRAR ESCENA - CORREGIDO
 // ==========================================
 
 function mostrarEscena(escena) {
@@ -367,11 +373,28 @@ function mostrarEscena(escena) {
     // Ocultar pregunta y feedback
     document.getElementById("preguntaContainer").style.display = "none";
     document.getElementById("feedbackContainer").style.display = "none";
+    document.getElementById("resultadoContainer").style.display = "none";
 
-    // Mostrar decisiones
     const decisionesContainer = document.getElementById("decisionesContainer");
     decisionesContainer.innerHTML = "";
 
+    // ✅ VERIFICAR: Si es final y tiene pregunta, mostrar la pregunta directamente
+    if (escena.esFinal && escena.tienePregunta && escena.pregunta) {
+        console.log("🎯 Escena final con pregunta detectada:", escena.pregunta);
+        
+        // Mostrar la pregunta
+        mostrarPregunta(escena.pregunta);
+        
+        // Mensaje para el estudiante
+        decisionesContainer.innerHTML = `<p style="color: var(--text-light); padding: 16px; text-align: center; background: var(--blue-soft); border-radius: 8px;">
+            📝 Responde la pregunta para completar la historia.
+        </p>`;
+        
+        guardarProgreso();
+        return;
+    }
+
+    // Si no es final, mostrar decisiones normalmente
     if (escena.decisiones && escena.decisiones.length > 0) {
         const letras = ['A', 'B', 'C', 'D'];
         escena.decisiones.forEach((decision, index) => {
@@ -386,21 +409,10 @@ function mostrarEscena(escena) {
         decisionesContainer.innerHTML = "<p style='color: var(--text-light);'>No hay decisiones disponibles.</p>";
     }
 
-    // Si es final y tiene pregunta, mostrarla después
-    if (escena.esFinal && escena.tienePregunta && escena.pregunta) {
-        // La pregunta se mostrará después de tomar la última decisión
-        // o si no hay decisiones, se muestra automáticamente
-        if (!escena.decisiones || escena.decisiones.length === 0) {
-            mostrarPregunta(escena.pregunta);
-        }
-    }
-
-    // Guardar progreso automáticamente
     guardarProgreso();
 }
-
 // ==========================================
-// TOMAR DECISIÓN
+// TOMAR DECISIÓN 
 // ==========================================
 
 async function tomarDecision(decisionId) {
@@ -440,29 +452,45 @@ async function tomarDecision(decisionId) {
     // Mostrar botón continuar
     const btnContinuar = document.getElementById("btnContinuar");
     btnContinuar.style.display = "block";
-    btnContinuar.textContent = decision.siguienteEscenaId ? "Continuar →" : "Ver resultado 🏆";
+
+    // ✅ CORRECCIÓN: Verificar si tiene siguiente escena
+    console.log("SiguienteEscenaId:", decision.siguienteEscenaId);
+    
+    if (decision.siguienteEscenaId) {
+        // Buscar la siguiente escena
+        const siguienteEscena = historiaData.escenas.find(e => e.id === decision.siguienteEscenaId);
+        
+        if (siguienteEscena) {
+            btnContinuar.textContent = "Continuar →";
+            btnContinuar.onclick = () => {
+                mostrarEscena(siguienteEscena);
+                // Limpiar feedback después de cambiar de escena
+                feedbackContainer.style.display = "none";
+                btnContinuar.style.display = "none";
+            };
+        } else {
+            // Si no se encuentra la escena, mostrar resultado
+            console.warn("No se encontró la siguiente escena:", decision.siguienteEscenaId);
+            btnContinuar.textContent = "Ver resultado 🏆";
+            btnContinuar.onclick = () => mostrarResultadoFinal();
+        }
+    } else {
+        // Si no tiene siguiente escena, mostrar resultado
+        btnContinuar.textContent = "Ver resultado 🏆";
+        btnContinuar.onclick = () => mostrarResultadoFinal();
+    }
 
     // Guardar progreso
     await guardarProgreso();
-
-    // Si no hay siguiente escena, mostrar resultado
-    if (!decision.siguienteEscenaId) {
-        btnContinuar.onclick = () => mostrarResultadoFinal();
-    } else {
-        btnContinuar.onclick = () => {
-            const siguienteEscena = historiaData.escenas.find(e => e.id === decision.siguienteEscenaId);
-            if (siguienteEscena) {
-                mostrarEscena(siguienteEscena);
-            }
-        };
-    }
 }
 
 // ==========================================
-// MOSTRAR PREGUNTA
+// MOSTRAR PREGUNTA - CORREGIDO
 // ==========================================
 
 function mostrarPregunta(pregunta) {
+    console.log("📝 Mostrando pregunta:", pregunta);
+    
     const container = document.getElementById("preguntaContainer");
     container.style.display = "block";
 
@@ -483,10 +511,13 @@ function mostrarPregunta(pregunta) {
 
     // Ocultar feedback mientras no se responda
     document.getElementById("feedbackContainer").style.display = "none";
+    
+    // ✅ Asegurar que el contenedor de resultado esté oculto
+    document.getElementById("resultadoContainer").style.display = "none";
 }
 
 // ==========================================
-// SELECCIONAR RESPUESTA
+// SELECCIONAR RESPUESTA - CORREGIDO
 // ==========================================
 
 function seleccionarRespuesta(respuestaId) {
@@ -523,8 +554,14 @@ function seleccionarRespuesta(respuestaId) {
     const feedbackContainer = document.getElementById("feedbackContainer");
     feedbackContainer.style.display = "block";
     const feedbackMensaje = document.getElementById("feedbackMensaje");
-    feedbackMensaje.textContent = pregunta.explicacion || (respuesta.esCorrecta ? "¡Correcto!" : "Incorrecto. Sigue aprendiendo.");
-    feedbackMensaje.className = `feedback-mensaje ${respuesta.esCorrecta ? 'exito' : 'error'}`;
+    
+    if (respuesta.esCorrecta) {
+        feedbackMensaje.textContent = pregunta.explicacion || "✅ ¡Correcto! Excelente respuesta.";
+        feedbackMensaje.className = "feedback-mensaje exito";
+    } else {
+        feedbackMensaje.textContent = pregunta.explicacion || "❌ Incorrecto. Sigue aprendiendo.";
+        feedbackMensaje.className = "feedback-mensaje error";
+    }
 
     // Mostrar botón para ver resultado final
     const btnContinuar = document.getElementById("btnContinuar");
@@ -535,7 +572,6 @@ function seleccionarRespuesta(respuestaId) {
     // Guardar progreso
     guardarProgreso();
 }
-
 document.addEventListener("DOMContentLoaded", inicializar);
 
 // ==========================================
