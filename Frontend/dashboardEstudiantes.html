@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | Voces con Derechos</title>
+
+    <link rel="stylesheet" href="css/dashboardEstudiantes.css">
+</head>
+
+<body>
+
+    <div class="dashboard-estudiante">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <div class="sidebar-logo">
+                <img src="assets/logo.png" alt="Voces con Derechos">
+            </div>
+
+            <nav class="sidebar-menu">
+                <a href="#inicio" class="menu-item active" data-section="inicio">
+                    <span class="menu-icon">⌂</span>
+                    <span>Inicio</span>
+                </a>
+
+                <a href="#misiones" class="menu-item" data-section="misiones">
+                    <span class="menu-icon">◇</span>
+                    <span>Mis misiones</span>
+                </a>
+
+                <a href="#progreso" class="menu-item" data-section="progreso">
+                    <span class="menu-icon">📊</span>
+                    <span>Mi progreso</span>
+                </a>
+
+                <a href="#logros" class="menu-item" data-section="logros">
+                    <span class="menu-icon">🏆</span>
+                    <span>Mis logros</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-bottom">
+                <a href="login.html" class="menu-item" id="cerrarSesion">
+                    <span class="menu-icon">←</span>
+                    <span>Cerrar sesión</span>
+                </a>
+            </div>
+
+        </aside>
+
+        <!-- Contenido principal -->
+        <main class="main-content">
+
+            <!-- Header -->
+            <header class="topbar">
+                <div class="topbar-user">
+                    <div class="user-avatar" id="userAvatar">ES</div>
+                    <div class="user-info">
+                        <strong id="userName">Estudiante</strong>
+                        <span>Estudiante de secundaria</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Sección Inicio -->
+            <section id="inicio" class="dashboard-section active-section">
+
+                <div class="welcome">
+                    <div>
+                        <span class="section-label">PANEL DEL ESTUDIANTE</span>
+                        <h1 id="welcomeMessage">¡Hola, Estudiante! 👋</h1>
+                        <p>Completa tus misiones y aprende sobre derechos e igualdad.</p>
+                    </div>
+                    <div class="stats-mini">
+                        <span id="totalMisiones">0</span> misiones disponibles
+                    </div>
+                </div>
+
+                <!-- Estadísticas rápidas -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon purple">◇</div>
+                        <div>
+                            <span>Misiones totales</span>
+                            <strong id="misionesTotales">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon pink">✓</div>
+                        <div>
+                            <span>Completadas</span>
+                            <strong id="misionesCompletadas">0</strong>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon blue">⭐</div>
+                        <div>
+                            <span>Puntos totales</span>
+                            <strong id="xpTotal">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Misiones activas -->
+                <div class="content-card">
+                    <div class="card-header">
+                        <div>
+                            <h2>Tus misiones</h2>
+                            <p>Misiones disponibles para ti.</p>
+                        </div>
+                    </div>
+                    <div id="misMisiones" class="missions-grid">
+                        <div class="loading">Cargando misiones...</div>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Sección Mis Misiones -->
+            <section id="misiones" class="dashboard-section">
+                <div class="page-header">
+                    <div>
+                        <span class="section-label">MISIONES</span>
+                        <h1>Mis misiones</h1>
+                        <p>Todas las misiones asignadas a tus clases.</p>
+                    </div>
+                </div>
+                <div id="todasMisiones" class="missions-grid">
+                    <div class="loading">Cargando misiones...</div>
+                </div>
+            </section>
+
+            <!-- Sección Progreso -->
+            <section id="progreso" class="dashboard-section">
+                <div class="page-header">
+                    <div>
+                        <span class="section-label">PROGRESO</span>
+                        <h1>Mi progreso</h1>
+                        <p>Tu avance en las misiones.</p>
+                    </div>
+                </div>
+                <div id="miProgreso" class="content-card">
+                    <div class="loading">Cargando progreso...</div>
+                </div>
+            </section>
+
+            <!-- Sección Logros -->
+            <section id="logros" class="dashboard-section">
+                <div class="page-header">
+                    <div>
+                        <span class="section-label">LOGROS</span>
+                        <h1>Mis logros</h1>
+                        <p>Insignias y recompensas obtenidas.</p>
+                    </div>
+                </div>
+                <div id="misLogros" class="logros-grid">
+                    <div class="loading">Cargando logros...</div>
+                </div>
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="js/dashboardEstudiantes.js"></script>
+
+</body>
+</html>

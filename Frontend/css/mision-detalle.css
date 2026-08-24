@@ -1,0 +1,269 @@
+/* =========================================
+   VARIABLES
+========================================= */
+
+:root {
+    --primary: #5636c9;
+    --primary-dark: #30206e;
+    --pink: #ed3d85;
+    --pink-soft: #fff0f7;
+    --purple-soft: #f1edff;
+    --blue-soft: #eaf7ff;
+    --text: #29205f;
+    --text-light: #777296;
+    --background: #f8f7fc;
+    --white: #ffffff;
+    --border: #ebe8f4;
+    --success: #2ca66f;
+    --danger: #d9366f;
+    --warning: #f59e0b;
+}
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--text);
+    background: var(--background);
+    min-height: 100vh;
+}
+
+/* =========================================
+   CONTAINER
+========================================= */
+
+.mision-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.mision-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-volver {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.btn-volver:hover {
+    background: var(--purple-soft);
+}
+
+.mision-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.mision-info span:first-child {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+#progresoMision {
+    background: var(--purple-soft);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* =========================================
+   PROGRESO
+========================================= */
+
+.progreso-barra {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 10px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.progreso-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--pink));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+/* =========================================
+   HISTORIAS GRID
+========================================= */
+
+.historias-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    flex: 1;
+}
+
+.historia-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px 24px;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    background: var(--white);
+    transition: 0.3s ease;
+    cursor: pointer;
+}
+
+.historia-card:hover:not(.bloqueada):not(.completada) {
+    border-color: var(--primary);
+    transform: translateX(6px);
+    box-shadow: 0 4px 12px rgba(86, 54, 201, 0.1);
+}
+
+.historia-card .numero {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+    background: var(--purple-soft);
+    color: var(--primary);
+}
+
+.historia-card .info {
+    flex: 1;
+}
+
+.historia-card .info h3 {
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.historia-card .info p {
+    font-size: 14px;
+    color: var(--text-light);
+}
+
+.historia-card .estado {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.historia-card .estado.disponible {
+    background: var(--purple-soft);
+    color: var(--primary);
+}
+
+.historia-card .estado.completada {
+    background: #d4edda;
+    color: #155724;
+}
+
+.historia-card .estado.bloqueada {
+    background: #f8f7fc;
+    color: var(--text-light);
+}
+
+.historia-card .estado.jugar {
+    background: var(--primary);
+    color: white;
+}
+
+.historia-card.completada {
+    border-color: #d4edda;
+    background: #f8fff9;
+    cursor: default;
+}
+
+.historia-card.completada .numero {
+    background: #d4edda;
+    color: #155724;
+}
+
+.historia-card.bloqueada {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.historia-card.bloqueada .numero {
+    background: #f0f0f0;
+    color: var(--text-light);
+}
+
+.historia-card .flecha {
+    font-size: 20px;
+    color: var(--text-light);
+}
+
+/* =========================================
+   LOADING / EMPTY
+========================================= */
+
+.loading,
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+    font-size: 16px;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+    .mision-container {
+        padding: 12px;
+    }
+
+    .mision-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .mision-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .historia-card {
+        flex-wrap: wrap;
+        padding: 16px;
+    }
+
+    .historia-card .estado {
+        font-size: 12px;
+        padding: 4px 12px;
+    }
+}

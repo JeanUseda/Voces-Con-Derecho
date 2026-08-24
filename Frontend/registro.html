@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Registro | Voces con Derechos</title>
+
+    <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+
+    <main class="login-page">
+
+        <!-- Decoración izquierda -->
+        <div class="login-decoration">
+
+            <div class="decoration-content">
+
+                <img
+                    src="assets/logo.png"
+                    alt="Voces con Derechos"
+                    class="login-logo"
+                >
+
+                <h1>
+                    Únete.
+                    <br>
+                    Aprende.
+                    <br>
+                    <span>Transforma.</span>
+                </h1>
+
+                <p>
+                    Regístrate para comenzar tu viaje
+                    de aprendizaje sobre derechos e igualdad.
+                </p>
+
+                <img
+                    src="assets/hero.png"
+                    alt=""
+                    class="decoration-image"
+                >
+
+            </div>
+
+        </div>
+
+        <!-- Formulario -->
+        <div class="login-container">
+
+            <div class="login-card">
+
+                <a href="login.html" class="back-link">
+                    ← Volver al login
+                </a>
+
+                <div class="login-header">
+
+                    <h2>Crear cuenta</h2>
+
+                    <p>
+                        Regístrate para comenzar a aprender.
+                    </p>
+
+                </div>
+
+                <!-- SELECTOR DE ROL PARA REGISTRO -->
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600;">
+                        ¿Qué tipo de usuario eres?
+                    </label>
+                    <div style="display: flex; gap: 12px;">
+                        <button
+                            type="button"
+                            id="rolEstudianteRegistro"
+                            class="rol-selector active"
+                            style="
+                                flex: 1;
+                                padding: 12px;
+                                border: 2px solid var(--primary);
+                                border-radius: 10px;
+                                background: var(--purple-soft);
+                                color: var(--primary);
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: 0.2s;
+                            "
+                        >
+                            🎓 Estudiante
+                        </button>
+                        <button
+                            type="button"
+                            id="rolProfesorRegistro"
+                            class="rol-selector"
+                            style="
+                                flex: 1;
+                                padding: 12px;
+                                border: 2px solid var(--border);
+                                border-radius: 10px;
+                                background: white;
+                                color: var(--text-light);
+                                font-weight: 600;
+                                cursor: pointer;
+                                transition: 0.2s;
+                            "
+                        >
+                            👨‍🏫 Profesor
+                        </button>
+                    </div>
+                </div>
+
+                <form id="registroForm">
+
+                    <div class="form-group">
+                        <label for="nombre">Nombre completo</label>
+                        <input
+                            type="text"
+                            id="nombre"
+                            placeholder="Tu nombre completo"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Correo electrónico</label>
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="ejemplo@correo.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <div class="password-container">
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Mínimo 6 caracteres"
+                                required
+                                minlength="6"
+                            >
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="toggle-password"
+                            >
+                                Mostrar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar contraseña</label>
+                        <div class="password-container">
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="Repite tu contraseña"
+                                required
+                            >
+                            <button
+                                type="button"
+                                id="toggleConfirmPassword"
+                                class="toggle-password"
+                            >
+                                Mostrar
+                            </button>
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="login-button"
+                        id="registroButton"
+                    >
+                        Registrarse
+                        <span>→</span>
+                    </button>
+
+                </form>
+
+                <div
+                    id="registroMessage"
+                    class="login-message"
+                ></div>
+
+                <div class="login-footer">
+                    <p>
+                        ¿Ya tienes cuenta?
+                    </p>
+                    <a href="login.html">
+                        Inicia sesión aquí
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="js/registro.js"></script>
+
+</body>
+</html>
+
+
+<!-- <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Registro | Voces con Derechos</title>
+
+    <link rel="stylesheet" href="css/login.css">
+</head>
+
+<body>
+
+    <main class="login-page">
+
+        <!-- Decoración izquierda --
+        <div class="login-decoration">
+
+            <div class="decoration-content">
+
+                <img
+                    src="assets/logo.png"
+                    alt="Voces con Derechos"
+                    class="login-logo"
+                >
+
+                <h1>
+                    Únete.
+                    <br>
+                    Aprende.
+                    <br>
+                    <span>Transforma.</span>
+                </h1>
+
+                <p>
+                    Regístrate para comenzar tu viaje
+                    de aprendizaje sobre derechos e igualdad.
+                </p>
+
+                <img
+                    src="assets/hero.png"
+                    alt=""
+                    class="decoration-image"
+                >
+
+            </div>
+
+        </div>
+
+        <!-- Formulario --
+        <div class="login-container">
+
+            <div class="login-card">
+
+                <a href="index.html" class="back-link">
+                    ← Volver al inicio
+                </a>
+
+                <div class="login-header">
+
+                    <h2>Crear cuenta</h2>
+
+                    <p>
+                        Regístrate para comenzar a aprender.
+                    </p>
+
+                </div>
+
+                <form id="registroForm">
+
+                    <div class="form-row">
+                        <div class="form-group half">
+                            <label for="nombre">Nombre</label>
+                            <input
+                                type="text"
+                                id="nombre"
+                                placeholder="Tu nombre"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group half">
+                            <label for="apellido">Apellido</label>
+                            <input
+                                type="text"
+                                id="apellido"
+                                placeholder="Tu apellido"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">Correo electrónico</label>
+                        <input
+                            type="email"
+                            id="email"
+                            placeholder="ejemplo@correo.com"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <div class="password-container">
+                            <input
+                                type="password"
+                                id="password"
+                                placeholder="Mínimo 6 caracteres"
+                                required
+                                minlength="6"
+                            >
+                            <button
+                                type="button"
+                                id="togglePassword"
+                                class="toggle-password"
+                            >
+                                Mostrar
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar contraseña</label>
+                        <div class="password-container">
+                            <input
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="Repite tu contraseña"
+                                required
+                            >
+                            <button
+                                type="button"
+                                id="toggleConfirmPassword"
+                                class="toggle-password"
+                            >
+                                Mostrar
+                            </button>
+                        </div>
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="login-button"
+                    >
+                        Registrarse
+                        <span>→</span>
+                    </button>
+
+                </form>
+
+                <div
+                    id="registroMessage"
+                    class="login-message"
+                ></div>
+
+                <div class="login-footer">
+
+                    <p>
+                        ¿Ya tienes cuenta?
+                    </p>
+
+                    <a href="login.html">
+                        Inicia sesión aquí
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <script src="js/registro.js"></script>
+
+</body>
+</html> -->

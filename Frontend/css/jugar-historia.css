@@ -1,0 +1,478 @@
+/* =========================================
+   VARIABLES
+========================================= */
+
+:root {
+    --primary: #5636c9;
+    --primary-dark: #30206e;
+    --pink: #ed3d85;
+    --pink-soft: #fff0f7;
+    --purple-soft: #f1edff;
+    --blue-soft: #eaf7ff;
+    --text: #29205f;
+    --text-light: #777296;
+    --background: #f8f7fc;
+    --white: #ffffff;
+    --border: #ebe8f4;
+    --success: #2ca66f;
+    --danger: #d9366f;
+    --warning: #f59e0b;
+}
+
+/* =========================================
+   RESET
+========================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    color: var(--text);
+    background: var(--background);
+    min-height: 100vh;
+}
+
+/* =========================================
+   CONTAINER
+========================================= */
+
+.jugar-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.jugar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-volver {
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.btn-volver:hover {
+    background: var(--purple-soft);
+}
+
+.jugar-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.jugar-info span:first-child {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+#puntosInfo {
+    background: var(--purple-soft);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* =========================================
+   PROGRESO
+========================================= */
+
+.progreso-barra {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 10px;
+    margin: 20px 0;
+    overflow: hidden;
+}
+
+.progreso-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--pink));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+/* =========================================
+   ESCENA
+========================================= */
+
+.escena-container {
+    flex: 1;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    padding: 40px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.escena-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.escena-imagen {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.escena-imagen img {
+    max-width: 100%;
+    max-height: 250px;
+    border-radius: 12px;
+    object-fit: cover;
+}
+
+.escena-texto {
+    flex: 1;
+}
+
+.escena-texto p {
+    font-size: 22px;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 25px;
+}
+
+/* =========================================
+   DECISIONES
+========================================= */
+
+.decisiones-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-decision {
+    padding: 16px 24px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    background: white;
+    color: var(--text);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: left;
+}
+
+.btn-decision:hover {
+    border-color: var(--primary);
+    background: var(--purple-soft);
+    transform: translateX(5px);
+}
+
+.btn-decision:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-decision.correcta {
+    border-color: var(--success);
+    background: #d4edda;
+    color: #155724;
+}
+
+.btn-decision.incorrecta {
+    border-color: var(--danger);
+    background: #f8d7da;
+    color: #721c24;
+}
+
+/* =========================================
+   PREGUNTA
+========================================= */
+
+.pregunta-container {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border);
+}
+
+.pregunta-container h3 {
+    margin-bottom: 12px;
+    color: var(--primary);
+}
+
+#preguntaEnunciado {
+    font-size: 18px;
+    margin-bottom: 16px;
+}
+
+.respuestas-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn-respuesta {
+    padding: 14px 20px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    color: var(--text);
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.2s;
+    text-align: left;
+}
+
+.btn-respuesta:hover {
+    border-color: var(--primary);
+    background: var(--purple-soft);
+}
+
+.btn-respuesta.seleccionada {
+    border-color: var(--primary);
+    background: var(--purple-soft);
+}
+
+.btn-respuesta.correcta {
+    border-color: var(--success);
+    background: #d4edda;
+    color: #155724;
+}
+
+.btn-respuesta.incorrecta {
+    border-color: var(--danger);
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.btn-respuesta:disabled {
+    cursor: not-allowed;
+}
+
+/* =========================================
+   FEEDBACK
+========================================= */
+
+.feedback-container {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    background: var(--purple-soft);
+}
+
+.feedback-mensaje {
+    font-size: 16px;
+    line-height: 1.5;
+    margin-bottom: 16px;
+}
+
+.feedback-mensaje.exito {
+    color: var(--success);
+}
+
+.feedback-mensaje.error {
+    color: var(--danger);
+}
+
+/* =========================================
+   RESULTADO FINAL
+========================================= */
+
+.resultado-container {
+    text-align: center;
+    padding: 30px 0;
+}
+
+.resultado-icon {
+    font-size: 72px;
+    margin-bottom: 16px;
+}
+
+.resultado-container h2 {
+    font-size: 28px;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+#resultadoPuntos {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--warning);
+    margin-bottom: 12px;
+}
+
+.resultado-mensaje {
+    font-size: 18px;
+    color: var(--text-light);
+    margin-bottom: 24px;
+}
+
+/* =========================================
+   BOTONES
+========================================= */
+
+.btn-primario {
+    padding: 14px 32px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-primario:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(86, 54, 201, 0.25);
+}
+
+.btn-primario:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 600px) {
+    .jugar-container {
+        padding: 12px;
+    }
+
+    .escena-container {
+        padding: 24px;
+    }
+
+    .escena-texto p {
+        font-size: 18px;
+    }
+
+    .jugar-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .jugar-info {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .btn-decision {
+        font-size: 14px;
+        padding: 14px 18px;
+    }
+}
+/* =========================================
+   MODAL HISTORIAS
+========================================= */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    max-width: 600px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.modal-content h2 {
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+.historias-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.historia-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.historia-item:hover {
+    border-color: var(--primary);
+    background: var(--purple-soft);
+    transform: translateX(5px);
+}
+
+.historia-icon {
+    font-size: 28px;
+}
+
+.historia-item h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.historia-item p {
+    font-size: 13px;
+    color: var(--text-light);
+}
+
+.historia-arrow {
+    margin-left: auto;
+    font-size: 20px;
+    color: var(--text-light);
+}
+
+.btn-cerrar {
+    margin-top: 20px;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    background: var(--border);
+    color: var(--text);
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+    width: 100%;
+}
+
+.btn-cerrar:hover {
+    background: var(--purple-soft);
+}
