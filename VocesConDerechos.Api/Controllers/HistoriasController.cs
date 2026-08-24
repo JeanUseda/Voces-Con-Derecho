@@ -18,6 +18,31 @@ public class HistoriasController : ControllerBase
     }
 
     // ==========================================
+    // GET: api/historias
+    // Obtener todas las historias
+    // ==========================================
+    [HttpGet]
+    public async Task<IActionResult> GetHistorias()
+    {
+        var historias = await _context.Historias
+            .OrderBy(h => h.MisionId)
+            .ThenBy(h => h.Orden)
+            .Select(h => new
+            {
+                h.Id,
+                h.Titulo,
+                Descripcion = h.Descripcion ?? "Sin descripción",  // ✅ CORREGIDO
+                h.MisionId,
+                h.Orden,
+                h.PuntosBase,
+                h.Activa
+            })
+            .ToListAsync();
+
+        return Ok(historias);
+    }
+
+    // ==========================================
     // GET: api/historias/mision/{misionId}
     // Obtener todas las historias de una misión
     // ==========================================
@@ -31,7 +56,7 @@ public class HistoriasController : ControllerBase
             {
                 h.Id,
                 h.Titulo,
-                h.Descripcion,
+                Descripcion = h.Descripcion ?? "Sin descripción",  // ✅ CORREGIDO
                 h.Orden,
                 h.PuntosBase
             })
@@ -39,7 +64,6 @@ public class HistoriasController : ControllerBase
 
         return Ok(historias);
     }
-
     // ==========================================
     // GET: api/historias/{id}/jugar
     // Obtener una historia completa para jugar
@@ -51,7 +75,7 @@ public class HistoriasController : ControllerBase
             .Include(h => h.Escenas)
                 .ThenInclude(e => e.Decisiones)
             .Include(h => h.Escenas)
-                .ThenInclude(e => e.Pregunta)
+                .ThenInclude(e => e.Pregunta!)
                     .ThenInclude(p => p.Respuestas)
             .FirstOrDefaultAsync(h => h.Id == id && h.Activa);
 
@@ -315,6 +339,110 @@ public class HistoriasController : ControllerBase
             progreso.Id,
             progreso.Completada,
             progreso.PuntosObtenidos
+        });
+    }
+
+    // ==========================================
+    // POST: api/historias
+    // Crear una nueva historia
+    // ==========================================
+    [HttpPost]
+    public async Task<IActionResult> CrearHistoria([FromBody] CrearHistoriaDto dto)
+    {
+        // Verificar que la misión existe
+        var misionExiste = await _context.Misiones.AnyAsync(m => m.Id == dto.MisionId);
+        if (!misionExiste)
+        {
+            return BadRequest(new { mensaje = "La misión no existe." });
+        }
+
+        var historia = new Historia
+        {
+            Titulo = dto.Titulo,
+            Descripcion = dto.Descripcion,
+            MisionId = dto.MisionId,
+            Orden = dto.Orden,
+            PuntosBase = dto.PuntosBase,
+            Activa = true,
+            FechaCreacion = DateTime.UtcNow
+        };
+
+        _context.Historias.Add(historia);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            mensaje = "Historia creada correctamente.",
+            historia.Id,
+            historia.Titulo,
+            historia.MisionId,
+            historia.Orden
+        });
+    }
+
+    // ==========================================
+    // DELETE: api/historias/{id}
+    // ==========================================
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> EliminarHistoria(int id)
+    {
+        // 1. Buscar la historia
+        var historia = await _context.Historias
+            .Include(h => h.Escenas)
+                .ThenInclude(e => e.Decisiones)
+            .Include(h => h.Escenas)
+                .ThenInclude(e => e.Pregunta!)
+                    .ThenInclude(p => p.Respuestas)
+            .FirstOrDefaultAsync(h => h.Id == id);
+
+        if (historia == null)
+        {
+            return NotFound(new { mensaje = "Historia no encontrada." });
+        }
+
+        // 2. ✅ ELIMINAR PROGRESOS PRIMERO (para evitar el error de foreign key)
+        var escenaIds = historia.Escenas.Select(e => e.Id).ToList();
+        var progresos = await _context.ProgresoHistorias
+            .Where(p => escenaIds.Contains(p.EscenaActualId))
+            .ToListAsync();
+        
+        if (progresos.Any())
+        {
+            _context.ProgresoHistorias.RemoveRange(progresos);
+        }
+
+        // 3. Eliminar todo lo demás (decisiones, preguntas, respuestas, escenas)
+        foreach (var escena in historia.Escenas)
+        {
+            if (escena.Decisiones.Any())
+            {
+                _context.Decisiones.RemoveRange(escena.Decisiones);
+            }
+            
+            if (escena.Pregunta != null)
+            {
+                if (escena.Pregunta.Respuestas.Any())
+                {
+                    _context.Respuestas.RemoveRange(escena.Pregunta.Respuestas);
+                }
+                _context.Preguntas.Remove(escena.Pregunta);
+            }
+        }
+
+        if (historia.Escenas.Any())
+        {
+            _context.Escenas.RemoveRange(historia.Escenas);
+        }
+
+        _context.Historias.Remove(historia);
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            mensaje = "Historia eliminada correctamente.",
+            historiaId = id,
+            progresosEliminados = progresos.Count
         });
     }
 }

@@ -78,7 +78,6 @@ public class MisionesController : ControllerBase
                 return NotFound("El profesor no existe.");
             }
         }
-
         // Una misión global no pertenece a un profesor
         if (dto.EsGlobal)
         {
@@ -179,4 +178,30 @@ public class MisionesController : ControllerBase
             activa = true
         });
     }
+
+    // DELETE: api/misiones/{id}
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> EliminarMision(int id)
+    {
+        var mision = await _context.Misiones
+            .Include(m => m.Clases)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        
+        if (mision == null)
+        {
+            return NotFound(new { mensaje = "Misión no encontrada." });
+        }
+
+        // Verificar si tiene clases asignadas
+        if (mision.Clases.Any())
+        {
+            return BadRequest(new { mensaje = "No se puede eliminar la misión porque está asignada a una o más clases." });
+        }
+
+        _context.Misiones.Remove(mision);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { mensaje = "Misión eliminada correctamente." });
+    }
+
 }
