@@ -1,5 +1,9 @@
 const API_URL = "http://localhost:5019/api";
 
+// ==========================================
+// ELEMENTOS
+// ==========================================
+
 const registroForm = document.getElementById("registroForm");
 const nombreInput = document.getElementById("nombre");
 const emailInput = document.getElementById("email");
@@ -10,55 +14,126 @@ const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
 const registroMessage = document.getElementById("registroMessage");
 const registroButton = document.getElementById("registroButton");
 
-// Botones de rol
 const rolEstudianteRegistro = document.getElementById("rolEstudianteRegistro");
 const rolProfesorRegistro = document.getElementById("rolProfesorRegistro");
 
-let rolSeleccionado = "estudiante"; // 'estudiante' o 'profesor'
+let rolSeleccionado = "estudiante";
 
 // ==========================================
-// SELECTOR DE ROL
+// ANIMACIONES
+// ==========================================
+
+const Animations = {
+    createRipple(event, element) {
+        const rect = element.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        const size = Math.max(rect.width, rect.height);
+        const x = event.clientX - rect.left - size / 2;
+        const y = event.clientY - rect.top - size / 2;
+        
+        ripple.className = 'ripple';
+        ripple.style.cssText = `
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            width: ${size}px;
+            height: ${size}px;
+            left: ${x}px;
+            top: ${y}px;
+            transform: scale(0);
+            animation: ripple-anim 0.6s ease-out forwards;
+            pointer-events: none;
+        `;
+        
+        if (getComputedStyle(element).position === 'static') {
+            element.style.position = 'relative';
+        }
+        element.style.overflow = 'hidden';
+        element.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 700);
+    },
+
+    setLoading(isLoading) {
+        if (!registroButton) return;
+        if (isLoading) {
+            registroButton.disabled = true;
+            registroButton.innerHTML = `
+                <span class="spinner"></span>
+                Registrando...
+            `;
+            const style = document.createElement('style');
+            style.textContent = `
+                .spinner {
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    border: 2px solid rgba(255,255,255,0.3);
+                    border-top-color: white;
+                    border-radius: 50%;
+                    animation: spin 0.8s linear infinite;
+                }
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+        } else {
+            registroButton.disabled = false;
+            registroButton.innerHTML = 'Registrarse <span>→</span>';
+        }
+    },
+
+    showMessage(text, isSuccess = false) {
+        if (!registroMessage) return;
+        registroMessage.textContent = text;
+        registroMessage.style.color = isSuccess ? 'var(--success)' : '#d9366f';
+        registroMessage.style.opacity = '0';
+        registroMessage.style.transform = 'translateY(-10px)';
+        registroMessage.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        setTimeout(() => {
+            registroMessage.style.opacity = '1';
+            registroMessage.style.transform = 'translateY(0)';
+        }, 50);
+    }
+};
+
+// ==========================================
+// SELECTOR DE ROL CON ANIMACIÓN
 // ==========================================
 
 function seleccionarRolRegistro(rol) {
     rolSeleccionado = rol;
 
-    // Resetear estilos
     [rolEstudianteRegistro, rolProfesorRegistro].forEach(btn => {
-        btn.style.border = "2px solid var(--border)";
-        btn.style.background = "white";
-        btn.style.color = "var(--text-light)";
         btn.classList.remove("active");
+        btn.style.borderColor = "var(--border)";
+        btn.style.background = "var(--white)";
+        btn.style.color = "var(--text-light)";
+        btn.style.transform = "scale(1)";
     });
 
-    // Activar el seleccionado
-    if (rol === "estudiante") {
-        rolEstudianteRegistro.style.border = "2px solid var(--primary)";
-        rolEstudianteRegistro.style.background = "var(--purple-soft)";
-        rolEstudianteRegistro.style.color = "var(--primary)";
-        rolEstudianteRegistro.classList.add("active");
-    } else {
-        rolProfesorRegistro.style.border = "2px solid var(--primary)";
-        rolProfesorRegistro.style.background = "var(--purple-soft)";
-        rolProfesorRegistro.style.color = "var(--primary)";
-        rolProfesorRegistro.classList.add("active");
-    }
+    const selectedBtn = rol === "estudiante" ? rolEstudianteRegistro : rolProfesorRegistro;
+    selectedBtn.classList.add("active");
+    selectedBtn.style.borderColor = "var(--primary)";
+    selectedBtn.style.background = "var(--purple-soft)";
+    selectedBtn.style.color = "var(--primary)";
+    selectedBtn.style.transform = "scale(1.02)";
 }
 
-rolEstudianteRegistro.addEventListener("click", () => seleccionarRolRegistro("estudiante"));
-rolProfesorRegistro.addEventListener("click", () => seleccionarRolRegistro("profesor"));
+rolEstudianteRegistro?.addEventListener("click", () => seleccionarRolRegistro("estudiante"));
+rolProfesorRegistro?.addEventListener("click", () => seleccionarRolRegistro("profesor"));
 
 // ==========================================
 // MOSTRAR/OCULTAR CONTRASEÑA
 // ==========================================
 
-togglePassword.addEventListener("click", () => {
+togglePassword?.addEventListener("click", () => {
     const isPassword = passwordInput.type === "password";
     passwordInput.type = isPassword ? "text" : "password";
     togglePassword.textContent = isPassword ? "Ocultar" : "Mostrar";
 });
 
-toggleConfirmPassword.addEventListener("click", () => {
+toggleConfirmPassword?.addEventListener("click", () => {
     const isPassword = confirmPasswordInput.type === "password";
     confirmPasswordInput.type = isPassword ? "text" : "password";
     toggleConfirmPassword.textContent = isPassword ? "Ocultar" : "Mostrar";
@@ -68,7 +143,7 @@ toggleConfirmPassword.addEventListener("click", () => {
 // REGISTRO UNIFICADO
 // ==========================================
 
-registroForm.addEventListener("submit", async (event) => {
+registroForm?.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     const nombre = nombreInput.value.trim();
@@ -78,33 +153,38 @@ registroForm.addEventListener("submit", async (event) => {
 
     // Validaciones
     if (!nombre || !email || !password || !confirmPassword) {
-        registroMessage.textContent = "Completa todos los campos.";
-        registroMessage.style.color = "#d9366f";
+        Animations.showMessage("Completa todos los campos.", false);
+        return;
+    }
+
+    if (nombre.length < 2) {
+        Animations.showMessage("El nombre debe tener al menos 2 caracteres.", false);
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        Animations.showMessage("Ingresa un correo electrónico válido.", false);
         return;
     }
 
     if (password !== confirmPassword) {
-        registroMessage.textContent = "Las contraseñas no coinciden.";
-        registroMessage.style.color = "#d9366f";
+        Animations.showMessage("Las contraseñas no coinciden.", false);
         return;
     }
 
     if (password.length < 6) {
-        registroMessage.textContent = "La contraseña debe tener al menos 6 caracteres.";
-        registroMessage.style.color = "#d9366f";
+        Animations.showMessage("La contraseña debe tener al menos 6 caracteres.", false);
         return;
     }
 
-    // Deshabilitar botón durante el registro
-    registroButton.disabled = true;
-    registroButton.textContent = "Registrando...";
+    Animations.setLoading(true);
 
     try {
         let endpoint = "";
         let body = {};
 
         if (rolSeleccionado === "estudiante") {
-            // Registro de estudiante
             endpoint = `${API_URL}/estudiantes/registro`;
             body = {
                 nombre,
@@ -113,7 +193,6 @@ registroForm.addEventListener("submit", async (event) => {
                 esSecundaria: true
             };
         } else {
-            // Registro de profesor
             endpoint = `${API_URL}/profesores/registro`;
             body = {
                 nombre,
@@ -124,9 +203,7 @@ registroForm.addEventListener("submit", async (event) => {
 
         const response = await fetch(endpoint, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body)
         });
 
@@ -136,8 +213,7 @@ registroForm.addEventListener("submit", async (event) => {
             throw new Error(data.mensaje || "Error al registrar.");
         }
 
-        registroMessage.textContent = "✅ ¡Registro exitoso! Redirigiendo al login...";
-        registroMessage.style.color = "#2ca66f";
+        Animations.showMessage("✅ ¡Registro exitoso! Redirigiendo al login...", true);
 
         // Limpiar formulario
         registroForm.reset();
@@ -149,101 +225,33 @@ registroForm.addEventListener("submit", async (event) => {
 
     } catch (error) {
         console.error("Error:", error);
-        registroMessage.textContent = "❌ " + error.message;
-        registroMessage.style.color = "#d9366f";
-
-        // Habilitar botón nuevamente
-        registroButton.disabled = false;
-        registroButton.textContent = "Registrarse →";
+        Animations.showMessage("❌ " + error.message, false);
+        Animations.setLoading(false);
     }
 });
 
-// const API_URL = "http://localhost:5019/api";
+// ==========================================
+// EFECTO GLOW EN INPUTS AL FOCUS
+// ==========================================
 
-// const registroForm = document.getElementById("registroForm");
-// const passwordInput = document.getElementById("password");
-// const confirmPasswordInput = document.getElementById("confirmPassword");
-// const togglePassword = document.getElementById("togglePassword");
-// const toggleConfirmPassword = document.getElementById("toggleConfirmPassword");
-// const registroMessage = document.getElementById("registroMessage");
+document.querySelectorAll('.form-group input').forEach(input => {
+    input.addEventListener('focus', function() {
+        this.closest('.form-group')?.querySelector('label')?.style?.setProperty('color', 'var(--primary)');
+    });
+    input.addEventListener('blur', function() {
+        this.closest('.form-group')?.querySelector('label')?.style?.setProperty('color', 'var(--text)');
+    });
+});
 
-// // Mostrar/ocultar contraseña
-// togglePassword.addEventListener("click", () => {
-//     const isPassword = passwordInput.type === "password";
-//     passwordInput.type = isPassword ? "text" : "password";
-//     togglePassword.textContent = isPassword ? "Ocultar" : "Mostrar";
-// });
+// ==========================================
+// VERIFICAR SESIÓN ACTIVA
+// ==========================================
 
-// toggleConfirmPassword.addEventListener("click", () => {
-//     const isPassword = confirmPasswordInput.type === "password";
-//     confirmPasswordInput.type = isPassword ? "text" : "password";
-//     toggleConfirmPassword.textContent = isPassword ? "Ocultar" : "Mostrar";
-// });
+const estudianteActivo = localStorage.getItem("estudiante");
+const profesorActivo = localStorage.getItem("profesor");
 
-// // Registro
-// registroForm.addEventListener("submit", async (event) => {
-//     event.preventDefault();
-
-//     const nombre = document.getElementById("nombre").value.trim();
-//     const apellido = document.getElementById("apellido").value.trim();
-//     const email = document.getElementById("email").value.trim();
-//     const password = passwordInput.value;
-//     const confirmPassword = confirmPasswordInput.value;
-
-//     // Validaciones
-//     if (!nombre || !apellido || !email || !password || !confirmPassword) {
-//         registroMessage.textContent = "Completa todos los campos.";
-//         registroMessage.style.color = "#d9366f";
-//         return;
-//     }
-
-//     if (password !== confirmPassword) {
-//         registroMessage.textContent = "Las contraseñas no coinciden.";
-//         registroMessage.style.color = "#d9366f";
-//         return;
-//     }
-
-//     if (password.length < 6) {
-//         registroMessage.textContent = "La contraseña debe tener al menos 6 caracteres.";
-//         registroMessage.style.color = "#d9366f";
-//         return;
-//     }
-
-//     try {
-//         const response = await fetch(`${API_URL}/estudiantes/registro`, {
-//             method: "POST",
-//             headers: {
-//                 "Content-Type": "application/json"
-//             },
-//             body: JSON.stringify({
-//                 nombre,
-//                 apellido,
-//                 email,
-//                 password,
-//                 esSecundaria: true
-//             })
-//         });
-
-//         const data = await response.json();
-
-//         if (!response.ok) {
-//             throw new Error(data.mensaje || "Error al registrar.");
-//         }
-
-//         registroMessage.textContent = "✅ ¡Registro exitoso! Redirigiendo al login...";
-//         registroMessage.style.color = "#2ca66f";
-
-//         // Limpiar formulario
-//         registroForm.reset();
-
-//         // Redirigir al login después de 2 segundos
-//         setTimeout(() => {
-//             window.location.href = "login-estudiante.html";
-//         }, 2000);
-
-//     } catch (error) {
-//         console.error("Error:", error);
-//         registroMessage.textContent = "❌ " + error.message;
-//         registroMessage.style.color = "#d9366f";
-//     }
-// });
+if (estudianteActivo) {
+    window.location.href = "dashboardEstudiantes.html";
+} else if (profesorActivo) {
+    window.location.href = "dashboard.html";
+}

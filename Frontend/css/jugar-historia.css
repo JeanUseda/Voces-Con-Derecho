@@ -1,7 +1,3 @@
-/* =========================================
-   VARIABLES
-========================================= */
-
 :root {
     --primary: #5636c9;
     --primary-dark: #30206e;
@@ -16,30 +12,30 @@
     --border: #ebe8f4;
     --success: #2ca66f;
     --danger: #d9366f;
-    --warning: #f59e0b;
+    --gold: #f59e0b;
+    --glow-primary: rgba(86, 54, 201, 0.25);
+    --glow-success: rgba(44, 166, 111, 0.25);
+    --shadow-soft: 0 8px 30px rgba(50, 30, 100, 0.06);
+    --shadow-medium: 0 12px 40px rgba(50, 30, 100, 0.1);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
 }
 
 /* =========================================
-   RESET
+   RESET Y BASE
 ========================================= */
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color: var(--text);
     background: var(--background);
     min-height: 100vh;
 }
 
 /* =========================================
-   CONTAINER
+   CONTAINER CON FONDO INMERSIVO
 ========================================= */
-
 .jugar-container {
     max-width: 900px;
     margin: 0 auto;
@@ -47,12 +43,14 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    background: radial-gradient(circle at 50% 30%, rgba(241, 237, 255, 0.4) 0%, transparent 60%),
+                radial-gradient(circle at 70% 70%, rgba(255, 240, 247, 0.3) 0%, transparent 50%),
+                var(--background);
 }
 
 /* =========================================
    HEADER
 ========================================= */
-
 .jugar-header {
     display: flex;
     align-items: center;
@@ -69,11 +67,12 @@ body {
     font-weight: 600;
     padding: 8px 16px;
     border-radius: 8px;
-    transition: 0.2s;
+    transition: all 0.25s ease;
 }
 
 .btn-volver:hover {
     background: var(--purple-soft);
+    transform: translateX(-4px);
 }
 
 .jugar-info {
@@ -87,18 +86,18 @@ body {
     font-size: 18px;
 }
 
-#puntosInfo {
-    background: var(--purple-soft);
+.puntos-badge {
+    background: linear-gradient(135deg, var(--purple-soft), var(--pink-soft));
     padding: 6px 16px;
     border-radius: 20px;
     font-weight: 600;
     color: var(--primary);
+    border: 1px solid var(--glass-border);
 }
 
 /* =========================================
-   PROGRESO
+   BARRA DE PROGRESO CON SHIMMER
 ========================================= */
-
 .progreso-barra {
     width: 100%;
     height: 8px;
@@ -106,28 +105,55 @@ body {
     border-radius: 10px;
     margin: 20px 0;
     overflow: hidden;
+    position: relative;
 }
 
 .progreso-fill {
     height: 100%;
     background: linear-gradient(90deg, var(--primary), var(--pink));
     border-radius: 10px;
-    transition: width 0.5s ease;
+    transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.shimmer-effect {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    100% { transform: translateX(100%); }
 }
 
 /* =========================================
-   ESCENA
+   ESCENA - GLASS CARD
 ========================================= */
+.glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+}
 
 .escena-container {
     flex: 1;
-    background: white;
-    border-radius: 20px;
-    border: 1px solid var(--border);
     padding: 40px;
     min-height: 400px;
     display: flex;
     flex-direction: column;
+    animation: fadeSlideIn 0.5s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(30px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .escena-content {
@@ -136,33 +162,21 @@ body {
     flex-direction: column;
 }
 
-.escena-imagen {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-.escena-imagen img {
-    max-width: 100%;
-    max-height: 250px;
-    border-radius: 12px;
-    object-fit: cover;
-}
-
 .escena-texto {
     flex: 1;
 }
 
 .escena-texto p {
-    font-size: 22px;
-    line-height: 1.6;
+    font-size: 24px;
+    line-height: 1.7;
     color: var(--text);
-    margin-bottom: 25px;
+    margin-bottom: 30px;
+    font-weight: 500;
 }
 
 /* =========================================
-   DECISIONES
+   DECISIONES - BOTONES 3D
 ========================================= */
-
 .decisiones-container {
     display: flex;
     flex-direction: column;
@@ -170,50 +184,72 @@ body {
 }
 
 .btn-decision {
-    padding: 16px 24px;
-    border: 2px solid var(--border);
-    border-radius: 12px;
-    background: white;
+    padding: 18px 24px;
+    border: 2px solid var(--glass-border);
+    border-radius: 14px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     color: var(--text);
     font-size: 16px;
     font-weight: 500;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     text-align: left;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
 }
 
-.btn-decision:hover {
+.btn-decision:hover:not(:disabled) {
     border-color: var(--primary);
     background: var(--purple-soft);
-    transform: translateX(5px);
+    transform: translateX(6px) scale(1.01);
+    box-shadow: var(--shadow-medium);
 }
 
 .btn-decision:disabled {
-    opacity: 0.6;
+    opacity: 0.7;
     cursor: not-allowed;
-    transform: none;
+    transform: none !important;
 }
 
 .btn-decision.correcta {
     border-color: var(--success);
     background: #d4edda;
     color: #155724;
+    box-shadow: 0 0 30px var(--glow-success);
 }
 
 .btn-decision.incorrecta {
     border-color: var(--danger);
     background: #f8d7da;
     color: #721c24;
+    box-shadow: 0 0 30px rgba(217, 54, 111, 0.2);
+}
+
+/* Efecto Ripple para decisiones */
+.btn-decision .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(86, 54, 201, 0.15);
+    transform: scale(0);
+    animation: ripple-anim 0.6s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes ripple-anim {
+    to { transform: scale(4); opacity: 0; }
 }
 
 /* =========================================
    PREGUNTA
 ========================================= */
-
 .pregunta-container {
     margin-top: 20px;
     padding-top: 20px;
     border-top: 2px solid var(--border);
+    animation: fadeSlideIn 0.4s ease;
 }
 
 .pregunta-container h3 {
@@ -224,6 +260,7 @@ body {
 #preguntaEnunciado {
     font-size: 18px;
     margin-bottom: 16px;
+    font-weight: 500;
 }
 
 .respuestas-container {
@@ -235,23 +272,25 @@ body {
 .btn-respuesta {
     padding: 14px 20px;
     border: 2px solid var(--border);
-    border-radius: 10px;
-    background: white;
+    border-radius: 12px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     color: var(--text);
     font-size: 15px;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     text-align: left;
 }
 
-.btn-respuesta:hover {
+.btn-respuesta:hover:not(:disabled) {
     border-color: var(--primary);
     background: var(--purple-soft);
+    transform: scale(1.02);
 }
 
-.btn-respuesta.seleccionada {
-    border-color: var(--primary);
-    background: var(--purple-soft);
+.btn-respuesta:disabled {
+    cursor: not-allowed;
 }
 
 .btn-respuesta.correcta {
@@ -266,24 +305,23 @@ body {
     color: #721c24;
 }
 
-.btn-respuesta:disabled {
-    cursor: not-allowed;
-}
-
 /* =========================================
    FEEDBACK
 ========================================= */
-
 .feedback-container {
     margin-top: 20px;
     padding: 20px;
-    border-radius: 12px;
-    background: var(--purple-soft);
+    border-radius: 14px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--glass-border);
+    animation: fadeSlideIn 0.3s ease;
 }
 
 .feedback-mensaje {
     font-size: 16px;
-    line-height: 1.5;
+    line-height: 1.6;
     margin-bottom: 16px;
 }
 
@@ -298,10 +336,10 @@ body {
 /* =========================================
    RESULTADO FINAL
 ========================================= */
-
 .resultado-container {
     text-align: center;
     padding: 30px 0;
+    animation: fadeSlideIn 0.5s ease;
 }
 
 .resultado-icon {
@@ -318,7 +356,7 @@ body {
 #resultadoPuntos {
     font-size: 22px;
     font-weight: 700;
-    color: var(--warning);
+    color: var(--gold);
     margin-bottom: 12px;
 }
 
@@ -326,27 +364,37 @@ body {
     font-size: 18px;
     color: var(--text-light);
     margin-bottom: 24px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.resultado-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
 /* =========================================
-   BOTONES
+   BOTONES PRIMARIOS
 ========================================= */
-
 .btn-primario {
     padding: 14px 32px;
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    transition: 0.2s;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 8px 20px var(--glow-primary);
 }
 
-.btn-primario:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(86, 54, 201, 0.25);
+.btn-primario:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 30px var(--glow-primary);
 }
 
 .btn-primario:disabled {
@@ -355,124 +403,48 @@ body {
     transform: none;
 }
 
+.btn-success {
+    background: linear-gradient(135deg, var(--success), #1f8a5a);
+    box-shadow: 0 8px 20px var(--glow-success);
+}
+
+.btn-success:hover:not(:disabled) {
+    box-shadow: 0 12px 30px var(--glow-success);
+}
+
+.pulse-on-hover {
+    transition: all 0.3s ease;
+}
+
+.pulse-on-hover:hover {
+    animation: pulse-btn 1s ease infinite;
+}
+
+@keyframes pulse-btn {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
+}
+
 /* =========================================
    RESPONSIVE
 ========================================= */
-
-@media (max-width: 600px) {
-    .jugar-container {
-        padding: 12px;
-    }
-
-    .escena-container {
-        padding: 24px;
-    }
-
-    .escena-texto p {
-        font-size: 18px;
-    }
-
-    .jugar-header {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .jugar-info {
-        width: 100%;
-        justify-content: space-between;
-    }
-
-    .btn-decision {
-        font-size: 14px;
-        padding: 14px 18px;
-    }
-}
-/* =========================================
-   MODAL HISTORIAS
-========================================= */
-
-.modal-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    padding: 20px;
+@media (max-width: 768px) {
+    .jugar-container { padding: 12px; }
+    .jugar-header { flex-direction: column; align-items: flex-start; }
+    .jugar-info { width: 100%; justify-content: space-between; }
+    .escena-container { padding: 24px; min-height: 300px; }
+    .escena-texto p { font-size: 20px; }
+    .btn-decision { font-size: 15px; padding: 14px 18px; }
+    .resultado-actions { flex-direction: column; }
+    .resultado-actions .btn-primario { width: 100%; justify-content: center; }
 }
 
-.modal-content {
-    background: white;
-    border-radius: 20px;
-    padding: 40px;
-    max-width: 600px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-}
-
-.modal-content h2 {
-    margin-bottom: 20px;
-    color: var(--primary);
-}
-
-.historias-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.historia-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px 20px;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.historia-item:hover {
-    border-color: var(--primary);
-    background: var(--purple-soft);
-    transform: translateX(5px);
-}
-
-.historia-icon {
-    font-size: 28px;
-}
-
-.historia-item h3 {
-    font-size: 16px;
-    margin-bottom: 4px;
-}
-
-.historia-item p {
-    font-size: 13px;
-    color: var(--text-light);
-}
-
-.historia-arrow {
-    margin-left: auto;
-    font-size: 20px;
-    color: var(--text-light);
-}
-
-.btn-cerrar {
-    margin-top: 20px;
-    padding: 10px 24px;
-    border: none;
-    border-radius: 10px;
-    background: var(--border);
-    color: var(--text);
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-    width: 100%;
-}
-
-.btn-cerrar:hover {
-    background: var(--purple-soft);
+@media (max-width: 480px) {
+    .escena-container { padding: 18px; }
+    .escena-texto p { font-size: 17px; }
+    .btn-decision { font-size: 14px; padding: 12px 16px; }
+    .resultado-container h2 { font-size: 22px; }
+    #resultadoPuntos { font-size: 18px; }
+    .resultado-mensaje { font-size: 15px; }
+    .btn-primario { padding: 12px 24px; font-size: 14px; }
 }

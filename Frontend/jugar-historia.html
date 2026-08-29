@@ -3,86 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Jugar | Voces con Derechos</title>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/jugar-historia.css">
 </head>
-
 <body>
 
     <div class="jugar-container">
 
         <!-- Header -->
         <header class="jugar-header">
-            <a href="dashboardEstudiantes.html" class="btn-volver">
-                ← Volver al dashboard
+            <a href="mision-detalle.html" class="btn-volver" id="btnVolver">
+                ← Volver a la misión
             </a>
             <div class="jugar-info">
                 <span id="historiaTitulo">Cargando historia...</span>
-                <span id="puntosInfo">⭐ 0 puntos</span>
+                <span id="puntosInfo" class="puntos-badge">⭐ 0 puntos</span>
             </div>
         </header>
 
-        <!-- Contenido principal -->
-        <main class="jugar-main">
-
-            <!-- Progreso -->
-            <div class="progreso-barra">
-                <div class="progreso-fill" id="progresoFill" style="width: 0%;"></div>
+        <!-- Barra de progreso con shimmer -->
+        <div class="progreso-barra">
+            <div class="progreso-fill" id="progresoFill" style="width: 0%;">
+                <div class="shimmer-effect"></div>
             </div>
+        </div>
 
-            <!-- Escena -->
-            <div id="escenaContainer" class="escena-container">
-
-                <div class="escena-content">
-
-                    <!-- Texto -->
-                    <div class="escena-texto">
-                        <p id="escenaTexto">Cargando escena...</p>
-                    </div>
-
-                    <!-- Decisiones -->
-                    <div id="decisionesContainer" class="decisiones-container">
-                        <!-- Se llenan dinámicamente -->
-                    </div>
-
-                    <!-- Pregunta (se muestra al final) -->
-                    <div id="preguntaContainer" class="pregunta-container" style="display: none;">
-                        <h3>📝 Pregunta</h3>
-                        <p id="preguntaEnunciado"></p>
-                        <div id="respuestasContainer" class="respuestas-container">
-                            <!-- Se llenan dinámicamente -->
-                        </div>
-                    </div>
-
-                    <!-- Feedback -->
-                    <div id="feedbackContainer" class="feedback-container" style="display: none;">
-                        <div id="feedbackMensaje" class="feedback-mensaje"></div>
-                        <button id="btnContinuar" class="btn-primario" onclick="continuarHistoria()">
-                            Continuar →
-                        </button>
-                    </div>
-
-                    <!-- Resultado final -->
-                    <div id="resultadoContainer" class="resultado-container" style="display: none;">
-                        <div class="resultado-icon">🎉</div>
-                        <h2 id="resultadoTitulo">¡Historia completada!</h2>
-                        <p id="resultadoPuntos">Has ganado 0 puntos</p>
-                        <p id="resultadoMensaje" class="resultado-mensaje"></p>
-                        <button class="btn-primario" onclick="volverDashboard()">
-                            Volver al dashboard
-                        </button>
-                        <button id="btnSiguienteHistoria" class="btn-primario" style="display: none; margin-top: 10px; background: var(--success);">
-                            Siguiente historia →
-                        </button>
-                    </div>
-
+        <!-- Contenido de la escena -->
+        <div id="escenaContainer" class="escena-container glass-card">
+            <div class="escena-content">
+                <!-- Texto narrativo -->
+                <div class="escena-texto">
+                    <p id="escenaTexto">Cargando escena...</p>
                 </div>
 
-            </div>
+                <!-- Decisiones -->
+                <div id="decisionesContainer" class="decisiones-container">
+                    <!-- Se llenan dinámicamente -->
+                </div>
 
-        </main>
+                <!-- Pregunta -->
+                <div id="preguntaContainer" class="pregunta-container" style="display: none;">
+                    <h3>📝 Pregunta</h3>
+                    <p id="preguntaEnunciado"></p>
+                    <div id="respuestasContainer" class="respuestas-container">
+                        <!-- Se llenan dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Feedback -->
+                <div id="feedbackContainer" class="feedback-container" style="display: none;">
+                    <div id="feedbackMensaje" class="feedback-mensaje"></div>
+                    <button id="btnContinuar" class="btn-primario pulse-on-hover">
+                        Continuar →
+                    </button>
+                </div>
+
+                <!-- Resultado final -->
+                <div id="resultadoContainer" class="resultado-container" style="display: none;">
+                    <div class="resultado-icon" id="resultadoIcono">🎉</div>
+                    <h2 id="resultadoTitulo">¡Historia completada!</h2>
+                    <p id="resultadoPuntos">⭐ Has ganado 0 puntos</p>
+                    <p id="resultadoMensaje" class="resultado-mensaje"></p>
+                    <div class="resultado-actions">
+                        <button class="btn-primario" onclick="volverAMision()">← Volver a la misión</button>
+                        <button id="btnSiguienteHistoria" class="btn-primario btn-success" style="display: none;">Siguiente historia →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 

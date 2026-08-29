@@ -3,163 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Dashboard | Voces con Derechos</title>
-
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/dashboardEstudiantes.css">
 </head>
-
 <body>
 
     <div class="dashboard-estudiante">
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
-
-            <div class="sidebar-logo">
-                <img src="assets/logo.png" alt="Voces con Derechos">
+        <!-- =====================================
+             SIDEBAR - CON EFECTO GLASS
+        ====================================== -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <img src="assets/logo.png" alt="Voces con Derechos">
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
 
             <nav class="sidebar-menu">
                 <a href="#inicio" class="menu-item active" data-section="inicio">
                     <span class="menu-icon">⌂</span>
-                    <span>Inicio</span>
+                    <span class="menu-label">Inicio</span>
                 </a>
-
                 <a href="#misiones" class="menu-item" data-section="misiones">
                     <span class="menu-icon">◇</span>
-                    <span>Mis misiones</span>
+                    <span class="menu-label">Mis misiones</span>
+                    <span class="menu-badge" id="sidebarMisionesBadge">0</span>
                 </a>
-
                 <a href="#progreso" class="menu-item" data-section="progreso">
                     <span class="menu-icon">📊</span>
-                    <span>Mi progreso</span>
+                    <span class="menu-label">Mi progreso</span>
                 </a>
-
                 <a href="#logros" class="menu-item" data-section="logros">
                     <span class="menu-icon">🏆</span>
-                    <span>Mis logros</span>
+                    <span class="menu-label">Mis logros</span>
+                    <span class="menu-badge" id="sidebarLogrosBadge">0</span>
                 </a>
             </nav>
 
             <div class="sidebar-bottom">
                 <a href="login.html" class="menu-item" id="cerrarSesion">
                     <span class="menu-icon">←</span>
-                    <span>Cerrar sesión</span>
+                    <span class="menu-label">Cerrar sesión</span>
                 </a>
             </div>
-
         </aside>
 
-        <!-- Contenido principal -->
+        <!-- =====================================
+             CONTENIDO PRINCIPAL
+        ====================================== -->
         <main class="main-content">
 
-            <!-- Header -->
+            <!-- TOPBAR -->
             <header class="topbar">
-                <div class="topbar-user">
-                    <div class="user-avatar" id="userAvatar">ES</div>
-                    <div class="user-info">
-                        <strong id="userName">Estudiante</strong>
-                        <span>Estudiante de secundaria</span>
+                <div class="topbar-left">
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Open menu">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <div class="mobile-logo">
+                        <img src="assets/logo.png" alt="Voces con Derechos">
+                    </div>
+                </div>
+                <div class="topbar-right">
+                    <div class="topbar-user">
+                        <div class="user-avatar" id="userAvatar">ES</div>
+                        <div class="user-info">
+                            <strong id="userName">Estudiante</strong>
+                            <span>Estudiante</span>
+                        </div>
                     </div>
                 </div>
             </header>
 
-            <!-- Sección Inicio -->
+            <!-- =================================
+                 SECCIÓN INICIO
+            ================================== -->
             <section id="inicio" class="dashboard-section active-section">
-
                 <div class="welcome">
                     <div>
                         <span class="section-label">PANEL DEL ESTUDIANTE</span>
                         <h1 id="welcomeMessage">¡Hola, Estudiante! 👋</h1>
                         <p>Completa tus misiones y aprende sobre derechos e igualdad.</p>
                     </div>
-                    <div class="stats-mini">
+                    <div class="stats-mini pulse-glow">
                         <span id="totalMisiones">0</span> misiones disponibles
                     </div>
                 </div>
 
-                <!-- Estadísticas rápidas -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon purple">◇</div>
+                <!-- Estadísticas gamificadas -->
+                <div class="stats-grid-dashboard fade-in-up">
+                    <div class="stat-card-dashboard glass-card">
+                        <div class="stat-icon-dashboard purple">◇</div>
                         <div>
                             <span>Misiones totales</span>
                             <strong id="misionesTotales">0</strong>
                         </div>
                     </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon pink">✓</div>
+                    <div class="stat-card-dashboard glass-card">
+                        <div class="stat-icon-dashboard pink">✓</div>
                         <div>
                             <span>Completadas</span>
                             <strong id="misionesCompletadas">0</strong>
                         </div>
                     </div>
-
-                    <div class="stat-card">
-                        <div class="stat-icon blue">⭐</div>
+                    <div class="stat-card-dashboard glass-card">
+                        <div class="stat-icon-dashboard gold">⭐</div>
                         <div>
                             <span>Puntos totales</span>
                             <strong id="xpTotal">0</strong>
                         </div>
                     </div>
-                </div>
-
-                <!-- Misiones activas -->
-                <div class="content-card">
-                    <div class="card-header">
+                    <div class="stat-card-dashboard glass-card">
+                        <div class="stat-icon-dashboard blue">🔥</div>
                         <div>
-                            <h2>Tus misiones</h2>
-                            <p>Misiones disponibles para ti.</p>
+                            <span>Racha</span>
+                            <strong id="rachaTotal">0</strong>
                         </div>
                     </div>
-                    <div id="misMisiones" class="missions-grid">
-                        <div class="loading">Cargando misiones...</div>
-                    </div>
                 </div>
 
+                <!-- Misiones activas con efecto de tarjetas 3D -->
+                <div class="content-card glass-card fade-in-up">
+                    <div class="card-header">
+                        <div>
+                            <h2>🎯 Tus misiones activas</h2>
+                            <p>Misiones disponibles para ti.</p>
+                        </div>
+                        <button class="text-button" onclick="switchTab('misiones')">Ver todas →</button>
+                    </div>
+                    <div id="misMisiones" class="missions-grid">
+                        <div class="loading shimmer">Cargando misiones...</div>
+                    </div>
+                </div>
             </section>
 
-            <!-- Sección Mis Misiones -->
+            <!-- =================================
+                 SECCIÓN MIS MISIONES
+            ================================== -->
             <section id="misiones" class="dashboard-section">
                 <div class="page-header">
                     <div>
                         <span class="section-label">MISIONES</span>
-                        <h1>Mis misiones</h1>
+                        <h1>📚 Mis misiones</h1>
                         <p>Todas las misiones asignadas a tus clases.</p>
+                    </div>
+                    <div class="stats-mini pulse-glow">
+                        <span id="totalMisionesCount">0</span> misiones
                     </div>
                 </div>
                 <div id="todasMisiones" class="missions-grid">
-                    <div class="loading">Cargando misiones...</div>
+                    <div class="loading shimmer">Cargando misiones...</div>
                 </div>
             </section>
 
-            <!-- Sección Progreso -->
+            <!-- =================================
+                 SECCIÓN PROGRESO
+            ================================== -->
             <section id="progreso" class="dashboard-section">
                 <div class="page-header">
                     <div>
                         <span class="section-label">PROGRESO</span>
-                        <h1>Mi progreso</h1>
+                        <h1>📊 Mi progreso</h1>
                         <p>Tu avance en las misiones.</p>
                     </div>
                 </div>
-                <div id="miProgreso" class="content-card">
-                    <div class="loading">Cargando progreso...</div>
+                <div id="miProgreso" class="content-card glass-card">
+                    <div class="loading shimmer">Cargando progreso...</div>
                 </div>
             </section>
 
-            <!-- Sección Logros -->
+            <!-- =================================
+                 SECCIÓN LOGROS
+            ================================== -->
             <section id="logros" class="dashboard-section">
                 <div class="page-header">
                     <div>
                         <span class="section-label">LOGROS</span>
-                        <h1>Mis logros</h1>
+                        <h1>🏆 Mis logros</h1>
                         <p>Insignias y recompensas obtenidas.</p>
                     </div>
                 </div>
                 <div id="misLogros" class="logros-grid">
-                    <div class="loading">Cargando logros...</div>
+                    <div class="loading shimmer">Cargando logros...</div>
                 </div>
             </section>
 

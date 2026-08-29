@@ -3,187 +3,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Voces con Derechos</title>
-
+    <title>Voces con Derechos - Aprende jugando sobre igualdad</title>
+    
+    <!-- Meta tags para SEO y redes sociales -->
+    <meta name="description" content="Plataforma educativa interactiva para aprender sobre derechos, igualdad y respeto a través de misiones y juegos.">
+    <meta property="og:title" content="Voces con Derechos - Aprende jugando">
+    <meta property="og:description" content="Plataforma educativa interactiva para aprender sobre derechos, igualdad y respeto.">
+    <meta property="og:image" content="assets/img/og-image.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Estilos -->
     <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-
-        <!-- NAVBAR -->
-  
-    <header class="navbar">
-
+    <!-- ============================================
+         NAVBAR - CON EFECTO GLASS Y MENÚ HAMBURGUESA
+    ============================================ -->
+    <header class="navbar" id="navbar">
         <div class="navbar-container">
-
             <a href="index.html" class="logo-link">
-                <img
-                    src="assets/img/logo.png"
-                    alt="Voces con Derechos"
-                    class="logo"
-                >
+                <img src="assets/img/logo.png" alt="Voces con Derechos" class="logo">
             </a>
 
-            <nav class="nav-menu">
+            <!-- Botón Hamburguesa -->
+            <button class="hamburger" id="hamburger" aria-label="Abrir menú">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="nav-menu" id="navMenu">
                 <a href="#inicio" class="active">Inicio</a>
                 <a href="#aprender">Aprender</a>
-                <a href="#juegos">Juegos</a>
+                <a href="#estudiantes">Estudiantes</a>
+                <a href="#profesores">Profesores</a>
                 <a href="#recursos">Recursos</a>
                 <a href="#nosotros">Sobre nosotros</a>
             </nav>
 
-            <a href="login.html" class="btn-start">
-                Comenzar
-                <span>›</span>
-            </a>
-
+            <div class="nav-actions">
+                <a href="login.html" class="btn-login">Iniciar sesión</a>
+                <a href="registro.html" class="btn-start pulse-on-hover">
+                    Comenzar
+                    <span>›</span>
+                </a>
+            </div>
         </div>
-
     </header>
 
-
-  
-         <!-- HERO -->
-
+    <!-- ============================================
+         HERO - SECCIÓN PRINCIPAL IMPACTANTE
+    ============================================ -->
     <main>
-
         <section class="hero" id="inicio">
-
             <div class="hero-container">
+                <!-- Elementos flotantes decorativos -->
+                <div class="floating-elements">
+                    <div class="floating-card card-1">
+                        <span class="floating-icon">🏆</span>
+                        <span class="floating-text">+500 misiones</span>
+                    </div>
+                    <div class="floating-card card-2">
+                        <span class="floating-icon">⭐</span>
+                        <span class="floating-text">Aprende jugando</span>
+                    </div>
+                    <div class="floating-card card-3">
+                        <span class="floating-icon">👨‍🎓</span>
+                        <span class="floating-text">10k+ estudiantes</span>
+                    </div>
+                </div>
 
-                <!-- Texto -->
                 <div class="hero-content">
-
+                    <span class="hero-badge pulse-glow">🎯 Plataforma educativa</span>
                     <h1>
                         Voces
                         <br>
-                        <span>con Derechos</span>
+                        <span class="gradient-text">con Derechos</span>
                     </h1>
-
-                    <p>
-                        Aprender hoy para construir
-                        <br class="desktop-only">
-                        una sociedad con respeto e igualdad.
+                    <p class="hero-subtitle">
+                        Aprende sobre igualdad y respeto a través de 
+                        <span class="highlight">misiones interactivas</span> 
+                        y <span class="highlight">experiencias gamificadas</span>
                     </p>
 
-                    <a href="login.html" class="hero-button">
-                        Comenzar
-                        <span>›</span>
-                    </a>
+                    <div class="hero-cta">
+                        <a href="registro.html" class="hero-button primary pulse-on-hover">
+                            Comenzar ahora
+                            <span>→</span>
+                        </a>
+                        <a href="#aprender" class="hero-button secondary">
+                            <i class="fas fa-play"></i>
+                            Ver cómo funciona
+                        </a>
+                    </div>
 
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="150">0</span>
+                            <span class="stat-label">Misiones educativas</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="12000">0</span>
+                            <span class="stat-label">Estudiantes activos</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="98">0</span>
+                            <span class="stat-label">% de satisfacción</span>
+                        </div>
+                    </div>
                 </div>
 
-
-                <!-- Imagen -->
                 <div class="hero-image-container">
-
-                    <img
-                        src="assets/img/hero.png"
-                        alt="Ilustración de Voces con Derechos"
-                        class="hero-image"
-                    >
-
+                    <div class="hero-image-wrapper">
+                        <img src="assets/img/hero.png" alt="Voces con Derechos - Aprendizaje interactivo" class="hero-image">
+                        <div class="hero-glow"></div>
+                    </div>
+                    <!-- Badge flotante sobre la imagen -->
+                    <div class="image-badge badge-1">
+                        <span class="badge-icon">🎮</span>
+                        <span class="badge-text">Aprendizaje gamificado</span>
+                    </div>
+                    <div class="image-badge badge-2">
+                        <span class="badge-icon">📊</span>
+                        <span class="badge-text">Progreso en tiempo real</span>
+                    </div>
                 </div>
-
             </div>
 
-        </section>
-
-
-        
-             <!-- VALORES -->
-       
-        <section class="values">
-
-            <div class="values-container">
-
-                <div class="value">
-
-                    <div class="value-icon respect">
-                        ♡
-                    </div>
-
-                    <h3>Respeto</h3>
-
-                </div>
-
-
-                <div class="value">
-
-                    <div class="value-icon equality">
-                        ⚖
-                    </div>
-
-                    <h3>Igualdad</h3>
-
-                </div>
-
-
-                <div class="value">
-
-                    <div class="value-icon empathy">
-                        ♧
-                    </div>
-
-                    <h3>Empatía</h3>
-
-                </div>
-
+            <!-- Ola decorativa -->
+            <div class="hero-wave">
+                <svg viewBox="0 0 1440 120" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M0,40 C360,80 720,0 1080,40 C1260,60 1380,40 1440,40 L1440,120 L0,120 Z" fill="#f8f7fc"/>
+                </svg>
             </div>
-
         </section>
 
-            <!-- SECCIONES FUTURAS -->
+        <!-- ============================================
+             SECCIÓN "APRENDER" - PROPUESTA DE VALOR
+        ============================================ -->
+        <section class="section-aprender" id="aprender">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-label">¿CÓMO FUNCIONA?</span>
+                    <h2>Aprender nunca fue tan <span class="gradient-text">divertido</span></h2>
+                    <p>Nuestra metodología combina narrativa interactiva, gamificación y contenido educativo de calidad.</p>
+                </div>
 
-        <section id="aprender" class="placeholder-section">
-            <h2>Aprender</h2>
-            <p>
-                Contenido educativo sobre derechos, igualdad y respeto.
-            </p>
+                <div class="features-grid">
+                    <div class="feature-card glass-card" data-delay="0">
+                        <div class="feature-icon purple">📚</div>
+                        <h3>Misiones educativas</h3>
+                        <p>Historias interactivas que te sumergen en situaciones de la vida real para aprender sobre derechos y respeto.</p>
+                        <div class="feature-hover"></div>
+                    </div>
+
+                    <div class="feature-card glass-card" data-delay="100">
+                        <div class="feature-icon pink">🎯</div>
+                        <h3>Decisiones con impacto</h3>
+                        <p>Cada elección que haces tiene consecuencias. Aprende a tomar decisiones basadas en el respeto y la igualdad.</p>
+                        <div class="feature-hover"></div>
+                    </div>
+
+                    <div class="feature-card glass-card" data-delay="200">
+                        <div class="feature-icon gold">🏆</div>
+                        <h3>Logros y recompensas</h3>
+                        <p>Desbloquea insignias, gana puntos y sube de nivel mientras avanzas en tu aprendizaje.</p>
+                        <div class="feature-hover"></div>
+                    </div>
+
+                    <div class="feature-card glass-card" data-delay="300">
+                        <div class="feature-icon blue">📊</div>
+                        <h3>Progreso visible</h3>
+                        <p>Sigue tu avance en tiempo real con estadísticas claras y motivadoras.</p>
+                        <div class="feature-hover"></div>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <section id="juegos" class="placeholder-section">
-            <h2>Juegos</h2>
-            <p>
-                Aprende mediante misiones y experiencias interactivas.
-            </p>
+        <!-- ============================================
+             SECCIÓN "ESTUDIANTES" - ENFOQUE GAMIFICADO
+        ============================================ -->
+        <section class="section-estudiantes" id="estudiantes">
+            <div class="section-container">
+                <div class="section-content reverse">
+                    <div class="section-text">
+                        <span class="section-label">PARA ESTUDIANTES</span>
+                        <h2>Convierte el aprendizaje en una <span class="gradient-text">aventura</span></h2>
+                        <p>Sumérgete en historias interactivas donde tú eres el protagonista. Aprende sobre igualdad y respeto mientras te diviertes.</p>
+                        
+                        <ul class="feature-list">
+                            <li>
+                                <span class="list-icon">🎮</span>
+                                <span><strong>Juega y aprende</strong> — Cada misión es una historia que te reta a pensar.</span>
+                            </li>
+                            <li>
+                                <span class="list-icon">⭐</span>
+                                <span><strong>Gana puntos y logros</strong> — Cada decisión correcta te acerca a la victoria.</span>
+                            </li>
+                            <li>
+                                <span class="list-icon">📈</span>
+                                <span><strong>Mide tu progreso</strong> — Visualiza tu avance y celebra tus logros.</span>
+                            </li>
+                        </ul>
+
+                        <a href="registro.html" class="primary-button pulse-on-hover">
+                            Comenzar a jugar
+                            <span>→</span>
+                        </a>
+                    </div>
+                    <div class="section-image">
+                        <div class="image-wrapper">
+                            <img src="assets/img/estudiantes-illustration.png" alt="Estudiantes aprendiendo con Voces con Derechos">
+                            <div class="image-glow"></div>
+                            <!-- Badges flotantes -->
+                            <div class="floating-badge badge-top">
+                                <span class="badge-emoji">🔥</span>
+                                <span>Racha de 5 días</span>
+                            </div>
+                            <div class="floating-badge badge-bottom">
+                                <span class="badge-emoji">🏆</span>
+                                <span>5 insignias desbloqueadas</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <section id="recursos" class="placeholder-section">
-            <h2>Recursos</h2>
-            <p>
-                Recursos educativos para estudiantes y docentes.
-            </p>
+        <!-- ============================================
+             SECCIÓN "PROFESORES" - ENFOQUE GESTIÓN
+        ============================================ -->
+        <section class="section-profesores" id="profesores">
+            <div class="section-container">
+                <div class="section-content">
+                    <div class="section-image">
+                        <div class="image-wrapper">
+                            <img src="assets/img/profesores-illustration.png" alt="Profesores gestionando contenido">
+                            <div class="image-glow"></div>
+                            <!-- Badges flotantes -->
+                            <div class="floating-badge badge-top">
+                                <span class="badge-emoji">📊</span>
+                                <span>Analítica en tiempo real</span>
+                            </div>
+                            <div class="floating-badge badge-bottom">
+                                <span class="badge-emoji">✏️</span>
+                                <span>Contenido personalizable</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-text">
+                        <span class="section-label">PARA PROFESORES</span>
+                        <h2>Gestiona el aprendizaje con <span class="gradient-text">poder y control</span></h2>
+                        <p>Administra tus clases, crea contenido educativo y monitorea el progreso de tus estudiantes todo desde un solo lugar.</p>
+                        
+                        <ul class="feature-list">
+                            <li>
+                                <span class="list-icon">📚</span>
+                                <span><strong>Crea misiones y contenido</strong> — Diseña experiencias educativas personalizadas.</span>
+                            </li>
+                            <li>
+                                <span class="list-icon">👨‍🎓</span>
+                                <span><strong>Gestiona estudiantes</strong> — Organiza tus clases y sigue su progreso.</span>
+                            </li>
+                            <li>
+                                <span class="list-icon">📈</span>
+                                <span><strong>Analiza resultados</strong> — Visualiza el rendimiento de tu grupo.</span>
+                            </li>
+                        </ul>
+
+                        <a href="login.html" class="primary-button pulse-on-hover">
+                            Comenzar a gestionar
+                            <span>→</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </section>
 
-        <section id="nosotros" class="placeholder-section">
-            <h2>Sobre nosotros</h2>
-            <p>
-                Voces con Derechos es una plataforma educativa enfocada
-                en promover el conocimiento sobre los derechos y la dignidad
-                de la mujer.
-            </p>
+        <!-- ============================================
+             SECCIÓN "RECURSOS" - RECURSOS EDUCATIVOS
+        ============================================ -->
+        <section class="section-recursos" id="recursos">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-label">RECURSOS</span>
+                    <h2>Material educativo de <span class="gradient-text">calidad</span></h2>
+                    <p>Accede a contenido diseñado por expertos para promover el respeto y la igualdad.</p>
+                </div>
+
+                <div class="recursos-grid">
+                    <div class="recurso-card glass-card">
+                        <div class="recurso-icon">📖</div>
+                        <h3>Guías didácticas</h3>
+                        <p>Material de apoyo para docentes con actividades y dinámicas de grupo.</p>
+                        <a href="#" class="recurso-link">Explorar →</a>
+                    </div>
+
+                    <div class="recurso-card glass-card">
+                        <div class="recurso-icon">🎬</div>
+                        <h3>Videos educativos</h3>
+                        <p>Contenido audiovisual que refuerza los conceptos de igualdad y respeto.</p>
+                        <a href="#" class="recurso-link">Explorar →</a>
+                    </div>
+
+                    <div class="recurso-card glass-card">
+                        <div class="recurso-icon">📝</div>
+                        <h3>Actividades imprimibles</h3>
+                        <p>Material descargable para trabajar en clase o en casa.</p>
+                        <a href="#" class="recurso-link">Explorar →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             SECCIÓN "NOSOTROS" - SOBRE NOSOTROS
+        ============================================ -->
+        <section class="section-nosotros" id="nosotros">
+            <div class="section-container">
+                <div class="section-header">
+                    <span class="section-label">SOBRE NOSOTROS</span>
+                    <h2>Construyendo una sociedad más <span class="gradient-text">igualitaria</span></h2>
+                    <p>Voces con Derechos nace con la misión de educar a las nuevas generaciones en valores de respeto e igualdad.</p>
+                </div>
+
+                <div class="valores-grid">
+                    <div class="valor-card">
+                        <div class="valor-icon respect">❤️</div>
+                        <h3>Respeto</h3>
+                        <p>Fomentamos el respeto como base de las relaciones humanas.</p>
+                    </div>
+                    <div class="valor-card">
+                        <div class="valor-icon equality">⚖️</div>
+                        <h3>Igualdad</h3>
+                        <p>Promovemos la igualdad de derechos y oportunidades para todos.</p>
+                    </div>
+                    <div class="valor-card">
+                        <div class="valor-icon empathy">🤝</div>
+                        <h3>Empatía</h3>
+                        <p>Desarrollamos la empatía como herramienta para entender al otro.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================================
+             CTA FINAL - LLAMADA A LA ACCIÓN
+        ============================================ -->
+        <section class="section-cta">
+            <div class="section-container">
+                <div class="cta-box glass-card">
+                    <h2>¿Listo para <span class="gradient-text">transformar</span> la educación?</h2>
+                    <p>Únete a miles de estudiantes y profesores que ya están aprendiendo sobre igualdad y respeto con Voces con Derechos.</p>
+                    <div class="cta-buttons">
+                        <a href="registro.html" class="primary-button pulse-on-hover">
+                            Comenzar ahora
+                            <span>→</span>
+                        </a>
+                        <a href="login.html" class="secondary-button">
+                            Iniciar sesión
+                        </a>
+                    </div>
+                </div>
+            </div>
         </section>
 
     </main>
 
-
-        <!-- FOOTER -->
-    <footer>
-
-        <p>
-            © 2026 Voces con Derechos
-        </p>
-
-        <p>
-            Aprender hoy para construir una sociedad con respeto e igualdad.
-        </p>
-
+    <!-- ============================================
+         FOOTER
+    ============================================ -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <img src="assets/img/logo-white.png" alt="Voces con Derechos" class="footer-logo">
+                <p>Aprender hoy para construir una sociedad con respeto e igualdad.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-links">
+                <div class="footer-col">
+                    <h4>Plataforma</h4>
+                    <a href="#inicio">Inicio</a>
+                    <a href="#aprender">Aprender</a>
+                    <a href="#estudiantes">Estudiantes</a>
+                    <a href="#profesores">Profesores</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Recursos</h4>
+                    <a href="#recursos">Guías</a>
+                    <a href="#recursos">Videos</a>
+                    <a href="#recursos">Actividades</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="#">Términos</a>
+                    <a href="#">Privacidad</a>
+                    <a href="#">Cookies</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Voces con Derechos. Todos los derechos reservados.</p>
+        </div>
     </footer>
 
-
+    <!-- ============================================
+         SCRIPTS
+    ============================================ -->
     <script src="js/main.js"></script>
 
 </body>
