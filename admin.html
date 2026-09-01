@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | Voces con Derechos</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+
+    <div class="dashboard">
+
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <img src="assets/logo.png" alt="Voces con Derechos">
+            </div>
+            <nav class="sidebar-menu">
+                <a href="#inicio" class="menu-item active" data-section="inicio">
+                    <span class="menu-icon">📍</span>
+                    <span>Inicio</span>
+                </a>
+                <a href="#profesores" class="menu-item" data-section="profesores">
+                    <span class="menu-icon">👨‍🏫</span>
+                    <span>Profesores</span>
+                </a>
+                <a href="#estudiantes" class="menu-item" data-section="estudiantes">
+                    <span class="menu-icon">👨‍🎓</span>
+                    <span>Estudiantes</span>
+                </a>
+            </nav>
+            <div class="sidebar-bottom">
+                <a href="login.html" class="menu-item" id="cerrarSesion">
+                    <span class="menu-icon">←</span>
+                    <span>Cerrar sesión</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- CONTENIDO -->
+        <main class="main-content">
+
+            <header class="topbar">
+                <div class="topbar-user">
+                    <div class="user-avatar" id="userAvatar">AD</div>
+                    <div class="user-info">
+                        <strong id="userName">Administrador</strong>
+                        <span>Panel de Administración</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- SECCIÓN INICIO -->
+<section id="inicio" class="dashboard-section active-section">
+    <div class="admin-hero">
+        <div class="admin-hero-content">
+            <span class="admin-hero-label">✦ PANEL DE ADMINISTRACIÓN</span>
+            <h1 id="welcomeMessage">¡Hola, Administrador! 👋</h1>
+            <p>Gestiona los profesores y supervisa toda la plataforma educativa.</p>
+            <div class="admin-hero-tags">
+                <span>👨‍🏫 Profesores</span>
+                <span>▣ Clases</span>
+                <span>📊 Supervisión</span>
+            </div>
+
+        </div>
+        <div class="admin-hero-visual">
+            <div class="admin-circle admin-circle-one"></div>
+            <div class="admin-circle admin-circle-two"></div>
+            <div class="admin-floating-card">
+                <div class="admin-floating-icon">⚖</div>
+                <strong>Supervisa la plataforma</strong>
+                <small>Educación con derechos</small>
+            </div>
+            <div class="admin-star-one">✦</div>
+            <div class="admin-star-two">✦</div>
+        </div>
+    </div>
+
+                <!-- Estadísticas -->
+                <div class="stats-grid-dashboard">
+                    <div class="stat-card-dashboard">
+                        <div class="stat-icon-dashboard purple">👨‍🏫</div>
+                        <div>
+                            <span>Total Profesores</span>
+                            <strong id="totalProfesores">0</strong>
+                        </div>
+                    </div>
+                    <div class="stat-card-dashboard">
+                        <div class="stat-icon-dashboard pink">👨‍🎓</div>
+                        <div>
+                            <span>Total Estudiantes</span>
+                            <strong id="totalEstudiantesAdmin">0</strong>
+                        </div>
+                    </div>
+
+                </div>
+
+<!-- Lista de profesores (solo 4 con scroll) -->
+<div class="content-card">
+    <div class="card-header">
+        <div>
+            <h2>👨‍🏫 Profesores</h2>
+            <p>Últimos profesores registrados.</p>
+        </div>
+        <button class="text-button" onclick="showSection('profesores')">Ver todos →</button>
+    </div>
+    <div id="profesoresList" class="admin-list" style="max-height: 400px; overflow-y: auto; padding-right: 5px;">
+        <div class="loading">Cargando profesores...</div>
+    </div>
+</div>
+            </section>
+
+<!-- SECCIÓN PROFESORES -->
+<section id="profesores" class="dashboard-section">
+    <div class="profesores-hero">
+        <div class="profesores-hero-content">
+            <span class="profesores-hero-label">✦ GESTIÓN DE PROFESORES</span>
+            <h1>👨‍🏫 Profesores</h1>
+            <p>Gestiona los profesores de la plataforma y supervisa su actividad.</p>
+            <div class="profesores-hero-tags">
+                <span>👨‍🏫 Enseñan</span>
+                <span>📚 Crean contenido</span>
+                <span>⭐ Inspiran</span>
+            </div>
+            <button class="primary-button" onclick="abrirModalCrearProfesor()" style="margin-top: 20px;">
+                + Crear profesor
+            </button>
+        </div>
+        <div class="profesores-hero-visual">
+            <div class="profesores-orbit profesores-orbit-one"></div>
+            <div class="profesores-orbit profesores-orbit-two"></div>
+            <div class="profesores-floating-card">
+                <div class="profesores-floating-icon">👨‍🏫</div>
+                <strong>Forma educadores</strong>
+                <small>Inspira y guía</small>
+            </div>
+            <div class="profesores-star-one">✦</div>
+            <div class="profesores-star-two">✦</div>
+        </div>
+    </div>
+
+    <!-- TABS: Activos | Inactivos -->
+    <div class="detail-tabs" style="margin-bottom: 20px;">
+        <button class="detail-tab active" data-tab="activos" onclick="switchTabProfesoresAdmin('activos')">
+            ✅ Activos
+        </button>
+        <button class="detail-tab" data-tab="inactivos" onclick="switchTabProfesoresAdmin('inactivos')">
+            ⛔ Inactivos
+        </button>
+    </div>
+
+    <!-- BUSCADOR DE PROFESORES -->
+    <div class="buscador-container" style="margin-bottom: 20px;">
+        <div class="buscador-input-wrapper">
+            <span class="buscador-icon">🔍</span>
+            <input 
+                type="text" 
+                id="buscadorProfesores" 
+                placeholder="Buscar profesor por nombre..." 
+                oninput="filtrarProfesores()"
+                style="width: 100%; padding: 12px 14px 12px 40px; border: 1.5px solid var(--border); border-radius: 12px; outline: none; background: white; color: var(--text); font-size: 14px;"
+            >
+        </div>
+    </div>
+
+    <!-- TAB: ACTIVOS -->
+    <div id="tabProfesoresActivos" class="detail-tab-content active">
+        <div id="profesoresActivosList" class="admin-list" style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
+            <div class="loading">Cargando profesores activos...</div>
+        </div>
+    </div>
+
+    <!-- TAB: INACTIVOS -->
+    <div id="tabProfesoresInactivos" class="detail-tab-content">
+        <div id="profesoresInactivosList" class="admin-list" style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
+            <div class="loading">Cargando profesores inactivos...</div>
+        </div>
+    </div>
+
+</section>
+
+<!-- SECCIÓN ESTUDIANTES -->
+<section id="estudiantes" class="dashboard-section">
+    <div class="profesores-hero">
+        <div class="profesores-hero-content">
+            <span class="profesores-hero-label">✦ SUPERVISIÓN DE ESTUDIANTES</span>
+            <h1>👨‍🎓 Estudiantes</h1>
+            <p>Visualiza todos los estudiantes registrados en la plataforma.</p>
+            <div class="profesores-hero-tags">
+                <span>👨‍🎓 Aprenden</span>
+                <span>📊 Progresan</span>
+                <span>⭐ Destacan</span>
+            </div>
+        </div>
+        <div class="profesores-hero-visual">
+            <div class="profesores-orbit profesores-orbit-one"></div>
+            <div class="profesores-orbit profesores-orbit-two"></div>
+            <div class="profesores-floating-card">
+                <div class="profesores-floating-icon">👨‍🎓</div>
+                <strong>Supervisa estudiantes</strong>
+                <small>Educación con derechos</small>
+            </div>
+            <div class="profesores-star-one">✦</div>
+            <div class="profesores-star-two">✦</div>
+        </div>
+    </div>
+
+    <!-- TABS: Activos | Inactivos -->
+    <div class="detail-tabs" style="margin-bottom: 20px;">
+        <button class="detail-tab active" data-tab="activos" onclick="switchTabEstudiantesAdmin('activos')">
+            ✅ Activos
+        </button>
+        <button class="detail-tab" data-tab="inactivos" onclick="switchTabEstudiantesAdmin('inactivos')">
+            ⛔ Inactivos
+        </button>
+    </div>
+
+    <!-- BUSCADOR DE ESTUDIANTES -->
+    <div class="buscador-container" style="margin-bottom: 20px;">
+        <div class="buscador-input-wrapper">
+            <span class="buscador-icon">🔍</span>
+            <input 
+                type="text" 
+                id="buscadorEstudiantesAdmin" 
+                placeholder="Buscar estudiante por nombre o email..." 
+                oninput="filtrarEstudiantesAdmin()"
+                style="width: 100%; padding: 12px 14px 12px 40px; border: 1.5px solid var(--border); border-radius: 12px; outline: none; background: white; color: var(--text); font-size: 14px;"
+            >
+        </div>
+    </div>
+
+    <!-- Contador -->
+    <div class="stats-mini" style="margin-bottom: 24px;">
+        <span id="totalEstudiantesAdminCount">0</span> estudiantes
+    </div>
+
+    <!-- TAB: ACTIVOS -->
+    <div id="tabEstudiantesAdminActivos" class="detail-tab-content active">
+        <div id="estudiantesAdminList" class="admin-list" style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
+            <div class="loading">Cargando estudiantes activos...</div>
+        </div>
+    </div>
+
+    <!-- TAB: INACTIVOS -->
+    <div id="tabEstudiantesAdminInactivos" class="detail-tab-content">
+        <div id="estudiantesAdminInactivosList" class="admin-list" style="max-height: 500px; overflow-y: auto; padding-right: 5px;">
+            <div class="loading">Cargando estudiantes inactivos...</div>
+        </div>
+    </div>
+</section>
+
+        </main>
+
+    </div>
+
+    <!-- MODAL CREAR PROFESOR -->
+    <div id="modalCrearProfesor" class="modal">
+        <div class="modal-card" style="max-width: 500px;">
+            <button class="close-modal" onclick="cerrarModal('modalCrearProfesor')">×</button>
+            <div class="modal-header">
+                <span class="modal-icon">👨‍🏫</span>
+                <h2>Crear Profesor</h2>
+                <p>Ingresa los datos del nuevo profesor.</p>
+            </div>
+            <form id="formCrearProfesor">
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label>Nombre *</label>
+                        <input type="text" id="profesorNombre" placeholder="Nombre" required oninput="generarCorreoProfesor()">
+                    </div>
+                    <div class="form-group half">
+                        <label>Apellido *</label>
+                        <input type="text" id="profesorApellido" placeholder="Apellido" required oninput="generarCorreoProfesor()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Correo electrónico (automático)</label>
+                    <input type="email" id="profesorEmail" readonly style="background: #f0f0f0; cursor: not-allowed;">
+                </div>
+                <div class="form-group">
+                    <label>Contraseña *</label>
+                    <input type="password" id="profesorPassword" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                <div id="profesorMessage" class="form-message"></div>
+                <button type="submit" class="primary-button full">Crear Profesor</button>
+            </form>
+        </div>
+    </div>
+<!-- MODAL DETALLE DE PROFESOR -->
+<div id="modalDetalleProfesor" class="modal">
+    <div class="modal-card" style="max-width: 650px; max-height: 85vh; overflow-y: auto;">
+        <button class="close-modal" onclick="cerrarModal('modalDetalleProfesor')">×</button>
+        
+        <div class="modal-header">
+            <span class="modal-icon">👨‍🏫</span>
+            <h2 id="detalleProfesorNombre">Profesor</h2>
+            <p id="detalleProfesorEmail" style="margin-top: 5px; color: var(--text-light); font-size: 13px;">—</p>
+        </div>
+
+        <!-- Estadísticas del profesor -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 20px;">
+            <div style="background: var(--purple-soft); padding: 15px; border-radius: 12px; text-align: center;">
+                <strong style="font-size: 24px; color: var(--primary); display: block;" id="detalleProfesorTotalClases">0</strong>
+                <span style="font-size: 12px; color: var(--text-light);">Clases creadas</span>
+            </div>
+            <div style="background: var(--blue-soft); padding: 15px; border-radius: 12px; text-align: center;">
+                <strong style="font-size: 24px; color: var(--blue); display: block;" id="detalleProfesorTotalEstudiantes">0</strong>
+                <span style="font-size: 12px; color: var(--text-light);">Total estudiantes</span>
+            </div>
+        </div>
+
+        <!-- Lista de clases -->
+        <h3 style="font-size: 16px; margin-bottom: 12px; color: var(--text);">📚 Clases del profesor</h3>
+        <div id="detalleProfesorClases" style="display: flex; flex-direction: column; gap: 10px;">
+            <div class="loading">Cargando clases...</div>
+        </div>
+    </div>
+</div>
+    <script src="js/admin.js"></script>
+
+</body>
+</html>
