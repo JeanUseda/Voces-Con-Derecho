@@ -414,7 +414,6 @@ function mostrarEscena(escena) {
 // ==========================================
 // TOMAR DECISIÓN 
 // ==========================================
-
 async function tomarDecision(decisionId) {
     const escena = escenaActual;
     const decision = escena.decisiones.find(d => d.id === decisionId);
@@ -438,8 +437,10 @@ async function tomarDecision(decisionId) {
         }
     });
 
-    // Sumar puntos
-    puntosTotales += decision.puntos;
+    // Sumar puntos (solo si es correcta)
+    if (decision.esCorrecta) {
+        puntosTotales += decision.puntos;
+    }
     document.getElementById("puntosInfo").textContent = `⭐ ${puntosTotales} puntos`;
 
     // Mostrar feedback
@@ -453,34 +454,75 @@ async function tomarDecision(decisionId) {
     const btnContinuar = document.getElementById("btnContinuar");
     btnContinuar.style.display = "block";
 
-    // ✅ CORRECCIÓN: Verificar si tiene siguiente escena
+    // ✅ SI ES INCORRECTA: mostrar feedback y continuar a la siguiente escena
+    if (!decision.esCorrecta) {
+        btnContinuar.textContent = "Continuar →";
+        
+        // Buscar la siguiente escena (por orden, no por SiguienteEscenaId)
+        const indexActual = historiaData.escenas.findIndex(e => e.id === escena.id);
+        const siguienteEscena = historiaData.escenas[indexActual + 1];
+        
+        if (siguienteEscena) {
+            btnContinuar.onclick = () => {
+                mostrarEscena(siguienteEscena);
+                feedbackContainer.style.display = "none";
+                btnContinuar.style.display = "none";
+                // Habilitar los botones para la nueva escena
+                document.querySelectorAll('.btn-decision').forEach(btn => btn.disabled = false);
+            };
+        } else {
+            // Si no hay siguiente escena, mostrar resultado
+            btnContinuar.textContent = "Ver resultado 🏆";
+            btnContinuar.onclick = () => mostrarResultadoFinal();
+        }
+        
+        // Guardar progreso y salir
+        await guardarProgreso();
+        return;
+    }
+
+    // ✅ SI ES CORRECTA: flujo normal
     console.log("SiguienteEscenaId:", decision.siguienteEscenaId);
     
     if (decision.siguienteEscenaId) {
-        // Buscar la siguiente escena
         const siguienteEscena = historiaData.escenas.find(e => e.id === decision.siguienteEscenaId);
         
         if (siguienteEscena) {
             btnContinuar.textContent = "Continuar →";
             btnContinuar.onclick = () => {
                 mostrarEscena(siguienteEscena);
-                // Limpiar feedback después de cambiar de escena
                 feedbackContainer.style.display = "none";
                 btnContinuar.style.display = "none";
             };
         } else {
-            // Si no se encuentra la escena, mostrar resultado
             console.warn("No se encontró la siguiente escena:", decision.siguienteEscenaId);
             btnContinuar.textContent = "Ver resultado 🏆";
             btnContinuar.onclick = () => mostrarResultadoFinal();
         }
     } else {
-        // Si no tiene siguiente escena, mostrar resultado
-        btnContinuar.textContent = "Ver resultado 🏆";
-        btnContinuar.onclick = () => mostrarResultadoFinal();
+        // Si la escena actual es la última, mostrar resultado
+        const esUltimaEscena = historiaData.escenas.indexOf(escena) === historiaData.escenas.length - 1;
+        if (esUltimaEscena) {
+            btnContinuar.textContent = "Ver resultado 🏆";
+            btnContinuar.onclick = () => mostrarResultadoFinal();
+        } else {
+            // Si no es la última y no tiene SiguienteEscenaId, ir a la siguiente por orden
+            const indexActual = historiaData.escenas.findIndex(e => e.id === escena.id);
+            const siguienteEscena = historiaData.escenas[indexActual + 1];
+            if (siguienteEscena) {
+                btnContinuar.textContent = "Continuar →";
+                btnContinuar.onclick = () => {
+                    mostrarEscena(siguienteEscena);
+                    feedbackContainer.style.display = "none";
+                    btnContinuar.style.display = "none";
+                };
+            } else {
+                btnContinuar.textContent = "Ver resultado 🏆";
+                btnContinuar.onclick = () => mostrarResultadoFinal();
+            }
+        }
     }
 
-    // Guardar progreso
     await guardarProgreso();
 }
 

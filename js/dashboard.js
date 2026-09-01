@@ -21,20 +21,31 @@ const API_URL = "http://localhost:5019/api";
 // ==========================================
 
 function obtenerProfesorAutenticado() {
-    const profesorData = localStorage.getItem("profesor");
-    
-    if (!profesorData) {
-        window.location.href = "login.html";
-        return null;
+    // 1. Intentar con el nuevo formato unificado
+    const usuarioData = localStorage.getItem("usuario");
+    if (usuarioData) {
+        try {
+            const usuario = JSON.parse(usuarioData);
+            if (usuario.rol === "profesor" || usuario.rol === "admin") {
+                return usuario;
+            }
+        } catch (error) {
+            console.error("Error al parsear usuario:", error);
+        }
     }
 
-    try {
-        return JSON.parse(profesorData);
-    } catch (error) {
-        console.error("Error al parsear datos del profesor:", error);
-        window.location.href = "login.html";
-        return null;
+    // 2. Compatibilidad con formato antiguo
+    const profesorData = localStorage.getItem("profesor");
+    if (profesorData) {
+        try {
+            return JSON.parse(profesorData);
+        } catch (error) {
+            console.error("Error al parsear profesor:", error);
+        }
     }
+
+    window.location.href = "login.html";
+    return null;
 }
 
 const profesorActual = obtenerProfesorAutenticado();
@@ -48,7 +59,7 @@ const PROFESOR_ID = profesorActual.id;
 document.addEventListener("DOMContentLoaded", () => {
     const userNameElement = document.querySelector(".user-info strong");
     if (userNameElement && profesorActual.nombre) {
-        userNameElement.textContent = profesorActual.nombre;
+        userNameElement.textContent = `${profesorActual.nombre} ${profesorActual.apellido || ''}`.trim();
     }
 
     const welcomeElement = document.querySelector(".welcome h1");
@@ -58,40 +69,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const avatarElement = document.querySelector(".user-avatar");
     if (avatarElement && profesorActual.nombre) {
-        const iniciales = profesorActual.nombre
-            .split(" ")
-            .map(n => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2);
+        const nombre = profesorActual.nombre || "";
+        const apellido = profesorActual.apellido || "";
+        const iniciales = `${nombre[0] || ''}${apellido[0] || ''}`.toUpperCase() || "PR";
         avatarElement.textContent = iniciales;
     }
 });
-
 // ==========================================
 // ACTUALIZAR DATOS DEL PROFESOR EN LA UI
 // ==========================================
-
 function actualizarDatosProfesor() {
     const avatar = document.getElementById("userAvatar");
-    if (avatar && profesorActual && profesorActual.nombre) {
-        const iniciales = profesorActual.nombre
-            .split(" ")
-            .map(n => n[0])
-            .join("")
-            .toUpperCase()
-            .slice(0, 2);
+    if (avatar && profesorActual) {
+        const nombre = profesorActual.nombre || "";
+        const apellido = profesorActual.apellido || "";
+        const iniciales = `${nombre[0] || ''}${apellido[0] || ''}`.toUpperCase() || "PR";
         avatar.textContent = iniciales;
     }
 
     const userName = document.getElementById("userName");
-    if (userName && profesorActual && profesorActual.nombre) {
-        userName.textContent = profesorActual.nombre;
+    if (userName && profesorActual) {
+        userName.textContent = `${profesorActual.nombre || ''} ${profesorActual.apellido || ''}`.trim();
     }
 
     const welcomeMessage = document.getElementById("welcomeMessage");
-    if (welcomeMessage && profesorActual && profesorActual.nombre) {
-        welcomeMessage.textContent = `¡Hola, ${profesorActual.nombre}! 👋`;
+    if (welcomeMessage && profesorActual) {
+        welcomeMessage.textContent = `¡Hola, ${profesorActual.nombre || 'Profesor'}! 👋`;
     }
 }
 
@@ -949,36 +952,16 @@ async function loadInactiveStudents(classId) {
     }
 }
 
-async function reactivarEstudiante(classId, estudianteId) {
-    if (!confirm("¿Quieres reactivar a este estudiante en la clase?")) return;
-
-    try {
-        const response = await fetch(`${API_URL}/clases/${classId}/estudiantes?estudianteId=${estudianteId}`, {
-            method: "POST"
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(data.mensaje || "No se pudo reactivar el estudiante.");
-        }
-
-        await Promise.all([
-            loadClassStudents(classId),
-            loadInactiveStudents(classId)
-        ]);
-        await loadClasses();
-        await cargarEstadisticasClase(classId);
-        await cargarContadoresClase(classId);
-
-    } catch (error) {
-        console.error(error);
-        alert("No se pudo reactivar el estudiante.");
-    }
-}
-
 async function desactivarEstudiante(classId, estudianteId) {
-    if (!confirm("¿Quieres desactivar a este estudiante de la clase?")) return;
+    const confirmacion = await mostrarModalConfirmacion(
+        "¿Desactivar estudiante de la clase?",
+        "El estudiante será movido a la pestaña de inactivos.",
+        "⛔ Sí, desactivar",
+        "#d9366f",
+        "⛔"
+    );
+
+    if (!confirmacion) return;
 
     try {
         const response = await fetch(`${API_URL}/clases/${classId}/estudiantes/${estudianteId}/desactivar`, {
@@ -992,19 +975,58 @@ async function desactivarEstudiante(classId, estudianteId) {
         }
 
         await Promise.all([
-            loadClassStudents(classId),
-            loadInactiveStudents(classId)
+            loadClassStudentsDetalle(classId),
+            loadInactiveStudentsDetalle(classId)
         ]);
         await loadClasses();
         await cargarEstadisticasClase(classId);
         await cargarContadoresClase(classId);
+        
+        mostrarNotificacion("✅ Estudiante desactivado correctamente", "success");
 
     } catch (error) {
         console.error(error);
-        alert("No se pudo desactivar el estudiante.");
+        mostrarNotificacion("❌ " + error.message, "error");
     }
 }
 
+async function reactivarEstudiante(classId, estudianteId) {
+    const confirmacion = await mostrarModalConfirmacion(
+        "¿Reactivar estudiante?",
+        "El estudiante volverá a la lista de activos de esta clase.",
+        "✅ Sí, reactivar",
+        "#2ca66f",
+        "✅"
+    );
+
+    if (!confirmacion) return;
+
+    try {
+        const response = await fetch(`${API_URL}/clases/${classId}/estudiantes?estudianteId=${estudianteId}`, {
+            method: "POST"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.mensaje || "No se pudo reactivar el estudiante.");
+        }
+
+        await Promise.all([
+            loadClassStudentsDetalle(classId),
+            loadInactiveStudentsDetalle(classId)
+        ]);
+        await loadClasses();
+        await cargarEstadisticasClase(classId);
+        await cargarContadoresClase(classId);
+        
+        mostrarNotificacion("✅ Estudiante reactivado correctamente", "success");
+
+    } catch (error) {
+        console.error(error);
+        mostrarNotificacion("❌ " + error.message, "error");
+    }
+}
 /* =========================================
    MISIONES DE CLASE
 ========================================= */
@@ -1107,69 +1129,6 @@ async function loadTotalStudents(classes) {
     document.getElementById("totalStudents").textContent = total;
 }
 
-/* =========================================
-   ESTUDIANTES GENERAL
-========================================= */
-
-// async function loadStudentsOverview() {
-//     const container = document.getElementById("studentsOverview");
-
-//     try {
-//         const response = await fetch(`${API_URL}/clases?profesorId=${PROFESOR_ID}`);
-//         if (!response.ok) {
-//             throw new Error("No se pudieron obtener las clases.");
-//         }
-
-//         const classes = await response.json();
-
-//         if (!classes.length) {
-//             container.innerHTML = `<div class="empty-state"><strong>No tienes clases todavía.</strong></div>`;
-//             return;
-//         }
-
-//         let html = "";
-
-//         for (const clase of classes) {
-//             const studentsResponse = await fetch(`${API_URL}/clases/${clase.id}/estudiantes`);
-//             if (!studentsResponse.ok) continue;
-
-//             const students = await studentsResponse.json();
-
-//             html += `
-//                 <div class="content-card">
-//                     <div class="card-header">
-//                         <div>
-//                             <h2>${escapeHtml(clase.nombre)}</h2>
-//                             <p>${students.length} estudiante(s)</p>
-//                         </div>
-//                     </div>
-//                     <div class="student-list">
-//                         ${students.length ? students.map(student => {
-//                             const initials = `${student.nombre[0]}${student.apellido[0]}`.toUpperCase();
-//                             return `
-//                                 <div class="student-row">
-//                                     <div class="student-main">
-//                                         <div class="student-avatar">${initials}</div>
-//                                         <div>
-//                                             <div class="student-name">${escapeHtml(student.nombre)} ${escapeHtml(student.apellido)}</div>
-//                                             <div class="student-date">Ingreso: ${formatDate(student.fechaIngreso)}</div>
-//                                         </div>
-//                                     </div>
-//                                 </div>
-//                             `;
-//                         }).join("") : `<div class="empty-state">No hay estudiantes activos.</div>`}
-//                     </div>
-//                 </div>
-//             `;
-//         }
-
-//         container.innerHTML = html || `<div class="empty-state">No hay estudiantes.</div>`;
-
-//     } catch (error) {
-//         console.error("Error cargando estudiantes:", error);
-//         container.innerHTML = `<div class="empty-state">No se pudieron cargar los estudiantes.</div>`;
-//     }
-// }
 
 /* =========================================
    VOLVER A CLASES
@@ -1185,10 +1144,16 @@ document.getElementById("backToClasses").addEventListener("click", () => {
 
 document.getElementById("cerrarSesion")?.addEventListener("click", (event) => {
     event.preventDefault();
+    // ✅ Eliminar todos los datos de sesión
+    localStorage.removeItem("usuario");
     localStorage.removeItem("profesor");
+    localStorage.removeItem("estudiante");
+    localStorage.removeItem("seccionActual");
+    localStorage.removeItem("claseActualId");
+    localStorage.removeItem("filtrosEstudiantes");
+    // ✅ Redirigir al login
     window.location.href = "login.html";
 });
-
 /* =========================================
    UTILIDADES
 ========================================= */
@@ -1227,9 +1192,29 @@ const agregarEstudianteSubtexto = document.getElementById("agregarEstudianteSubt
 
 async function abrirModalAgregarEstudiante(claseId, claseNombre) {
     claseIdSeleccionadaAgregar = claseId;
-    agregarEstudianteSubtexto.textContent = `Selecciona un estudiante para agregar a "${claseNombre}"`;
-    agregarEstudianteModal.classList.add("show");
-    buscadorEstudiantes.value = "";
+
+    const subtexto = document.getElementById("agregarEstudianteSubtexto");
+    if (subtexto) {
+        subtexto.textContent = `Selecciona un estudiante para agregar a "${claseNombre}"`;
+    }
+
+    const modal = document.getElementById("agregarEstudianteModal");
+    if (modal) {
+        modal.classList.add("show");
+    }
+
+    const buscador = document.getElementById("buscadorEstudiantes");
+    if (buscador) {
+        buscador.value = "";
+    }
+
+    // ✅ Verificar que el contenedor existe antes de cargar
+    const container = document.getElementById("listaEstudiantesAgregar");
+    if (!container) {
+        console.error("❌ listaEstudiantesAgregar no encontrado en el DOM");
+        return;
+    }
+
     await cargarEstudiantesDisponibles(claseId);
 }
 
@@ -1245,8 +1230,9 @@ async function cargarEstudiantesDisponibles(claseId) {
     listaEstudiantesAgregar.innerHTML = `<div class="loading">Cargando estudiantes...</div>`;
 
     try {
+        // ✅ USAR ESTUDIANTES DEL PROFESOR EN LUGAR DE TODOS
         const [estudiantesResponse, claseEstudiantesResponse] = await Promise.all([
-            fetch(`${API_URL}/estudiantes/todos`),
+            fetch(`${API_URL}/estudiantes/profesor/${PROFESOR_ID}`),
             fetch(`${API_URL}/clases/${claseId}/estudiantes`)
         ]);
 
@@ -1361,13 +1347,14 @@ async function agregarEstudianteAClase(estudianteId) {
         estudiantesEnClaseIds.add(estudianteId);
         renderizarListaEstudiantes(todosLosEstudiantes);
 
-        if (claseIdSeleccionadaAgregar) {
-            await loadClassStudents(claseIdSeleccionadaAgregar);
-            await loadInactiveStudents(claseIdSeleccionadaAgregar);
-            await loadClasses();
-            await cargarEstadisticasClase(claseIdSeleccionadaAgregar);
-            await cargarContadoresClase(claseIdSeleccionadaAgregar);
-        }
+    if (claseIdSeleccionadaAgregar) {
+        
+        await loadClassStudentsDetalle(claseIdSeleccionadaAgregar);   
+        await loadInactiveStudentsDetalle(claseIdSeleccionadaAgregar); 
+        await loadClasses();
+        await cargarEstadisticasClase(claseIdSeleccionadaAgregar);
+        await cargarContadoresClase(claseIdSeleccionadaAgregar);
+    }
 
         mostrarNotificacion("✅ Estudiante agregado correctamente", "success");
 
@@ -1736,6 +1723,7 @@ async function cargarHistoriasGestion() {
     }
 }
 
+
 // ==========================================
 // CALCULAR ORDEN AUTOMÁTICO PARA HISTORIAS
 // ==========================================
@@ -1753,23 +1741,48 @@ async function calcularSiguienteOrdenHistoria(misionId) {
         const response = await fetch(`${API_URL}/historias/mision/${misionId}`);
         if (response.ok) {
             const historias = await response.json();
-            
-            // ✅ Calcular el MÁXIMO orden + 1 (no contar la cantidad)
             let maxOrden = 0;
             historias.forEach(h => {
                 if (h.orden > maxOrden) {
                     maxOrden = h.orden;
                 }
             });
-            
             const siguienteOrden = maxOrden + 1;
             ordenInput.value = siguienteOrden;
-            console.log(`📊 Orden calculado para misión ${misionId}: ${siguienteOrden} (máximo: ${maxOrden})`);
+            console.log(`📊 Orden calculado para misión ${misionId}: ${siguienteOrden}`);
         } else {
             ordenInput.value = 1;
         }
     } catch (error) {
         console.error("Error calculando orden de historia:", error);
+        ordenInput.value = "?";
+    }
+}
+// ==========================================
+// CALCULAR ORDEN AUTOMÁTICO PARA ESCENAS
+// ==========================================
+
+async function calcularSiguienteOrdenEscena(historiaId) {
+    const ordenInput = document.getElementById("escenaOrden");
+    if (!ordenInput) return;
+    
+    if (!historiaId || isNaN(historiaId) || historiaId <= 0) {
+        ordenInput.value = "...";
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_URL}/escenas/historia/${historiaId}`);
+        if (response.ok) {
+            const escenas = await response.json();
+            const siguienteOrden = (escenas?.length || 0) + 1;
+            ordenInput.value = siguienteOrden;
+            console.log(`📊 Orden de escena calculado: ${siguienteOrden}`);
+        } else {
+            ordenInput.value = 1;
+        }
+    } catch (error) {
+        console.error("Error calculando orden de escena:", error);
         ordenInput.value = "?";
     }
 }
@@ -1858,11 +1871,43 @@ function abrirModalCrearHistoriaConMision(misionId) {
     document.getElementById("historiaMisionId").value = misionId;
 }
 
+// Función corregida para abrir modal con historia específica
 function abrirModalCrearEscenaConHistoria(historiaId) {
     abrirModalCrearEscena();
+    
+    // Establecer el ID de la historia
     document.getElementById("escenaHistoriaId").value = historiaId;
+    
+    // Mostrar información de la historia
+    const historiaInfo = document.getElementById("escenaHistoriaInfo");
+    if (historiaInfo) {
+        // Buscar el título de la historia en los datos cargados
+        let tituloHistoria = "";
+        
+        // Buscar en datosCompletos si existe
+        if (typeof datosCompletos !== 'undefined' && datosCompletos.length > 0) {
+            for (const mision of datosCompletos) {
+                for (const historia of mision.historias) {
+                    if (historia.id === historiaId) {
+                        tituloHistoria = historia.titulo;
+                        break;
+                    }
+                }
+                if (tituloHistoria) break;
+            }
+        }
+        
+        historiaInfo.textContent = tituloHistoria 
+            ? `📖 Agregando escena a: "${tituloHistoria}"`
+            : `📖 Historia ID: ${historiaId}`;
+        historiaInfo.style.display = "block";
+    }
+    
+    // Calcular el siguiente orden de escena
+    if (typeof calcularSiguienteOrdenEscena === 'function') {
+        calcularSiguienteOrdenEscena(historiaId);
+    }
 }
-
 /* =========================================
    MODALES - CREAR MISIÓN
 ========================================= */
@@ -2049,44 +2094,17 @@ function abrirModalCrearEscena() {
     // Mostrar "..." mientras carga
     document.getElementById("escenaOrden").value = "...";
     
-    // Limpiar el input oculto y el select
+    // Limpiar el input oculto
     document.getElementById("escenaHistoriaId").value = "";
-    const select = document.getElementById("escenaHistoriaSelect");
-    if (select) {
-        select.value = "";
+    
+    // Limpiar la info de la historia
+    const historiaInfo = document.getElementById("escenaHistoriaInfo");
+    if (historiaInfo) {
+        historiaInfo.textContent = "";
+        historiaInfo.style.display = "none";
     }
-    
-    // Cargar historias
-    cargarSelectHistorias();
 }
-// // Calcular el siguiente orden automáticamente
-// async function calcularSiguienteOrden(historiaId) {
-//     const ordenInput = document.getElementById("escenaOrden");
-//     if (!ordenInput) return;
-    
-//     // Validar que sea un número válido
-//     if (!historiaId || isNaN(historiaId) || historiaId <= 0) {
-//         ordenInput.value = "...";
-//         return;
-//     }
-    
-//     try {
-//         const response = await fetch(`${API_URL}/escenas/historia/${historiaId}`);
-//         if (response.ok) {
-//             const escenas = await response.json();
-//             const siguienteOrden = (escenas?.length || 0) + 1;
-//             ordenInput.value = siguienteOrden;
-//             console.log(`📊 Orden calculado para historia ${historiaId}: ${siguienteOrden}`);
-//         } else {
-//             ordenInput.value = 1;
-//         }
-//     } catch (error) {
-//         console.error("Error calculando orden:", error);
-//         ordenInput.value = "?";
-//     }
-// }
 
-// Mostrar/Ocultar sección de pregunta
 document.addEventListener("DOMContentLoaded", function() {
     const escenaTienePregunta = document.getElementById("escenaTienePregunta");
     const preguntaSection = document.getElementById("preguntaSection");
@@ -2143,136 +2161,155 @@ function agregarRespuestaEscena() {
     `;
     container.appendChild(div);
 }
-
-// Submit del formulario de crear escena (con pregunta integrada)
+// En el submit del formulario de crear escena
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById("formCrearEscena");
     if (form) {
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const historiaId = parseInt(document.getElementById("escenaHistoriaId").value);
-            const contenido = document.getElementById("escenaContenido").value.trim();
-            const orden = parseInt(document.getElementById("escenaOrden").value) || 1;
-            const esFinal = document.getElementById("escenaEsFinal").checked;
-            const tienePregunta = document.getElementById("escenaTienePregunta").checked;
-            const message = document.getElementById("escenaMessage");
-            
-            if (!historiaId || !contenido) {
-                message.textContent = "Historia y contenido son obligatorios.";
-                message.style.color = "#d9366f";
-                return;
-            }
-            
-            try {
-                // 1. Crear la escena
-                const response = await fetch(`${API_URL}/escenas`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        historiaId,
-                        contenido,
-                        orden,
-                        esFinal,
-                        tienePregunta
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.mensaje || "Error al crear escena.");
-                }
-                
-                const escenaId = data.id || data.escena?.id;
-                
-                // 2. Si tiene pregunta, crearla y asociarla
-                if (tienePregunta) {
-                    const enunciado = document.getElementById("preguntaEnunciado").value.trim();
-                    const explicacion = document.getElementById("preguntaExplicacion").value.trim();
-                    const puntosPregunta = parseInt(document.getElementById("preguntaPuntos").value) || 5;
-                    
-                    // Recolectar respuestas
-                    const respuestasInputs = document.querySelectorAll("#respuestasContainerEscena .respuesta-texto");
-                    const respuestas = [];
-                    let correctaIndex = -1;
-                    
-                    document.querySelectorAll('input[name="respuestaCorrectaEscena"]').forEach((radio, index) => {
-                        if (radio.checked) correctaIndex = index;
-                    });
-                    
-                    respuestasInputs.forEach((input, index) => {
-                        if (input.value.trim()) {
-                            respuestas.push({
-                                texto: input.value.trim(),
-                                esCorrecta: index === correctaIndex
-                            });
-                        }
-                    });
-                    
-                    if (!enunciado || respuestas.length < 2) {
-                        throw new Error("La pregunta debe tener enunciado y al menos 2 respuestas.");
-                    }
-                    
-                    // Crear pregunta
-                    const preguntaResponse = await fetch(`${API_URL}/preguntas`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            enunciado,
-                            explicacion,
-                            puntos: puntosPregunta
-                        })
-                    });
-                    
-                    const preguntaData = await preguntaResponse.json();
-                    
-                    if (!preguntaResponse.ok) {
-                        throw new Error(preguntaData.mensaje || "Error al crear pregunta.");
-                    }
-                    
-                    const preguntaId = preguntaData.id;
-                    
-                    // Agregar respuestas
-                    for (const respuesta of respuestas) {
-                        await fetch(`${API_URL}/preguntas/${preguntaId}/respuestas`, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({
-                                texto: respuesta.texto,
-                                esCorrecta: respuesta.esCorrecta
-                            })
-                        });
-                    }
-                    
-                    // Asociar pregunta a la escena
-                    await fetch(`${API_URL}/escenas/${escenaId}/pregunta`, {
-                        method: "PUT",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ preguntaId })
-                    });
-                }
-                
-                message.textContent = "✅ Escena creada correctamente.";
-                message.style.color = "#2ca66f";
-                
-                cerrarModal("modalCrearEscena");
-                
-                // Recargar contenido
-                await cargarContenidoJerarquico();
-                await cargarEscenasGestion();
-                
-            } catch (error) {
-                console.error("Error:", error);
-                message.textContent = "❌ " + error.message;
-                message.style.color = "#d9366f";
-            }
-        });
+        form.removeEventListener("submit", handleSubmitEscena);
+        form.addEventListener("submit", handleSubmitEscena);
     }
 });
 
+async function handleSubmitEscena(e) {
+    e.preventDefault();
+    
+    // Obtener historiaId del select visible si existe
+    const selectHistoria = document.getElementById("escenaHistoriaSelect");
+    const hiddenHistoria = document.getElementById("escenaHistoriaId");
+    
+    let historiaId;
+    if (selectHistoria && selectHistoria.value) {
+        historiaId = parseInt(selectHistoria.value);
+        if (hiddenHistoria) hiddenHistoria.value = selectHistoria.value;
+    } else if (hiddenHistoria && hiddenHistoria.value) {
+        historiaId = parseInt(hiddenHistoria.value);
+    } else {
+        historiaId = NaN;
+    }
+    
+    const contenido = document.getElementById("escenaContenido").value.trim();
+    const orden = parseInt(document.getElementById("escenaOrden").value) || 1;
+    const esFinal = document.getElementById("escenaEsFinal").checked;
+    const tienePregunta = document.getElementById("escenaTienePregunta").checked;
+    const message = document.getElementById("escenaMessage");
+    
+    if (!historiaId || !contenido) {
+        message.textContent = "Historia y contenido son obligatorios.";
+        message.style.color = "#d9366f";
+        return;
+    }
+    
+    try {
+        // 1. Crear la escena
+        const response = await fetch(`${API_URL}/escenas`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                historiaId,
+                contenido,
+                orden,
+                esFinal,
+                tienePregunta
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.mensaje || "Error al crear escena.");
+        }
+        
+        const escenaId = data.id || data.escena?.id;
+        
+        // 2. Si tiene pregunta, crearla y asociarla
+        if (tienePregunta) {
+            const enunciado = document.getElementById("preguntaEnunciado").value.trim();
+            const explicacion = document.getElementById("preguntaExplicacion").value.trim();
+            const puntosPregunta = parseInt(document.getElementById("preguntaPuntos").value) || 5;
+            
+            // Recolectar respuestas
+            const respuestasInputs = document.querySelectorAll("#respuestasContainerEscena .respuesta-texto");
+            const respuestas = [];
+            let correctaIndex = -1;
+            
+            document.querySelectorAll('input[name="respuestaCorrectaEscena"]').forEach((radio, index) => {
+                if (radio.checked) correctaIndex = index;
+            });
+            
+            respuestasInputs.forEach((input, index) => {
+                if (input.value.trim()) {
+                    respuestas.push({
+                        texto: input.value.trim(),
+                        esCorrecta: index === correctaIndex
+                    });
+                }
+            });
+            
+            if (!enunciado || respuestas.length < 2) {
+                throw new Error("La pregunta debe tener enunciado y al menos 2 respuestas.");
+            }
+            
+            if (correctaIndex === -1) {
+                throw new Error("Debes marcar una respuesta como correcta.");
+            }
+            
+            // Crear pregunta
+            const preguntaResponse = await fetch(`${API_URL}/preguntas`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    enunciado,
+                    explicacion,
+                    puntos: puntosPregunta
+                })
+            });
+            
+            const preguntaData = await preguntaResponse.json();
+            
+            if (!preguntaResponse.ok) {
+                throw new Error(preguntaData.mensaje || "Error al crear pregunta.");
+            }
+            
+            const preguntaId = preguntaData.id;
+            
+            // Agregar respuestas
+            for (const respuesta of respuestas) {
+                await fetch(`${API_URL}/preguntas/${preguntaId}/respuestas`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        texto: respuesta.texto,
+                        esCorrecta: respuesta.esCorrecta
+                    })
+                });
+            }
+            
+            // Asociar pregunta a la escena
+            await fetch(`${API_URL}/escenas/${escenaId}/pregunta`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ preguntaId })
+            });
+        }
+        
+        message.textContent = "✅ Escena creada correctamente.";
+        message.style.color = "#2ca66f";
+        
+        cerrarModal("modalCrearEscena");
+        
+        // Recargar contenido
+        await cargarContenidoJerarquico();
+        await cargarEscenasGestion();
+        
+    } catch (error) {
+        console.error("Error:", error);
+        message.textContent = "❌ " + error.message;
+        message.style.color = "#d9366f";
+    }
+}
+
 /* =========================================
-   MODALES - CREAR DECISIÓN
+   MODALES - CREAR DECISIONES MÚLTIPLES
 ========================================= */
 
 let escenaSeleccionadaId = null;
@@ -2281,73 +2318,205 @@ function abrirModalCrearDecision(escenaId) {
     escenaSeleccionadaId = escenaId;
     const modal = document.getElementById("modalCrearDecision");
     if (!modal) {
-        console.error("Modal Crear Decisión no encontrado");
+        console.error("Modal Crear Decisiones no encontrado");
         return;
     }
+    
     document.getElementById("decisionEscenaId").value = escenaId;
     modal.classList.add("show");
-    document.getElementById("formCrearDecision")?.reset();
-    document.getElementById("decisionMessage").textContent = "";
-    cargarSelectEscenasParaDecision(escenaId);
-}
-
-//from crear decision
-document.addEventListener("DOMContentLoaded", function() {
+    
+    // Resetear el formulario
     const form = document.getElementById("formCrearDecision");
     if (form) {
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const escenaId = parseInt(document.getElementById("decisionEscenaId").value);
-            const texto = document.getElementById("decisionTexto").value.trim();
-            const esCorrecta = document.getElementById("decisionEsCorrecta").value === "true";
-            const puntos = parseInt(document.getElementById("decisionPuntos").value) || 0;
-            const retroalimentacion = document.getElementById("decisionRetroalimentacion").value.trim();
-            const siguienteEscenaId = document.getElementById("decisionSiguienteEscena").value;
-            const message = document.getElementById("decisionMessage");
-            
-            if (!texto) {
-                message.textContent = "El texto de la decisión es obligatorio.";
-                message.style.color = "#d9366f";
-                return;
+        form.reset();
+    }
+    
+    const message = document.getElementById("decisionMessage");
+    if (message) {
+        message.textContent = "";
+    }
+    
+    // Mostrar información de la escena
+    const escenaInfo = document.getElementById("decisionEscenaInfo");
+    if (escenaInfo) {
+        let contenidoEscena = "";
+        
+        if (typeof datosCompletos !== 'undefined' && datosCompletos.length > 0) {
+            for (const mision of datosCompletos) {
+                for (const historia of mision.historias) {
+                    for (const escena of historia.escenas) {
+                        if (escena.id === escenaId) {
+                            contenidoEscena = escena.contenido;
+                            break;
+                        }
+                    }
+                    if (contenidoEscena) break;
+                }
+                if (contenidoEscena) break;
             }
+        }
+        
+        const contenidoCorto = contenidoEscena 
+            ? contenidoEscena.substring(0, 80) + (contenidoEscena.length > 80 ? '...' : '')
+            : `Escena ID: ${escenaId}`;
+        
+        escenaInfo.textContent = `🎬 Agregando decisiones a: "${contenidoCorto}"`;
+        escenaInfo.style.display = "block";
+    }
+    
+    cargarSelectEscenasParaDecisionMultiple(escenaId);
+}
+
+async function cargarSelectEscenasParaDecisionMultiple(escenaId) {
+    const selects = document.querySelectorAll(".decision-siguiente-escena");
+    if (!selects.length) return;
+    
+    try {
+        const escenaResponse = await fetch(`${API_URL}/escenas/${escenaId}`);
+        if (!escenaResponse.ok) return;
+        
+        const escena = await escenaResponse.json();
+        
+        if (escena && escena.historiaId) {
+            const response = await fetch(`${API_URL}/escenas/historia/${escena.historiaId}`);
+            if (!response.ok) return;
             
-            try {
+            const escenas = await response.json();
+            
+            selects.forEach(select => {
+                select.innerHTML = '<option value="">- Ninguna (final) -</option>';
+                
+                escenas.forEach(e => {
+                    if (e.id !== escenaId) {
+                        const option = document.createElement("option");
+                        option.value = e.id;
+                        option.textContent = `Escena #${e.orden}${e.esFinal ? ' 🏁' : ''}`;
+                        select.appendChild(option);
+                    }
+                });
+            });
+        }
+    } catch (error) {
+        console.error("Error cargando escenas para decisiones:", error);
+    }
+}
+
+function submitDecisionesForm(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    const form = document.getElementById("formCrearDecision");
+    if (!form) {
+        console.error("Formulario no encontrado");
+        return;
+    }
+    
+    const escenaId = parseInt(document.getElementById("decisionEscenaId").value);
+    const message = document.getElementById("decisionMessage");
+    const submitBtn = form.querySelector('button[type="button"]');
+    
+    console.log("📝 Enviando decisiones para escena:", escenaId);
+    
+    if (!escenaId) {
+        message.textContent = "No hay una escena seleccionada.";
+        message.style.color = "#d9366f";
+        return;
+    }
+
+    // Recolectar decisiones usando el formulario correcto
+    const decisiones = [];
+    const textos = form.querySelectorAll(".decision-texto");
+    const correctas = form.querySelectorAll(".decision-es-correcta");
+    const puntos = form.querySelectorAll(".decision-puntos");
+    const retroalimentaciones = form.querySelectorAll(".decision-retroalimentacion");
+    const siguientes = form.querySelectorAll(".decision-siguiente-escena");
+
+    console.log("📋 Inputs encontrados:", textos.length);
+
+    let hayTexto = false;
+    let hayCorrecta = false;
+
+    for (let i = 0; i < textos.length; i++) {
+        const texto = textos[i].value.trim();
+        const esCorrecta = correctas[i] && correctas[i].value === "true";
+        const puntosDecision = puntos[i] ? (parseInt(puntos[i].value) || 0) : 0;
+        const retroalimentacion = retroalimentaciones[i] ? retroalimentaciones[i].value.trim() : "";
+        const siguienteEscenaId = siguientes[i] && siguientes[i].value ? parseInt(siguientes[i].value) : null;
+
+        if (texto) {
+            hayTexto = true;
+            if (esCorrecta) hayCorrecta = true;
+            
+            decisiones.push({
+                escenaId,
+                texto,
+                siguienteEscenaId,
+                puntos: puntosDecision,
+                esCorrecta,
+                retroalimentacion
+            });
+        }
+    }
+
+    if (!hayTexto) {
+        message.textContent = "Debes escribir al menos una decisión.";
+        message.style.color = "#d9366f";
+        return;
+    }
+
+    if (!hayCorrecta) {
+        message.textContent = "Debes marcar al menos una decisión como correcta.";
+        message.style.color = "#d9366f";
+        return;
+    }
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Creando...";
+    }
+
+    // Usar async/await con then
+    (async () => {
+        try {
+            console.log("📤 Creando decisiones:", decisiones);
+            
+            for (const decision of decisiones) {
                 const response = await fetch(`${API_URL}/decisiones`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        escenaId,
-                        texto,
-                        siguienteEscenaId: siguienteEscenaId ? parseInt(siguienteEscenaId) : null,
-                        puntos,
-                        esCorrecta,
-                        retroalimentacion
-                    })
+                    body: JSON.stringify(decision)
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (!response.ok) {
                     throw new Error(data.mensaje || "Error al crear decisión.");
                 }
-                
-                message.textContent = "✅ Decisión creada correctamente.";
-                message.style.color = "#2ca66f";
-                
-                cerrarModal("modalCrearDecision");
-                
-                // ✅ RECARGAR SOLO EL CONTENIDO
-                await cargarContenidoJerarquico();
-                await cargarEscenasGestion();
-                
-            } catch (error) {
-                message.textContent = "❌ " + error.message;
-                message.style.color = "#d9366f";
             }
-        });
-    }
-});
+
+            message.textContent = `✅ ${decisiones.length} decisiones creadas correctamente.`;
+            message.style.color = "#2ca66f";
+
+            setTimeout(() => {
+                cerrarModal("modalCrearDecision");
+                cargarContenidoJerarquico();
+                cargarEscenasGestion();
+            }, 1000);
+
+        } catch (error) {
+            console.error("❌ Error:", error);
+            message.textContent = "❌ " + error.message;
+            message.style.color = "#d9366f";
+            
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "⚡ Crear Decisiones";
+            }
+        }
+    })();
+}
 
 /* =========================================
    MODALES - CREAR PREGUNTA
@@ -2534,53 +2703,62 @@ async function cargarSelectMisiones() {
         console.error("Error cargando misiones:", error);
     }
 }
-
 async function cargarSelectHistorias() {
-    const select = document.getElementById("escenaHistoriaId");
-    if (!select) return;
+    const select = document.getElementById("escenaHistoriaSelect");
+    const hiddenInput = document.getElementById("escenaHistoriaId");
     
-    const valorActual = select.value;
-    select.innerHTML = '<option value="">Selecciona una historia...</option>';
+    if (!select && !hiddenInput) return;
     
-    try {
-        const response = await fetch(`${API_URL}/historias`);
-        const historias = await response.json();
+    // Si hay un select visible, usarlo
+    if (select) {
+        const valorActual = select.value;
+        select.innerHTML = '<option value="">Selecciona una historia...</option>';
         
-        historias.forEach(historia => {
-            const option = document.createElement("option");
-            option.value = historia.id;
-            option.textContent = `${escapeHtml(historia.titulo)} (Orden: ${historia.orden})`;
-            select.appendChild(option);
-        });
-        
-        if (valorActual) {
-            select.value = valorActual;
+        try {
+            const response = await fetch(`${API_URL}/historias`);
+            const historias = await response.json();
+            
+            historias.forEach(historia => {
+                const option = document.createElement("option");
+                option.value = historia.id;
+                option.textContent = `${escapeHtml(historia.titulo)} (Orden: ${historia.orden})`;
+                select.appendChild(option);
+            });
+            
+            if (valorActual) {
+                select.value = valorActual;
+            }
+            
+            // Evento change para actualizar el input oculto y calcular orden
+            select.onchange = function() {
+                const historiaId = parseInt(this.value);
+                if (hiddenInput) {
+                    hiddenInput.value = this.value;
+                }
+                if (historiaId) {
+                    if (typeof calcularSiguienteOrdenEscena === 'function') {
+                        calcularSiguienteOrdenEscena(historiaId);
+                    }
+                } else {
+                    document.getElementById("escenaOrden").value = "...";
+                }
+            };
+            
+            // Calcular orden inicial si hay valor
+            if (select.value) {
+                const historiaId = parseInt(select.value);
+                if (hiddenInput) {
+                    hiddenInput.value = select.value;
+                }
+                if (historiaId) {
+                    if (typeof calcularSiguienteOrdenEscena === 'function') {
+                        await calcularSiguienteOrdenEscena(historiaId);
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Error cargando historias:", error);
         }
-        
-        // ✅ Evento change para recalcular el orden
-        select.onchange = function() {
-            const historiaId = parseInt(this.value);
-            const hiddenInput = document.getElementById("escenaHistoriaId");
-            if (hiddenInput) {
-                hiddenInput.value = this.value;
-            }
-            if (historiaId) {
-                calcularSiguienteOrden(historiaId);
-            } else {
-                document.getElementById("escenaOrden").value = "...";
-            }
-        };
-        
-        // ✅ Calcular orden inicial si hay valor
-        if (select.value) {
-            const historiaId = parseInt(select.value);
-            if (historiaId) {
-                await calcularSiguienteOrden(historiaId);
-            }
-        }
-        
-    } catch (error) {
-        console.error("Error cargando historias:", error);
     }
 }
 
@@ -2637,8 +2815,17 @@ function cerrarModal(id) {
 ========================================= */
 
 async function eliminarMision(id) {
-    if (!confirm("¿Estás seguro de eliminar esta misión y todo su contenido?")) return;
-    
+
+    const confirmacion = await mostrarModalConfirmacion(
+        "¿Eliminar misión?",
+        "Se eliminará la misión y todo su contenido (historias, escenas, decisiones).",
+        "🗑 Sí, eliminar",
+        "#d9366f",
+        "🗑"
+    );
+
+    if (!confirmacion) return;
+
     try {
         const response = await fetch(`${API_URL}/misiones/${id}`, { method: "DELETE" });
         const data = await response.json();
@@ -2658,8 +2845,17 @@ async function eliminarMision(id) {
 }
 
 async function eliminarHistoria(id) {
-    if (!confirm("¿Estás seguro de eliminar esta historia y todo su contenido?")) return;
-    
+
+    const confirmacion = await mostrarModalConfirmacion(
+        "¿Eliminar historia?",
+        "Se eliminará la historia y todas sus escenas.",
+        "🗑 Sí, eliminar",
+        "#d9366f",
+        "🗑"
+    );
+
+    if (!confirmacion) return;
+
     try {
         const response = await fetch(`${API_URL}/historias/${id}`, { method: "DELETE" });
         const data = await response.json();
@@ -2678,7 +2874,16 @@ async function eliminarHistoria(id) {
 }
 
 async function eliminarEscena(id) {
-    if (!confirm("¿Estás seguro de eliminar esta escena?")) return;
+
+    const confirmacion = await mostrarModalConfirmacion(
+        "¿Eliminar escena?",
+        "Se eliminará la escena y sus decisiones.",
+        "🗑 Sí, eliminar",
+        "#d9366f",
+        "🗑"
+    );
+
+    if (!confirmacion) return;
     
     try {
         const response = await fetch(`${API_URL}/escenas/${id}`, { method: "DELETE" });
@@ -2989,6 +3194,7 @@ async function initializeDashboard() {
     await Promise.all([
         loadClasses(),
         cargarEstudiantes(),
+        cargarEstudiantesInactivos(),
         cargarMisionesGestion(),
         cargarHistoriasGestion(),
         cargarEscenasGestion(),
@@ -3122,11 +3328,31 @@ function verMision(misionId) {
     }, 500);
 }
 
+let todosEstudiantesProfesor = [];
+let tabEstudiantesActual = 'activos';
+
 // ==========================================
-// CARGAR ESTUDIANTES
+// CAMBIAR TAB DE ESTUDIANTES
 // ==========================================
+
+function switchTabEstudiantes(tab) {
+    tabEstudiantesActual = tab;
+    
+    const tabActivos = document.getElementById('tabEstudiantesActivos');
+    const tabInactivos = document.getElementById('tabEstudiantesInactivos');
+    
+    if (tabActivos && tabInactivos) {
+        tabActivos.classList.toggle('active', tab === 'activos');
+        tabInactivos.classList.toggle('active', tab === 'inactivos');
+    }
+    
+    document.querySelectorAll('.detail-tab[data-tab]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+}
+
 // ==========================================
-// CARGAR ESTUDIANTES CON FILTROS
+// CARGAR ESTUDIANTES ACTIVOS DEL PROFESOR
 // ==========================================
 
 async function cargarEstudiantes() {
@@ -3136,48 +3362,15 @@ async function cargarEstudiantes() {
     container.innerHTML = '<div class="loading">Cargando estudiantes...</div>';
 
     try {
-        // 1. Obtener todos los estudiantes
-        const response = await fetch(`${API_URL}/estudiantes/todos`);
+        const response = await fetch(`${API_URL}/estudiantes/profesor/${PROFESOR_ID}`);
         if (!response.ok) throw new Error("Error al cargar estudiantes.");
-        let estudiantes = await response.json();
         
-        // 2. Obtener clases del profesor para filtrar
-        const clasesResponse = await fetch(`${API_URL}/clases?profesorId=${PROFESOR_ID}`);
-        const clases = clasesResponse.ok ? await clasesResponse.json() : [];
+        let estudiantes = await response.json();
+        todosEstudiantesProfesor = estudiantes;
 
-        // 3. Obtener estudiantes por clase (para saber a qué clase pertenece cada uno)
-        const estudiantesConClase = [];
-        for (const estudiante of estudiantes) {
-            let clasesDelEstudiante = [];
-            for (const clase of clases) {
-                const claseEstudiantesResponse = await fetch(`${API_URL}/clases/${clase.id}/estudiantes`);
-                if (claseEstudiantesResponse.ok) {
-                    const claseEstudiantes = await claseEstudiantesResponse.json();
-                    if (claseEstudiantes.some(e => e.estudianteId === estudiante.id)) {
-                        clasesDelEstudiante.push(clase.nombre);
-                    }
-                }
-            }
-            estudiantesConClase.push({
-                ...estudiante,
-                clases: clasesDelEstudiante,
-                claseNombres: clasesDelEstudiante.join(', ') || 'Sin clase'
-            });
-        }
+        // Aplicar filtros
+        let filtrados = estudiantes;
 
-        // 4. APLICAR FILTROS
-        let filtrados = estudiantesConClase;
-
-        // Filtro por clase
-        const claseFiltro = document.getElementById('filtroClase')?.value || 'todas';
-        if (claseFiltro !== 'todas') {
-            const claseSeleccionada = clases.find(c => c.id == claseFiltro);
-            if (claseSeleccionada) {
-                filtrados = filtrados.filter(e => e.clases.includes(claseSeleccionada.nombre));
-            }
-        }
-
-        // Filtro por nivel
         const nivelFiltro = document.getElementById('filtroNivel')?.value || 'todos';
         if (nivelFiltro !== 'todos') {
             filtrados = filtrados.filter(e => {
@@ -3187,7 +3380,6 @@ async function cargarEstudiantes() {
             });
         }
 
-        // Filtro por nombre
         const nombreFiltro = document.getElementById('filtroNombre')?.value?.toLowerCase() || '';
         if (nombreFiltro) {
             filtrados = filtrados.filter(e => 
@@ -3196,38 +3388,16 @@ async function cargarEstudiantes() {
             );
         }
 
-        // 5. Actualizar contador
         const totalSpan = document.getElementById("totalEstudiantesCount");
         if (totalSpan) {
             totalSpan.textContent = filtrados.length;
         }
 
-        // 6. Mostrar información del filtro
-        const filtroInfo = document.getElementById('filtroInfo');
-        if (filtroInfo) {
-            let info = '';
-            if (claseFiltro !== 'todas') {
-                const clase = clases.find(c => c.id == claseFiltro);
-                info += `en "${clase?.nombre || ''}"`;
-            }
-            if (nivelFiltro !== 'todos') {
-                info += info ? ` · ${nivelFiltro}` : `${nivelFiltro}`;
-            }
-            if (nombreFiltro) {
-                info += info ? ` · "${nombreFiltro}"` : `"${nombreFiltro}"`;
-            }
-            filtroInfo.textContent = info ? `(${info})` : '';
-        }
-
-        // 7. Renderizar estudiantes filtrados
         if (filtrados.length === 0) {
             container.innerHTML = `
-                <div class="empty-state" style="grid-column: 1 / -1;">
-                    <strong>No hay estudiantes que coincidan con los filtros</strong>
-                    <p>Intenta con otros criterios de búsqueda.</p>
-                    <button class="text-button" onclick="limpiarFiltros()" style="margin-top: 12px;">
-                        ✕ Limpiar filtros
-                    </button>
+                <div class="empty-state">
+                    <strong>No hay estudiantes activos</strong>
+                    <p>Los estudiantes que crees aparecerán aquí.</p>
                 </div>
             `;
             return;
@@ -3243,12 +3413,16 @@ async function cargarEstudiantes() {
                     <div class="estudiante-avatar">${iniciales}</div>
                     <div class="estudiante-info">
                         <h4>${escapeHtml(est.nombre)} ${escapeHtml(est.apellido)}</h4>
-                        <p>${escapeHtml(est.email || 'Sin email')} · ${est.claseNombres}</p>
+                        <p>${escapeHtml(est.email || 'Sin email')}</p>
                     </div>
                     <span class="estudiante-badge ${nivelClass}">${nivel}</span>
                     <div class="estudiante-actions">
-                        <button class="btn-ver" onclick="verEstudiante(${est.id})" title="Ver">👁️</button>
-                        <button class="btn-eliminar" onclick="eliminarEstudiante(${est.id})" title="Eliminar">🗑️</button>
+                        <button onclick="abrirModalCambiarPasswordEstudiante(${est.id}, '${escapeHtml(est.nombre)} ${escapeHtml(est.apellido)}')" title="Cambiar contraseña" style="color: var(--blue-dark); background: var(--blue-soft); padding: 5px 12px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                            🔑
+                        </button>
+                        <button onclick="desactivarEstudianteGeneral(${est.id})" title="Desactivar" style="color: #d9366f; background: #fde8ee; padding: 5px 12px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                            ⛔
+                        </button>
                     </div>
                 </div>
             `;
@@ -3257,49 +3431,233 @@ async function cargarEstudiantes() {
     } catch (error) {
         console.error("Error cargando estudiantes:", error);
         container.innerHTML = `
-            <div class="empty-state" style="grid-column: 1 / -1;">
+            <div class="empty-state">
                 <strong>Error al cargar estudiantes</strong>
                 <p>${error.message}</p>
-                <button class="primary-button" onclick="cargarEstudiantes()" style="margin-top: 16px;">
-                    🔄 Reintentar
-                </button>
             </div>
         `;
     }
 }
 
 // ==========================================
-// APLICAR FILTROS
+// CARGAR ESTUDIANTES INACTIVOS DEL PROFESOR
+// ==========================================
+
+async function cargarEstudiantesInactivos() {
+    const container = document.getElementById("estudiantesInactivosGrid");
+    if (!container) return;
+    
+    container.innerHTML = '<div class="loading">Cargando estudiantes inactivos...</div>';
+
+    try {
+        const response = await fetch(`${API_URL}/estudiantes/profesor/${PROFESOR_ID}/inactivos`);
+        if (!response.ok) throw new Error("Error al cargar estudiantes inactivos.");
+        
+        const estudiantes = await response.json();
+
+        if (estudiantes.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <strong>No hay estudiantes inactivos</strong>
+                    <p>Los estudiantes desactivados aparecerán aquí.</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = estudiantes.map(est => {
+            const iniciales = `${est.nombre[0]}${est.apellido[0]}`.toUpperCase();
+            const nivel = est.esSecundaria ? 'Secundaria' : 'Primaria';
+            const nivelClass = est.esSecundaria ? 'secundaria' : 'primaria';
+            
+            return `
+                <div class="estudiante-card" style="opacity: 0.7;">
+                    <div class="estudiante-avatar">${iniciales}</div>
+                    <div class="estudiante-info">
+                        <h4>${escapeHtml(est.nombre)} ${escapeHtml(est.apellido)}</h4>
+                        <p>${escapeHtml(est.email || 'Sin email')}</p>
+                    </div>
+                    <span class="estudiante-badge ${nivelClass}">${nivel}</span>
+                    <div class="estudiante-actions">
+                        <button onclick="reactivarEstudianteGeneral(${est.id})" title="Reactivar" style="color: #155724; background: #d4edda; padding: 5px 12px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s;">
+                            ✅ Reactivar
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+    } catch (error) {
+        console.error("Error cargando inactivos:", error);
+        container.innerHTML = `
+            <div class="empty-state">
+                <strong>Error al cargar inactivos</strong>
+                <p>${error.message}</p>
+            </div>
+        `;
+    }
+}
+
+// ==========================================
+// DESACTIVAR ESTUDIANTE (GENERAL)
+// ==========================================
+
+async function desactivarEstudianteGeneral(estudianteId) {
+    const confirmacion = await mostrarModalConfirmacion(
+        "¿Desactivar estudiante?",
+        "El estudiante no podrá acceder a la plataforma hasta que lo reactives.",
+        "⛔ Sí, desactivar",
+        "#d9366f",
+        "⛔"
+    );
+
+    if (!confirmacion) return;
+
+    try {
+        const response = await fetch(`${API_URL}/estudiantes/${estudianteId}/desactivar`, {
+            method: "PATCH"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.mensaje || "Error al desactivar estudiante.");
+        }
+
+        mostrarNotificacion("✅ Estudiante desactivado correctamente", "success");
+        
+        await Promise.all([
+            cargarEstudiantes(),
+            cargarEstudiantesInactivos()
+        ]);
+
+    } catch (error) {
+        console.error("Error:", error);
+        mostrarNotificacion("❌ " + error.message, "error");
+    }
+}
+// ==========================================
+// REACTIVAR ESTUDIANTE (GENERAL)
+// ==========================================
+
+async function reactivarEstudianteGeneral(estudianteId) {
+    const confirmacion = await mostrarModalConfirmacion(
+        "¿Reactivar estudiante?",
+        "El estudiante podrá acceder nuevamente a la plataforma.",
+        "✅ Sí, reactivar",
+        "#2ca66f",
+        "✅"
+    );
+
+    if (!confirmacion) return;
+
+    try {
+        const response = await fetch(`${API_URL}/estudiantes/${estudianteId}/reactivar`, {
+            method: "PATCH"
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.mensaje || "Error al reactivar estudiante.");
+        }
+
+        mostrarNotificacion("✅ Estudiante reactivado correctamente", "success");
+        
+        await Promise.all([
+            cargarEstudiantes(),
+            cargarEstudiantesInactivos()
+        ]);
+
+    } catch (error) {
+        console.error("Error:", error);
+        mostrarNotificacion("❌ " + error.message, "error");
+    }
+}
+
+// ==========================================
+// CAMBIAR CONTRASEÑA DE ESTUDIANTE
+// ==========================================
+
+function abrirModalCambiarPasswordEstudiante(estudianteId, nombreEstudiante) {
+    const modal = document.getElementById("modalCambiarPasswordEstudiante");
+    if (!modal) return;
+    
+    document.getElementById("cambiarPasswordEstudianteId").value = estudianteId;
+    document.getElementById("cambiarPasswordEstudianteInfo").textContent = `Cambiar contraseña de: ${nombreEstudiante}`;
+    document.getElementById("formCambiarPasswordEstudiante").reset();
+    document.getElementById("cambiarPasswordEstudianteMessage").textContent = "";
+    
+    modal.classList.add("show");
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("formCambiarPasswordEstudiante");
+    if (form) {
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const estudianteId = document.getElementById("cambiarPasswordEstudianteId").value;
+            const nuevaPassword = document.getElementById("nuevaPasswordEstudiante").value;
+            const confirmarPassword = document.getElementById("confirmarPasswordEstudiante").value;
+            const message = document.getElementById("cambiarPasswordEstudianteMessage");
+            
+            if (nuevaPassword.length < 6) {
+                message.textContent = "La contraseña debe tener al menos 6 caracteres.";
+                message.style.color = "#d9366f";
+                return;
+            }
+            
+            if (nuevaPassword !== confirmarPassword) {
+                message.textContent = "Las contraseñas no coinciden.";
+                message.style.color = "#d9366f";
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_URL}/estudiantes/${estudianteId}/password`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        nuevaPassword: nuevaPassword
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.mensaje || "Error al cambiar contraseña.");
+                }
+
+                message.textContent = "✅ Contraseña actualizada correctamente.";
+                message.style.color = "#2ca66f";
+                
+                setTimeout(() => {
+                    cerrarModal("modalCambiarPasswordEstudiante");
+                }, 1000);
+
+            } catch (error) {
+                console.error("Error:", error);
+                message.textContent = "❌ " + error.message;
+                message.style.color = "#d9366f";
+            }
+        });
+    }
+});
+
+// ==========================================
+// APLICAR FILTROS (ACTUALIZADO)
 // ==========================================
 
 function aplicarFiltros() {
-    // Guardar estado de filtros en localStorage
-    const filtros = {
-        clase: document.getElementById('filtroClase')?.value || 'todas',
-        nivel: document.getElementById('filtroNivel')?.value || 'todos',
-        nombre: document.getElementById('filtroNombre')?.value || ''
-    };
-    localStorage.setItem('filtrosEstudiantes', JSON.stringify(filtros));
-    
     cargarEstudiantes();
 }
-
-// ==========================================
-// LIMPIAR FILTROS
-// ==========================================
 
 function limpiarFiltros() {
-    document.getElementById('filtroClase').value = 'todas';
     document.getElementById('filtroNivel').value = 'todos';
     document.getElementById('filtroNombre').value = '';
-    localStorage.removeItem('filtrosEstudiantes');
     cargarEstudiantes();
 }
-
-// ==========================================
-// RESTAURAR FILTROS GUARDADOS
-// ==========================================
-
 function restaurarFiltros() {
     const filtrosGuardados = localStorage.getItem('filtrosEstudiantes');
     if (filtrosGuardados) {
@@ -3318,11 +3676,8 @@ function restaurarFiltros() {
     }
 }
 
-// ==========================================
-// MODAL CREAR ESTUDIANTE
-// ==========================================
-
 function abrirModalCrearEstudiante() {
+    // ✅ Abrir el modal correcto para CREAR estudiante
     const modal = document.getElementById("modalCrearEstudiante");
     if (!modal) {
         console.error("Modal Crear Estudiante no encontrado");
@@ -3332,68 +3687,286 @@ function abrirModalCrearEstudiante() {
     document.getElementById("formCrearEstudiante")?.reset();
     document.getElementById("estudianteMessage").textContent = "";
 }
+// ==========================================
+// CREAR ESTUDIANTE (desde modalCrearEstudiante)
+// ==========================================
 
 document.addEventListener("DOMContentLoaded", function() {
     const form = document.getElementById("formCrearEstudiante");
     if (form) {
-        form.addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const nombre = document.getElementById("estudianteNombre").value.trim();
-            const apellido = document.getElementById("estudianteApellido").value.trim();
-            const email = document.getElementById("estudianteEmail").value.trim();
-            const password = document.getElementById("estudiantePassword").value;
-            const esSecundaria = document.getElementById("estudianteNivel").value === "true";
-            const message = document.getElementById("estudianteMessage");
-            
-            if (!nombre || !apellido || !email || !password) {
-                message.textContent = "Todos los campos son obligatorios.";
-                message.style.color = "#d9366f";
-                return;
-            }
-            
-            if (password.length < 6) {
-                message.textContent = "La contraseña debe tener al menos 6 caracteres.";
-                message.style.color = "#d9366f";
-                return;
-            }
-            
-            try {
-                const response = await fetch(`${API_URL}/estudiantes/registro`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        nombre,
-                        apellido,
-                        email,
-                        password,
-                        esSecundaria
-                    })
-                });
-                
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.mensaje || "Error al crear estudiante.");
-                }
-                
-                message.textContent = "✅ Estudiante creado correctamente.";
-                message.style.color = "#2ca66f";
-                
-                cerrarModal("modalCrearEstudiante");
-                
-                // Recargar estudiantes
-                await cargarEstudiantes();
-                await loadStudentsOverview();
-                await loadClasses();
-                
-            } catch (error) {
-                message.textContent = "❌ " + error.message;
-                message.style.color = "#d9366f";
-            }
-        });
+        form.removeEventListener("submit", handleCrearEstudiante);
+        form.addEventListener("submit", handleCrearEstudiante);
     }
 });
+
+async function handleCrearEstudiante(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const submitBtn = document.querySelector('#formCrearEstudiante button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Creando...";
+    }
+
+    const nombre = document.getElementById("estudianteNombre2").value.trim();
+    const apellido = document.getElementById("estudianteApellido2").value.trim();
+    const password = document.getElementById("estudiantePassword2").value;
+    const esSecundaria = document.getElementById("estudianteNivel2").value === "true";
+    const message = document.getElementById("estudianteMessage");
+
+    if (!nombre || !apellido || !password) {
+        message.textContent = "Todos los campos son obligatorios.";
+        message.style.color = "#d9366f";
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Crear Estudiante";
+        }
+        return;
+    }
+
+    if (password.length < 6) {
+        message.textContent = "La contraseña debe tener al menos 6 caracteres.";
+        message.style.color = "#d9366f";
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Crear Estudiante";
+        }
+        return;
+    }
+
+    if (!esSecundaria && esSecundaria !== false) {
+        message.textContent = "Selecciona un nivel.";
+        message.style.color = "#d9366f";
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Crear Estudiante";
+        }
+        return;
+    }
+
+    try {
+        // ✅ NO ENVIAR EMAIL, el backend lo generará
+        const response = await fetch(`${API_URL}/estudiantes/registro`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nombre,
+                apellido,
+                password,
+                esSecundaria,
+                profesorId: PROFESOR_ID
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.mensaje || "Error al crear estudiante.");
+        }
+
+        message.textContent = `✅ Estudiante creado correctamente. Correo: ${data.email}`;
+        message.style.color = "#2ca66f";
+
+        // ✅ Actualizar el campo de email con el real
+        document.getElementById("estudianteEmail2").value = data.email;
+
+        cerrarModal("modalCrearEstudiante");
+        await Promise.all([
+            cargarEstudiantes(),
+            loadStudentsOverview(),
+            loadClasses()
+        ]);
+
+        document.getElementById("formCrearEstudiante").reset();
+
+    } catch (error) {
+        message.textContent = "❌ " + error.message;
+        message.style.color = "#d9366f";
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Crear Estudiante";
+        }
+    }
+}
+// ==========================================
+// PREVISUALIZAR CORREO ESTUDIANTE
+// ==========================================
+
+async function previsualizarCorreoEstudiante() {
+    const nombre = document.getElementById("estudianteNombre").value.trim();
+    const apellido = document.getElementById("estudianteApellido").value.trim();
+    const emailInput = document.getElementById("estudianteEmail");
+    const year = "26";
+
+    if (!nombre || !apellido) {
+        emailInput.value = "";
+        emailInput.placeholder = "Completa nombre y apellido";
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/estudiantes/todos`);
+        if (!response.ok) throw new Error("Error al obtener estudiantes.");
+        const estudiantes = await response.json();
+        
+        let maxId = 0;
+        estudiantes.forEach(e => {
+            if (e.id > maxId) maxId = e.id;
+        });
+        const nextId = maxId + 1;
+
+        const email = `${nombre.toLowerCase()}.${apellido.toLowerCase()}${year}${nextId}@estu.com`;
+        emailInput.value = email;
+        emailInput.style.color = "#777296";
+
+    } catch (error) {
+        console.error("Error previsualizando correo:", error);
+        const timestamp = Date.now().toString().slice(-4);
+        emailInput.value = `${nombre.toLowerCase()}.${apellido.toLowerCase()}${year}${timestamp}@estu.com`;
+    }
+}
+// ==========================================
+// PREVISUALIZAR CORREO ESTUDIANTE 2 (para modalCrearEstudiante)
+// ==========================================
+
+async function previsualizarCorreoEstudiante2() {
+    const nombre = document.getElementById("estudianteNombre2").value.trim();
+    const apellido = document.getElementById("estudianteApellido2").value.trim();
+    const emailInput = document.getElementById("estudianteEmail2");
+    const year = "26";
+
+    if (!nombre || !apellido) {
+        emailInput.value = "";
+        emailInput.placeholder = "Completa nombre y apellido";
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_URL}/estudiantes/todos`);
+        if (!response.ok) throw new Error("Error al obtener estudiantes.");
+        const estudiantes = await response.json();
+        
+        let maxId = 0;
+        estudiantes.forEach(e => {
+            if (e.id > maxId) maxId = e.id;
+        });
+        const nextId = maxId + 1;
+
+        const email = `${nombre.toLowerCase()}.${apellido.toLowerCase()}${year}${nextId}@estu.com`;
+        emailInput.value = email;
+        emailInput.style.color = "#777296";
+
+    } catch (error) {
+        console.error("Error previsualizando correo:", error);
+        const timestamp = Date.now().toString().slice(-4);
+        emailInput.value = `${nombre.toLowerCase()}.${apellido.toLowerCase()}${year}${timestamp}@estu.com`;
+    }
+}
+// ==========================================
+// CREAR ESTUDIANTE (con correo automático)
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("formAgregarEstudiante");
+    if (form) {
+        form.removeEventListener("submit", handleAgregarEstudiante);
+        form.addEventListener("submit", handleAgregarEstudiante);
+    }
+});
+
+async function handleAgregarEstudiante(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const submitBtn = document.querySelector('#formAgregarEstudiante button[type="submit"]');
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = "Agregando...";
+    }
+
+    const nombre = document.getElementById("estudianteNombre").value.trim();
+    const apellido = document.getElementById("estudianteApellido").value.trim();
+    const password = document.getElementById("estudiantePassword").value;
+    const esSecundaria = document.getElementById("estudianteNivel").value === "true";
+    const message = document.getElementById("estudianteMessage");
+
+    if (!nombre || !apellido || !password) {
+        message.textContent = "Todos los campos son obligatorios.";
+        message.style.color = "#d9366f";
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Agregar Estudiante";
+        }
+        return;
+    }
+
+    if (password.length < 6) {
+        message.textContent = "La contraseña debe tener al menos 6 caracteres.";
+        message.style.color = "#d9366f";
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Agregar Estudiante";
+        }
+        return;
+    }
+
+    if (!esSecundaria && esSecundaria !== false) {
+        message.textContent = "Selecciona un nivel.";
+        message.style.color = "#d9366f";
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Agregar Estudiante";
+        }
+        return;
+    }
+
+    try {
+        // ✅ NO ENVIAR EMAIL, el backend lo generará
+        const response = await fetch(`${API_URL}/estudiantes/registro`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                nombre,
+                apellido,
+                password,
+                esSecundaria,
+                profesorId: PROFESOR_ID
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.mensaje || "Error al crear estudiante.");
+        }
+
+        message.textContent = `✅ Estudiante creado correctamente. Correo: ${data.email}`;
+        message.style.color = "#2ca66f";
+
+        // ✅ Actualizar el campo de email con el real
+        document.getElementById("estudianteEmail").value = data.email;
+
+        cerrarModal("agregarEstudianteModal");
+        await Promise.all([
+            cargarEstudiantes(),
+            loadStudentsOverview(),
+            loadClasses()
+        ]);
+
+        document.getElementById("formAgregarEstudiante").reset();
+
+    } catch (error) {
+        message.textContent = "❌ " + error.message;
+        message.style.color = "#d9366f";
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "Agregar Estudiante";
+        }
+    }
+}
 
 // ==========================================
 // VER ESTUDIANTE
@@ -3403,58 +3976,38 @@ function verEstudiante(id) {
     mostrarNotificacion(`👁️ Ver estudiante ID: ${id} (Próximamente: detalle)`, "info");
 }
 
-// ==========================================
-// ELIMINAR ESTUDIANTE
-// ==========================================
 
-async function eliminarEstudiante(id) {
-    if (!confirm("¿Estás seguro de eliminar este estudiante?")) return;
-    
-    try {
-        // Nota: Puede que necesites un endpoint DELETE /api/estudiantes/{id}
-        // Si no existe, puedes desactivarlo en lugar de eliminarlo
-        mostrarNotificacion("⚠️ Eliminación de estudiantes pendiente (soft delete)", "info");
-        await cargarEstudiantes();
-        
-    } catch (error) {
-        alert("❌ " + error.message);
-    }
-}
+
 
 // ==========================================
-// CARGAR DASHBOARD - ESTADÍSTICAS (SIMPLIFICADO)
+// CARGAR DASHBOARD - ESTADÍSTICAS (SOLO PROFESOR)
 // ==========================================
 
 async function cargarDashboardEstadisticas() {
     try {
-        // Obtener todos los estudiantes para contar
-        const estudiantesResponse = await fetch(`${API_URL}/estudiantes/todos`);
-        const estudiantes = await estudiantesResponse.json();
+        // ✅ USAR ESTUDIANTES DEL PROFESOR
+        const estudiantesResponse = await fetch(`${API_URL}/estudiantes/profesor/${PROFESOR_ID}`);
+        const estudiantes = estudiantesResponse.ok ? await estudiantesResponse.json() : [];
 
         // Obtener misiones para contar
         const misionesResponse = await fetch(`${API_URL}/misiones`);
-        const misiones = await misionesResponse.json();
+        const misiones = misionesResponse.ok ? await misionesResponse.json() : [];
 
-        // Total de estudiantes y misiones
+        // Total de estudiantes del profesor
         const totalEstudiantes = estudiantes.length;
-        const totalMisiones = misiones.length;
 
-        // Actualizar tarjetas (solo los IDs que existen)
+        // Actualizar tarjetas
         const totalStudentsEl = document.getElementById('totalStudents');
         if (totalStudentsEl) totalStudentsEl.textContent = totalEstudiantes;
 
-        // NOTA: totalClasses ya lo actualiza loadClasses()
-        // NOTA: dashTotalCompletadas y dashTotalPuntos se actualizan con datos reales
-
-        // Para historias completadas y puntos, usamos datos de Maria (estudiante con progreso)
-        // Idealmente deberías tener un endpoint que devuelva esto, pero por ahora usamos datos fijos
+        // Para historias completadas y puntos
         const dashTotalCompletadasEl = document.getElementById('dashTotalCompletadas');
         const dashTotalPuntosEl = document.getElementById('dashTotalPuntos');
 
-        if (dashTotalCompletadasEl) dashTotalCompletadasEl.textContent = "9";
-        if (dashTotalPuntosEl) dashTotalPuntosEl.textContent = "85";
+        if (dashTotalCompletadasEl) dashTotalCompletadasEl.textContent = "0";
+        if (dashTotalPuntosEl) dashTotalPuntosEl.textContent = "0";
 
-        // Renderizar progreso por estudiante
+        // Renderizar progreso por estudiante (solo del profesor)
         renderizarProgresoEstudiantesDashboard(estudiantes);
 
     } catch (error) {
@@ -3466,42 +4019,25 @@ function renderizarProgresoEstudiantesDashboard(estudiantes) {
     const container = document.getElementById('dashProgresoEstudiantes');
     if (!container) return;
 
-    // Datos de progreso fijos (basados en Maria)
-    const datosProgreso = {
-        2: { completadas: 9, puntos: 85 },
-        1: { completadas: 0, puntos: 0 },
-        3: { completadas: 0, puntos: 0 },
-        4: { completadas: 0, puntos: 0 }
-    };
+    if (!estudiantes || estudiantes.length === 0) {
+        container.innerHTML = `<div class="empty-state"><strong>No hay estudiantes registrados</strong><p>Crea estudiantes desde la sección "Estudiantes".</p></div>`;
+        return;
+    }
 
-    const estudiantesConProgreso = estudiantes.map(est => ({
-        ...est,
-        completadas: datosProgreso[est.id]?.completadas || 0,
-        puntos: datosProgreso[est.id]?.puntos || 0
-    }));
-
-    // Ordenar por puntos
-    estudiantesConProgreso.sort((a, b) => b.puntos - a.puntos);
-
-    const maxPuntos = estudiantesConProgreso[0]?.puntos || 1;
-
-    container.innerHTML = estudiantesConProgreso.map(est => {
+    // Sin datos de progreso fijos, mostrar solo lista de estudiantes
+    container.innerHTML = estudiantes.map(est => {
         const iniciales = `${est.nombre[0]}${est.apellido[0]}`.toUpperCase();
-        const porcentaje = maxPuntos > 0 ? (est.puntos / maxPuntos) * 100 : 0;
-        const nivel = est.puntos >= 70 ? 'Excelente' : est.puntos >= 40 ? 'Bueno' : est.puntos > 0 ? 'En proceso' : 'Sin actividad';
-        const nivelColor = est.puntos >= 70 ? '#2ca66f' : est.puntos >= 40 ? '#f59e0b' : est.puntos > 0 ? '#3b8fb8' : '#777296';
-
+        
         return `
             <div class="progreso-item">
                 <div class="progreso-avatar">${iniciales}</div>
                 <div class="progreso-info">
-                    <h4>${est.nombre} ${est.apellido}</h4>
-                    <p>${est.completadas} historias completadas · ${nivel}</p>
+                    <h4>${escapeHtml(est.nombre)} ${escapeHtml(est.apellido)}</h4>
+                    <p>${escapeHtml(est.email || 'Sin email')}</p>
                 </div>
-                <div class="progreso-bar">
-                    <div class="fill" style="width: ${porcentaje}%; background: ${nivelColor};"></div>
+                <div class="progreso-puntos" style="color: var(--text-light); font-size: 12px;">
+                    ${est.esSecundaria ? 'Secundaria' : 'Primaria'}
                 </div>
-                <div class="progreso-puntos">${est.puntos} pts</div>
             </div>
         `;
     }).join('');
@@ -3813,12 +4349,128 @@ function renderizarDestacados(estudiantes) {
 }
 
 // ==========================================
-// EXPORTAR REPORTE
+// MODAL DE CONFIRMACIÓN PERSONALIZADO
 // ==========================================
 
-function exportarReporte() {
-    mostrarNotificacion('📥 Reporte exportado como CSV', 'success');
-    // Aquí se puede implementar la generación de CSV/PDF
+function mostrarModalConfirmacion(titulo, mensaje, textoBoton, colorBoton, icono = "⚠️") {
+    return new Promise((resolve) => {
+        // Eliminar modales anteriores
+        document.querySelectorAll('.confirm-overlay').forEach(el => el.remove());
+
+        const overlay = document.createElement("div");
+        overlay.className = "confirm-overlay";
+        overlay.style.cssText = `
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            background: rgba(35, 25, 75, 0.5);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        `;
+
+        overlay.innerHTML = `
+            <div style="
+                width: 100%;
+                max-width: 420px;
+                background: white;
+                border-radius: 20px;
+                padding: 30px;
+                box-shadow: 0 25px 70px rgba(30, 20, 70, 0.25);
+                animation: scaleIn 0.3s ease;
+                text-align: center;
+            ">
+                <div style="
+                    width: 60px;
+                    height: 60px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 20px;
+                    background: ${colorBoton}20;
+                    color: ${colorBoton};
+                    font-size: 28px;
+                    margin: 0 auto 15px;
+                ">${icono}</div>
+                
+                <h3 style="font-size: 19px; margin-bottom: 10px; color: var(--text);">${titulo}</h3>
+                <p style="font-size: 14px; color: var(--text-light); margin-bottom: 25px; line-height: 1.5;">${mensaje}</p>
+                
+                <div style="display: flex; gap: 10px;">
+                    <button id="confirmCancelar" style="
+                        flex: 1;
+                        padding: 12px;
+                        border: 1.5px solid var(--border);
+                        border-radius: 10px;
+                        background: white;
+                        color: var(--text);
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: 0.2s;
+                    ">Cancelar</button>
+                    
+                    <button id="confirmAceptar" style="
+                        flex: 1;
+                        padding: 12px;
+                        border: none;
+                        border-radius: 10px;
+                        background: ${colorBoton};
+                        color: white;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: 0.2s;
+                    ">${textoBoton}</button>
+                </div>
+            </div>
+        `;
+
+        document.body.appendChild(overlay);
+
+        // Animaciones
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; }
+                to { opacity: 1; }
+            }
+            @keyframes scaleIn {
+                from { opacity: 0; transform: scale(0.9); }
+                to { opacity: 1; transform: scale(1); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+
+        // Eventos
+        overlay.querySelector("#confirmCancelar").addEventListener("click", () => {
+            overlay.remove();
+            resolve(false);
+        });
+
+        overlay.querySelector("#confirmAceptar").addEventListener("click", () => {
+            overlay.remove();
+            resolve(true);
+        });
+
+        // Cerrar al hacer clic fuera
+        overlay.addEventListener("click", (e) => {
+            if (e.target === overlay) {
+                overlay.remove();
+                resolve(false);
+            }
+        });
+
+        // Cerrar con Escape
+        const handleEscape = (e) => {
+            if (e.key === "Escape") {
+                overlay.remove();
+                document.removeEventListener("keydown", handleEscape);
+                resolve(false);
+            }
+        };
+        document.addEventListener("keydown", handleEscape);
+    });
 }
 
 // ==========================================

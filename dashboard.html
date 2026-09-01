@@ -41,7 +41,7 @@
                     class="menu-item active"
                     data-section="inicio"
                 >
-                    <span class="menu-icon">⌂</span>
+                    <span class="menu-icon">📍</span>
                     <span>Inicio</span>
                 </a>
 
@@ -50,7 +50,7 @@
                     class="menu-item"
                     data-section="clases"
                 >
-                    <span class="menu-icon">▣</span>
+                    <span class="menu-icon">📚</span>
                     <span>Mis clases</span>
                 </a>
 
@@ -59,7 +59,7 @@
                     class="menu-item"
                     data-section="contenido"
                 >
-                    <span class="menu-icon">📚</span>
+                    <span class="menu-icon">📋</span>
                     <span>Contenido</span>
                 </a>
 
@@ -68,7 +68,7 @@
                     class="menu-item"
                     data-section="misiones"
                 >
-                    <span class="menu-icon">◇</span>
+                    <span class="menu-icon">🎯</span>
                     <span>Misiones</span>
                 </a>
 
@@ -77,7 +77,7 @@
                     class="menu-item"
                     data-section="estudiantes"
                 >
-                    <span class="menu-icon">♧</span>
+                    <span class="menu-icon">🧑‍🎓</span>
                     <span>Estudiantes</span>
                 </a>
 
@@ -150,14 +150,28 @@
 <section id="inicio" class="dashboard-section active-section">
 
     <div class="welcome">
-        <div>
-            <span class="section-label">PANEL DEL PROFESOR</span>
+        <div class="welcome-content">
+            <span class="section-label">✦ PANEL DEL PROFESOR</span>
             <h1 id="welcomeMessage">¡Hola, Profesor! 👋</h1>
             <p>Administra tus clases, estudiantes y misiones desde aquí.</p>
+            <div class="welcome-tags">
+                <span>⚖ Derechos</span>
+                <span>💜 Igualdad</span>
+                <span>🌱 Respeto</span>
+            </div>
+            <button class="primary-button" id="openCreateClass" style="margin-top: 20px;">
+                + Crear clase
+            </button>
         </div>
-        <button class="primary-button" id="openCreateClass">
-            + Crear clase
-        </button>
+        <div class="welcome-visual">
+            <div class="visual-circle circle-one"></div>
+            <div class="visual-circle circle-two"></div>
+            <div class="visual-card">
+                <span>⚖</span>
+                <strong>Tu labor importa</strong>
+                <small>Formando ciudadanos</small>
+            </div>
+        </div>
     </div>
 
     <!-- ✅ ESTADÍSTICAS UNIFICADAS -->
@@ -205,57 +219,43 @@
         </div>
     </div>
 
-
-
 </section>
-            <!-- =================================
-                 MIS CLASES
-            ================================== -->
+ <!-- =================================
+     MIS CLASES
+================================== -->
 
-            <section
-                id="clases"
-                class="dashboard-section"
-            >
+<section id="clases" class="dashboard-section">
+    <div class="clases-hero">
+        <div class="clases-hero-content">
+            <span class="clases-hero-label">✦ GESTIÓN DE CLASES</span>
+            <h1>Mis clases</h1>
+            <p>Administra tus grupos, asigna misiones y haz seguimiento del aprendizaje de tus estudiantes.</p>
+            <div class="clases-hero-tags">
+                <span>👨‍🎓 Estudiantes</span>
+                <span>📚 Misiones</span>
+                <span>📊 Progreso</span>
+            </div>
+            <button class="primary-button" id="openCreateClass2" style="margin-top: 20px;">
+                + Crear clase
+            </button>
+        </div>
+        <div class="clases-hero-visual">
+            <div class="class-orbit class-orbit-one"></div>
+            <div class="class-orbit class-orbit-two"></div>
+            <div class="class-floating-card">
+                <div class="class-floating-icon">👨‍🎓</div>
+                <strong>Organiza tus grupos</strong>
+                <small>Aprende y crece</small>
+            </div>
+            <div class="class-star-one">✦</div>
+            <div class="class-star-two">✦</div>
+        </div>
+    </div>
 
-                <div class="page-header">
-
-                    <div>
-
-                        <span class="section-label">
-                            GESTIÓN
-                        </span>
-
-                        <h1>
-                            Mis clases
-                        </h1>
-
-                        <p>
-                            Administra tus grupos y estudiantes.
-                        </p>
-
-                    </div>
-
-                    <button
-                        class="primary-button"
-                        id="openCreateClass2"
-                    >
-                        + Crear clase
-                    </button>
-
-                </div>
-
-                <div
-                    id="allClasses"
-                    class="classes-grid"
-                >
-
-                    <div class="loading">
-                        Cargando clases...
-                    </div>
-
-                </div>
-
-            </section>
+    <div id="allClasses" class="classes-grid">
+        <div class="loading">Cargando clases...</div>
+    </div>
+</section>
 
                 <!-- =================================
                     DETALLE CLASE
@@ -373,146 +373,127 @@
 
             </section>
 
-            <!-- =================================
-                 CONTENIDO (Vista Jerárquica - NUEVA)
-            ================================== -->
-
-            <section
-                id="contenido"
-                class="dashboard-section"
-            >
-
-                <div class="page-header">
-
-                    <div>
-
-                        <span class="section-label">
-                            GESTIÓN DE CONTENIDO
-                        </span>
-
-                        <h1>
-                            📚 Contenido Educativo
-                        </h1>
-
-                        <p>
-                            Organiza tus misiones, historias y escenas de forma jerárquica.
-                        </p>
-
-                    </div>
-
-                    <button
-                        class="primary-button"
-                        onclick="abrirModalCrearMision()"
-                    >
-                        + Nueva Misión
-                    </button>
-
-                </div>
-
-                <!-- VISTA JERÁRQUICA -->
-
-                <div
-                    id="contenidoJerarquico"
-                    class="contenido-jerarquico"
-                >
-
-                    <div class="loading">
-                        Cargando contenido...
-                    </div>
-
-                </div>
-
-            </section>
-
-            <!-- =================================
-                 MISIONES (Vista plana)
-            ================================== -->
-
-            <section
-                id="misiones"
-                class="dashboard-section"
-            >
-
-                <div class="page-header">
-
-                    <div>
-
-                        <span class="section-label">
-                            CONTENIDO EDUCATIVO
-                        </span>
-
-                        <h1>
-                            📚 Misiones
-                        </h1>
-
-                        <p>
-                            Gestiona las misiones educativas disponibles.
-                        </p>
-
-                    </div>
-
-                    <button
-                        class="primary-button"
-                        onclick="abrirModalCrearMision()"
-                    >
-                        + Nueva Misión
-                    </button>
-
-                </div>
-
-                <!-- Contador de misiones -->
-
-                <div
-                    class="stats-mini"
-                    style="margin-bottom: 24px;"
-                >
-                    <span id="totalMisionesCount">
-                        0
-                    </span>
-                    misiones disponibles
-                </div>
-
-                <!-- Grid de misiones mejorado -->
-
-                <div
-                    id="misionesGridMejorado"
-                    class="misiones-grid-mejorado"
-                >
-
-                    <div class="loading">
-                        Cargando misiones...
-                    </div>
-
-                </div>
-
-            </section>
-
 <!-- =================================
-     ESTUDIANTES (
+     CONTENIDO (Vista Jerárquica)
+================================== -->
+
+<section id="contenido" class="dashboard-section">
+    <div class="contenido-hero">
+        <div class="contenido-hero-content">
+            <span class="contenido-hero-label">✦ GESTIÓN DE CONTENIDO</span>
+            <h1>📚 Contenido Educativo</h1>
+            <p>Organiza tus misiones, historias y escenas de forma jerárquica para crear experiencias de aprendizaje.</p>
+            <div class="contenido-hero-tags">
+                <span>📖 Historias</span>
+                <span>🎬 Escenas</span>
+                <span>⚡ Decisiones</span>
+            </div>
+            <!-- <button class="primary-button" onclick="abrirModalCrearMision()" style="margin-top: 20px;">
+                + Nueva Misión
+            </button> -->
+        </div>
+        <div class="contenido-hero-visual">
+            <div class="contenido-circle contenido-circle-one"></div>
+            <div class="contenido-circle contenido-circle-two"></div>
+            <div class="contenido-floating-card">
+                <div class="contenido-floating-icon">📖</div>
+                <strong>Crea experiencias</strong>
+                <small></small>
+            </div>
+            <div class="contenido-star-one">✦</div>
+            <div class="contenido-star-two">✦</div>
+        </div>
+    </div>
+
+    <div id="contenidoJerarquico" class="contenido-jerarquico">
+        <div class="loading">Cargando contenido...</div>
+    </div>
+</section>
+
+ <!-- =================================
+     MISIONES (Vista plana)
+================================== -->
+
+<section id="misiones" class="dashboard-section">
+    <div class="misiones-hero">
+        <div class="misiones-hero-content">
+            <span class="misiones-hero-label">✦ CONTENIDO EDUCATIVO</span>
+            <h1>📚 Misiones</h1>
+            <p>Gestiona las misiones educativas disponibles y motiva a tus estudiantes a aprender.</p>
+            <div class="misiones-hero-tags">
+                <span>🎯 Aprende</span>
+                <span>⚡ Decide</span>
+                <span>💜 Participa</span>
+            </div>
+            <button class="primary-button" onclick="abrirModalCrearMision()" style="margin-top: 20px;">
+                + Nueva Misión
+            </button>
+        </div>
+        <div class="misiones-hero-visual">
+            <div class="mision-orbit mision-orbit-one"></div>
+            <div class="mision-orbit mision-orbit-two"></div>
+            <div class="mision-floating-card">
+                <div class="mision-floating-icon">🎯</div>
+                <strong>Tu próximo reto</strong>
+                <small>Aprende jugando</small>
+            </div>
+            <div class="mision-star-one">✦</div>
+            <div class="mision-star-two">✦</div>
+        </div>
+    </div>
+
+    <div class="stats-mini" style="margin-bottom: 24px;">
+        <span id="totalMisionesCount">0</span> misiones disponibles
+    </div>
+
+    <div id="misionesGridMejorado" class="misiones-grid-mejorado">
+        <div class="loading">Cargando misiones...</div>
+    </div>
+</section>
+<!-- =================================
+     ESTUDIANTES
 ================================== -->
 
 <section id="estudiantes" class="dashboard-section">
-
-    <div class="page-header">
-        <div>
-            <span class="section-label">ESTUDIANTES</span>
+    <div class="estudiantes-hero">
+        <div class="estudiantes-hero-content">
+            <span class="estudiantes-hero-label">✦ ESTUDIANTES</span>
             <h1>👨‍🎓 Estudiantes</h1>
-            <p>Gestiona los estudiantes de tus clases.</p>
+            <p>Gestiona los estudiantes de tus clases, haz seguimiento de su progreso y motívalos a aprender.</p>
+            <div class="estudiantes-hero-tags">
+                <span>👨‍🎓 Aprende</span>
+                <span>📊 Progresa</span>
+                <span>⭐ Destaca</span>
+            </div>
+            <button class="primary-button" onclick="abrirModalCrearEstudiante()" style="margin-top: 20px;">
+                + Nuevo Estudiante
+            </button>
         </div>
-        <button class="primary-button" onclick="abrirModalCrearEstudiante()">
-            + Nuevo Estudiante
+        <div class="estudiantes-hero-visual">
+            <div class="estudiantes-circle estudiantes-circle-one"></div>
+            <div class="estudiantes-circle estudiantes-circle-two"></div>
+            <div class="estudiantes-floating-card">
+                <div class="estudiantes-floating-icon">👨‍🎓</div>
+                <strong>Forma ciudadanos</strong>
+                <small>Inspira y educa</small>
+            </div>
+            <div class="estudiantes-star-one">✦</div>
+            <div class="estudiantes-star-two">✦</div>
+        </div>
+    </div>
+
+    <!-- TABS: Activos | Inactivos -->
+    <div class="detail-tabs" style="margin-bottom: 20px;">
+        <button class="detail-tab active" data-tab="activos" onclick="switchTabEstudiantes('activos')">
+            ✅ Activos
+        </button>
+        <button class="detail-tab" data-tab="inactivos" onclick="switchTabEstudiantes('inactivos')">
+            ⛔ Inactivos
         </button>
     </div>
 
-    <!-- ✅ FILTROS -->
+    <!-- FILTROS (solo nivel y busqueda) -->
     <div class="filtros-container">
-        <div class="filtro-grupo">
-            <label>Clase</label>
-            <select id="filtroClase" onchange="aplicarFiltros()">
-                <option value="todas">Todas las clases</option>
-                <!-- Se llenan dinámicamente -->
-            </select>
-        </div>
         <div class="filtro-grupo">
             <label>Nivel</label>
             <select id="filtroNivel" onchange="aplicarFiltros()">
@@ -534,12 +515,21 @@
 
     <!-- Contador -->
     <div class="stats-mini" style="margin-bottom: 24px;">
-        <span id="totalEstudiantesCount">0</span> estudiantes <span id="filtroInfo"></span>
+        <span id="totalEstudiantesCount">0</span> estudiantes activos
     </div>
 
-    <!-- Grid de estudiantes -->
-    <div id="estudiantesGrid" class="estudiantes-grid">
-        <div class="loading">Cargando estudiantes...</div>
+    <!-- TAB: ACTIVOS -->
+    <div id="tabEstudiantesActivos" class="detail-tab-content active">
+        <div id="estudiantesGrid" class="estudiantes-grid">
+            <div class="loading">Cargando estudiantes...</div>
+        </div>
+    </div>
+
+    <!-- TAB: INACTIVOS -->
+    <div id="tabEstudiantesInactivos" class="detail-tab-content">
+        <div id="estudiantesInactivosGrid" class="estudiantes-grid">
+            <div class="loading">Cargando estudiantes inactivos...</div>
+        </div>
     </div>
 
 </section>
@@ -549,16 +539,27 @@
 ================================== -->
 
 <section id="progreso" class="dashboard-section">
-
-    <div class="page-header">
-        <div>
-            <span class="section-label">ANÁLISIS</span>
+    <div class="progreso-hero">
+        <div class="progreso-hero-content">
+            <span class="progreso-hero-label">✦ ANÁLISIS</span>
             <h1>📊 Progreso de estudiantes</h1>
-            <p>Visualiza el rendimiento y avance de tus estudiantes.</p>
+            <p>Visualiza el rendimiento y avance de tus estudiantes en tiempo real.</p>
+            <div class="progreso-hero-tags">
+                <span>📈 Analiza</span>
+                <span>🎯 Mejora</span>
+                <span>🏆 Celebra</span>
+            </div>
+            <!-- <button class="primary-button" onclick="exportarReporte()" style="background: #2ca66f; margin-top: 20px;">
+                📥 Exportar reporte
+            </button> -->
         </div>
-        <button class="primary-button" onclick="exportarReporte()" style="background: #2ca66f;">
-            📥 Exportar reporte
-        </button>
+        <div class="progreso-hero-visual">
+            <div class="progreso-chart-icon">
+                <div class="progreso-chart-glow">📊</div>
+            </div>
+            <div class="progreso-star-one">✦</div>
+            <div class="progreso-star-two">✦</div>
+        </div>
     </div>
 
     <!-- Filtro de clase -->
@@ -641,29 +642,7 @@
     </div>
 
 </section>
-<!-- <section id="estudiantes" class="dashboard-section">
 
-    <div class="page-header">
-        <div>
-            <span class="section-label">ESTUDIANTES</span>
-            <h1>👨‍🎓 Estudiantes</h1>
-            <p>Gestiona los estudiantes de tus clases.</p>
-        </div>
-        <button class="primary-button" onclick="abrirModalCrearEstudiante()">
-            + Nuevo Estudiante
-        </button>
-    </div>
-
-    <div class="stats-mini" style="margin-bottom: 24px;">
-        <span id="totalEstudiantesCount">0</span> estudiantes registrados
-    </div>
-
-     //ESTE ES EL CONTENEDOR IMPORTANTE 
-    <div id="estudiantesGrid" class="estudiantes-grid">
-        <div class="loading">Cargando estudiantes...</div>
-    </div>
-
-</section> -->
 
         </main>
 
@@ -673,150 +652,46 @@
          MODAL CREAR ESTUDIANTE
     ====================================== -->
 
-    <div
-        id="modalCrearEstudiante"
-        class="modal"
-    >
-
-        <div
-            class="modal-card"
-            style="max-width: 500px;"
-        >
-
-            <button
-                class="close-modal"
-                onclick="cerrarModal('modalCrearEstudiante')"
-            >
-                ×
-            </button>
-
-            <div class="modal-header">
-
-                <span class="modal-icon">
-                    👨‍🎓
-                </span>
-
-                <h2>
-                    Crear Estudiante
-                </h2>
-
-                <p>
-                    Ingresa los datos del nuevo estudiante.
-                </p>
-
-            </div>
-
-            <form id="formCrearEstudiante">
-
-                <div class="form-row">
-
-                    <div class="form-group half">
-
-                        <label>
-                            Nombre *
-                        </label>
-
-                        <input
-                            type="text"
-                            id="estudianteNombre"
-                            placeholder="Ej: María"
-                            required
-                        >
-
-                    </div>
-
-                    <div class="form-group half">
-
-                        <label>
-                            Apellido *
-                        </label>
-
-                        <input
-                            type="text"
-                            id="estudianteApellido"
-                            placeholder="Ej: González"
-                            required
-                        >
-
-                    </div>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>
-                        Correo electrónico *
-                    </label>
-
-                    <input
-                        type="email"
-                        id="estudianteEmail"
-                        placeholder="ejemplo@correo.com"
-                        required
-                    >
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>
-                        Contraseña *
-                    </label>
-
-                    <input
-                        type="password"
-                        id="estudiantePassword"
-                        placeholder="Mínimo 6 caracteres"
-                        required
-                        minlength="6"
-                    >
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>
-                        Nivel *
-                    </label>
-
-                    <select
-                        id="estudianteNivel"
-                        required
-                    >
-
-                        <option value="">
-                            Selecciona un nivel...
-                        </option>
-
-                        <option value="true">
-                            Secundaria
-                        </option>
-
-                        <option value="false">
-                            Primaria
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div
-                    id="estudianteMessage"
-                    class="form-message"
-                ></div>
-
-                <button
-                    type="submit"
-                    class="primary-button full"
-                >
-                    Crear Estudiante
-                </button>
-
-            </form>
-
+ <div id="modalCrearEstudiante" class="modal">
+    <div class="modal-card" style="max-width: 500px;">
+        <button class="close-modal" onclick="cerrarModal('modalCrearEstudiante')">×</button>
+        <div class="modal-header">
+            <span class="modal-icon">👨‍🎓</span>
+            <h2>Crear Estudiante</h2>
+            <p>Ingresa los datos del nuevo estudiante.</p>
         </div>
-
+        <form id="formCrearEstudiante">
+            <div class="form-row">
+                <div class="form-group half">
+                    <label>Nombre *</label>
+                    <input type="text" id="estudianteNombre2" placeholder="Nombre" required oninput="previsualizarCorreoEstudiante2()">
+                </div>
+                <div class="form-group half">
+                    <label>Apellido *</label>
+                    <input type="text" id="estudianteApellido2" placeholder="Apellido" required oninput="previsualizarCorreoEstudiante2()">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Correo electrónico (automático)</label>
+                <input type="email" id="estudianteEmail2" readonly style="background: #f0f0f0; cursor: not-allowed; color: #777296;">
+            </div>
+            <div class="form-group">
+                <label>Contraseña *</label>
+                <input type="password" id="estudiantePassword2" placeholder="Mínimo 6 caracteres" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label>Nivel *</label>
+                <select id="estudianteNivel2" required>
+                    <option value="">Selecciona un nivel...</option>
+                    <option value="true">Secundaria</option>
+                    <option value="false">Primaria</option>
+                </select>
+            </div>
+            <div id="estudianteMessage" class="form-message"></div>
+            <button type="submit" class="primary-button full">Crear Estudiante</button>
+        </form>
     </div>
+</div> 
 
     <!-- =====================================
          MODAL CREAR CLASE
@@ -988,93 +863,39 @@
     <!-- =====================================
          MODAL AGREGAR ESTUDIANTE
     ====================================== -->
-
-    <div
-        id="agregarEstudianteModal"
-        class="modal"
-    >
-
-        <div
-            class="modal-card"
-            style="max-width: 580px;"
-        >
-
-            <button
-                class="close-modal"
-                id="closeAgregarEstudiante"
-            >
-                ×
-            </button>
-
-            <div class="modal-header">
-
-                <span class="modal-icon">
-                    ♧
-                </span>
-
-                <h2>
-                    Agregar estudiante
-                </h2>
-
-                <p id="agregarEstudianteSubtexto">
-                    Selecciona un estudiante para agregar a esta clase.
-                </p>
-
-            </div>
-
-            <!-- Buscador -->
-
-            <div
-                class="form-group"
-                style="margin-bottom: 15px;"
-            >
-
-                <input
-                    type="text"
-                    id="buscadorEstudiantes"
-                    placeholder="Buscar estudiante por nombre..."
-                    style="
-                        width: 100%;
-                        height: 45px;
-                        padding: 0 14px;
-                        border: 1px solid var(--border);
-                        border-radius: 10px;
-                        outline: none;
-                        font-size: 14px;
-                    "
-                >
-
-            </div>
-
-            <div
-                id="listaEstudiantesAgregar"
-                style="max-height: 350px; overflow-y: auto;"
-            >
-
-                <div class="loading">
-                    Cargando estudiantes...
-                </div>
-
-            </div>
-
-            <div
-                style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end;"
-            >
-
-                <button
-                    class="text-button"
-                    id="cancelarAgregarEstudiante"
-                    style="padding: 10px 20px;"
-                >
-                    Cancelar
-                </button>
-
-            </div>
-
+<!-- MODAL AGREGAR ESTUDIANTE (para asignar a una clase) -->
+<div id="agregarEstudianteModal" class="modal">
+    <div class="modal-card" style="max-width: 580px;">
+        <button class="close-modal" onclick="cerrarModal('agregarEstudianteModal')">×</button>
+        <div class="modal-header">
+            <span class="modal-icon">👨‍🎓</span>
+            <h2>Agregar Estudiante a la Clase</h2>
+            <p id="agregarEstudianteSubtexto">Selecciona un estudiante para agregar a esta clase.</p>
         </div>
 
-    </div>
+        <!-- Buscador -->
+        <div class="form-group" style="margin-bottom: 15px;">
+            <input
+                type="text"
+                id="buscadorEstudiantes"
+                placeholder="Buscar estudiante por nombre..."
+                style="width: 100%; height: 45px; padding: 0 14px; border: 1px solid var(--border); border-radius: 10px; outline: none; font-size: 14px;"
+            >
+        </div>
 
+        <!-- ✅ LISTA DE ESTUDIANTES - ESTE ES EL CONTENEDOR QUE FALTA -->
+        <div id="listaEstudiantesAgregar" style="max-height: 350px; overflow-y: auto;">
+            <div class="loading">Cargando estudiantes...</div>
+        </div>
+
+        <!-- Footer -->
+        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end;">
+            <button class="text-button" id="cancelarAgregarEstudiante" style="padding: 10px 20px;" onclick="cerrarModal('agregarEstudianteModal')">
+                Cancelar
+            </button>
+        </div>
+    </div>
+</div>
     <!-- =====================================
          MODALES DE CONTENIDO
     ====================================== -->
@@ -1307,476 +1128,282 @@
 
     </div>
 
-    <!-- MODAL CREAR ESCENA (SIMPLIFICADO) -->
-
-    <div
-        id="modalCrearEscena"
-        class="modal"
-    >
-
-        <div
-            class="modal-card"
-            style="max-width: 650px; max-height: 90vh; overflow-y: auto; padding: 30px;"
-        >
-
-            <button
-                class="close-modal"
-                onclick="cerrarModal('modalCrearEscena')"
-            >
-                ×
-            </button>
-
-            <div class="modal-header">
-
-                <span class="modal-icon">
-                    🎬
-                </span>
-
-                <h2>
-                    Crear Escena
-                </h2>
-
-                <p>
-                    Ingresa el contenido y las decisiones de la escena.
-                </p>
-
-            </div>
-
-            <form id="formCrearEscena">
-
-                <!-- Historia (oculta) -->
-
-                <input
-                    type="hidden"
-                    id="escenaHistoriaId"
-                    value=""
-                >
-
-                <!-- Contenido -->
-
-                <div class="form-group">
-
-                    <label>
-                        Contenido de la escena *
-                    </label>
-
-                    <textarea
-                        id="escenaContenido"
-                        rows="4"
-                        placeholder="Describe la situación..."
-                        required
-                    ></textarea>
-
-                </div>
-
-                <!-- Opciones rápidas -->
-
-                <div class="form-row">
-
-                    <div
-                        class="form-group"
-                        style="flex: 1;"
-                    >
-
-                        <label>
-
-                            <input
-                                type="checkbox"
-                                id="escenaEsFinal"
-                            >
-
-                            🏁 Escena final
-
-                        </label>
-
-                    </div>
-
-                    <div
-                        class="form-group"
-                        style="flex: 1;"
-                    >
-
-                        <label>
-
-                            <input
-                                type="checkbox"
-                                id="escenaTienePregunta"
-                            >
-
-                            ❓ Con pregunta
-
-                        </label>
-
-                    </div>
-
-                    <div
-                        class="form-group"
-                        style="flex: 0 0 100px;"
-                    >
-
-                        <label>
-                            Orden
-                        </label>
-
-                        <input
-                            type="text"
-                            id="escenaOrden"
-                            value="1"
-                            readonly
-                            style="background: #f0f0f0; cursor: not-allowed; text-align: center;"
-                        >
-
-                    </div>
-
-                </div>
-
-                <!-- SECCIÓN DE PREGUNTA -->
-
-                <div
-                    id="preguntaSection"
-                    style="display: none; margin-top: 16px; padding: 16px; background: var(--blue-soft); border-radius: 12px; border: 1px solid #b8d4e8;"
-                >
-
-                    <h4
-                        style="margin-bottom: 12px; color: var(--text);"
-                    >
-                        ❓ Pregunta
-                    </h4>
-
-                    <div class="form-group">
-
-                        <label>
-                            Enunciado *
-                        </label>
-
-                        <input
-                            type="text"
-                            id="preguntaEnunciado"
-                            placeholder="¿Qué enseñanza nos deja esta historia?"
-                            style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px;"
-                        >
-
-                    </div>
-
-                    <div class="form-row">
-
-                        <div
-                            class="form-group"
-                            style="flex: 1;"
-                        >
-
-                            <label>
-                                Explicación
-                            </label>
-
-                            <input
-                                type="text"
-                                id="preguntaExplicacion"
-                                placeholder="Explicación de la respuesta correcta..."
-                                style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px;"
-                            >
-
-                        </div>
-
-                        <div
-                            class="form-group"
-                            style="flex: 0 0 80px;"
-                        >
-
-                            <label>
-                                Puntos
-                            </label>
-
-                            <input
-                                type="number"
-                                id="preguntaPuntos"
-                                value="5"
-                                min="0"
-                                style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 8px;"
-                            >
-
-                        </div>
-
-                    </div>
-
-                    <div class="form-group">
-
-                        <label>
-                            Respuestas *
-                        </label>
-
-                        <div id="respuestasContainerEscena">
-
-                            <div class="respuesta-item">
-
-                                <input
-                                    type="text"
-                                    class="respuesta-texto"
-                                    placeholder="Opción A"
-                                    style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;"
-                                >
-
-                                <label
-                                    style="display: flex; align-items: center; gap: 4px; font-size: 13px;"
-                                >
-
-                                    <input
-                                        type="radio"
-                                        name="respuestaCorrectaEscena"
-                                        value="0"
-                                    >
-
-                                    Correcta
-
-                                </label>
-
-                                <button
-                                    type="button"
-                                    class="btn-remove"
-                                    onclick="this.parentElement.remove()"
-                                >
-                                    ✕
-                                </button>
-
-                            </div>
-
-                            <div class="respuesta-item">
-
-                                <input
-                                    type="text"
-                                    class="respuesta-texto"
-                                    placeholder="Opción B"
-                                    style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;"
-                                >
-
-                                <label
-                                    style="display: flex; align-items: center; gap: 4px; font-size: 13px;"
-                                >
-
-                                    <input
-                                        type="radio"
-                                        name="respuestaCorrectaEscena"
-                                        value="1"
-                                    >
-
-                                    Correcta
-
-                                </label>
-
-                                <button
-                                    type="button"
-                                    class="btn-remove"
-                                    onclick="this.parentElement.remove()"
-                                >
-                                    ✕
-                                </button>
-
-                            </div>
-
-                            <div class="respuesta-item">
-
-                                <input
-                                    type="text"
-                                    class="respuesta-texto"
-                                    placeholder="Opción C"
-                                    style="flex: 1; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px;"
-                                >
-
-                                <label
-                                    style="display: flex; align-items: center; gap: 4px; font-size: 13px;"
-                                >
-
-                                    <input
-                                        type="radio"
-                                        name="respuestaCorrectaEscena"
-                                        value="2"
-                                    >
-
-                                    Correcta
-
-                                </label>
-
-                                <button
-                                    type="button"
-                                    class="btn-remove"
-                                    onclick="this.parentElement.remove()"
-                                >
-                                    ✕
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                        <button
-                            type="button"
-                            class="text-button"
-                            onclick="agregarRespuestaEscena()"
-                            style="margin-top: 8px; font-size: 13px;"
-                        >
-                            + Agregar respuesta
-                        </button>
-
-                    </div>
-
-                </div>
-
-                <div
-                    id="escenaMessage"
-                    class="form-message"
-                ></div>
-
-                <button
-                    type="submit"
-                    class="primary-button full"
-                >
-                    Crear Escena
-                </button>
-
-            </form>
-
+<!-- MODAL CREAR ESCENA (MEJORADO - SIN SELECTOR DE HISTORIA) -->
+<div id="modalCrearEscena" class="modal">
+    <div class="modal-card" style="max-width: 700px; max-height: 90vh; overflow-y: auto; padding: 35px;">
+        <button class="close-modal" onclick="cerrarModal('modalCrearEscena')">×</button>
+        
+        <div class="modal-header">
+            <span class="modal-icon">🎬</span>
+            <h2>Crear Escena</h2>
+            <p id="escenaHistoriaInfo" style="margin-top: 7px; padding: 8px 12px; background: var(--purple-soft); border-radius: 8px; font-size: 12px; color: var(--primary); font-weight: 600;">
+                <!-- Aquí se mostrará el nombre de la historia -->
+            </p>
         </div>
 
-    </div>
+        <form id="formCrearEscena">
+            <!-- Historia (oculta) -->
+            <input type="hidden" id="escenaHistoriaId" value="">
 
-    <!-- MODAL CREAR DECISIÓN -->
+            <!-- Contenido de la escena -->
+            <div class="form-group">
+                <label>📝 Contenido de la escena *</label>
+                <textarea id="escenaContenido" rows="4" placeholder="Describe la situación..." required></textarea>
+            </div>
 
-    <div
-        id="modalCrearDecision"
-        class="modal"
-    >
+            <!-- Opciones rápidas -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="escenaEsFinal">
+                        🏁 Escena final
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="escenaTienePregunta">
+                        ❓ Con pregunta
+                    </label>
+                </div>
+                <div class="form-group" style="flex: 0 0 100px;">
+                    <label>Orden</label>
+                    <input type="text" id="escenaOrden" value="1" readonly style="background: #f0f0f0; cursor: not-allowed; text-align: center;">
+                </div>
+            </div>
 
-        <div
-            class="modal-card"
-            style="max-width: 500px;"
-        >
+            <!-- SECCIÓN DE PREGUNTA MEJORADA -->
+            <div id="preguntaSection" style="display: none; margin-top: 20px; padding: 24px; background: linear-gradient(135deg, #f8f7ff 0%, #f0f8ff 100%); border-radius: 16px; border: 2px solid #e0d8f5; box-shadow: 0 4px 15px rgba(86, 54, 201, 0.08);">
+                <h4 style="margin-bottom: 20px; color: var(--primary); font-weight: 700; font-size: 16px; display: flex; align-items: center; gap: 10px; padding-bottom: 12px; border-bottom: 2px solid #e0d8f5;">
+                    ❓ Configuración de la Pregunta
+                </h4>
 
-            <button
-                class="close-modal"
-                onclick="cerrarModal('modalCrearDecision')"
-            >
-                ×
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px;">
+                        📝 Enunciado de la pregunta *
+                    </label>
+                    <input type="text" id="preguntaEnunciado" placeholder="¿Qué enseñanza nos deja esta historia?" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; outline: none; background: white; color: var(--text); font-size: 14px;">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex: 1;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px;">
+                            💡 Explicación de la respuesta
+                        </label>
+                        <input type="text" id="preguntaExplicacion" placeholder="Explica por qué es la correcta..." style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; outline: none; background: white; color: var(--text); font-size: 14px;">
+                    </div>
+                    <div class="form-group" style="flex: 0 0 100px;">
+                        <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px;">
+                            ⭐ Puntos
+                        </label>
+                        <input type="number" id="preguntaPuntos" value="5" min="0" style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; outline: none; background: white; color: var(--primary); font-size: 14px; font-weight: 700; text-align: center;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 8px;">
+                        🎯 Opciones de respuesta *
+                    </label>
+                    <div id="respuestasContainerEscena" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+                        <div class="respuesta-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: 10px; border: 1.5px solid var(--border); transition: all 0.2s ease;">
+                            <input type="text" class="respuesta-texto" placeholder="Opción A" style="flex: 1; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; background: #faf9ff;">
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; padding: 8px 12px; border-radius: 8px; background: var(--purple-soft);">
+                                <input type="radio" name="respuestaCorrectaEscena" value="0" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--green);">
+                                Correcta
+                            </label>
+                            <button type="button" class="btn-remove" onclick="this.parentElement.remove()" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 8px; background: #fde8ee; color: #d9366f; font-size: 16px; cursor: pointer;">✕</button>
+                        </div>
+                        <div class="respuesta-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: 10px; border: 1.5px solid var(--border); transition: all 0.2s ease;">
+                            <input type="text" class="respuesta-texto" placeholder="Opción B" style="flex: 1; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; background: #faf9ff;">
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; padding: 8px 12px; border-radius: 8px; background: var(--purple-soft);">
+                                <input type="radio" name="respuestaCorrectaEscena" value="1" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--green);">
+                                Correcta
+                            </label>
+                            <button type="button" class="btn-remove" onclick="this.parentElement.remove()" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 8px; background: #fde8ee; color: #d9366f; font-size: 16px; cursor: pointer;">✕</button>
+                        </div>
+                        <div class="respuesta-item" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: white; border-radius: 10px; border: 1.5px solid var(--border); transition: all 0.2s ease;">
+                            <input type="text" class="respuesta-texto" placeholder="Opción C" style="flex: 1; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; background: #faf9ff;">
+                            <label style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; padding: 8px 12px; border-radius: 8px; background: var(--purple-soft);">
+                                <input type="radio" name="respuestaCorrectaEscena" value="2" style="width: 18px; height: 18px; cursor: pointer; accent-color: var(--green);">
+                                Correcta
+                            </label>
+                            <button type="button" class="btn-remove" onclick="this.parentElement.remove()" style="width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: none; border-radius: 8px; background: #fde8ee; color: #d9366f; font-size: 16px; cursor: pointer;">✕</button>
+                        </div>
+                    </div>
+                    <button type="button" class="text-button" onclick="agregarRespuestaEscena()" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 16px; margin-top: 12px; border: 1.5px dashed var(--primary); border-radius: 10px; color: var(--primary); font-size: 13px; font-weight: 600; background: transparent; cursor: pointer;">
+                        + Agregar opción
+                    </button>
+                </div>
+
+                <div style="margin-top: 16px; padding: 12px; background: #fff8e1; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                    <small style="color: #856404; font-size: 12px;">
+                        💡 Consejo: Marca como "Correcta" la opción que los estudiantes deben elegir.
+                    </small>
+                </div>
+            </div>
+
+            <div id="escenaMessage" class="form-message"></div>
+
+            <button type="submit" class="primary-button full">
+                Crear Escena
             </button>
+        </form>
+    </div>
+</div>
 
+    <!-- MODAL CREAR DECISIONES (MEJORADO - 3 DECISIONES A LA VEZ) -->
+    <div id="modalCrearDecision" class="modal">
+        <div class="modal-card" style="max-width: 700px; max-height: 90vh; overflow-y: auto; padding: 35px;">
+            <button class="close-modal" onclick="cerrarModal('modalCrearDecision')">×</button>
+            
             <div class="modal-header">
-
-                <span class="modal-icon">
-                    ⚡
-                </span>
-
-                <h2>
-                    Crear Decisión
-                </h2>
-
-                <p>
-                    Agrega una opción para la escena.
+                <span class="modal-icon">⚡</span>
+                <h2>Crear Decisiones</h2>
+                <p id="decisionEscenaInfo" style="margin-top: 7px; padding: 8px 12px; background: var(--purple-soft); border-radius: 8px; font-size: 12px; color: var(--primary); font-weight: 600; display: none;">
+                    <!-- Aquí se mostrará la información de la escena -->
                 </p>
-
             </div>
 
             <form id="formCrearDecision">
+                <!-- Escena (oculta) -->
+                <input type="hidden" id="decisionEscenaId" value="">
 
-                <input
-                    type="hidden"
-                    id="decisionEscenaId"
-                >
+                <!-- Decisiones múltiples -->
+                <div style="display: flex; flex-direction: column; gap: 20px; margin-top: 10px;">
+                    
+                    <!-- Decisión 1 -->
+                    <div class="decision-grupo" style="background: #faf9ff; border-radius: 16px; padding: 20px; border: 2px solid var(--border); transition: all 0.3s ease;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <span style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: var(--primary); color: white; border-radius: 8px; font-weight: 700; font-size: 14px;">A</span>
+                            <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">Opción A</h4>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block;">Texto de la decisión *</label>
+                            <input type="text" class="decision-texto" data-index="0" placeholder="Ej: María decide hablar con valentía..." style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; outline: none; background: white; color: var(--text); font-size: 14px;">
+                        </div>
 
-                <div class="form-group">
+                        <div class="form-row" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                                <label style="font-size: 12px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; display: block;">¿Es correcta?</label>
+                                <select class="decision-es-correcta" data-index="0" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; background: white; color: var(--text); font-size: 13px;">
+                                    <option value="false">❌ Incorrecta</option>
+                                    <option value="true">✅ Correcta</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 0 0 100px; margin-bottom: 0;">
+                                <label style="font-size: 12px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; display: block;">Puntos</label>
+                                <input type="number" class="decision-puntos" data-index="0" value="0" min="0" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; background: white; color: var(--text); font-size: 13px; text-align: center;">
+                            </div>
+                        </div>
 
-                    <label>
-                        Texto de la decisión *
-                    </label>
+                        <div class="form-group" style="margin-bottom: 0; margin-top: 12px;">
+                            <label style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block;">Retroalimentación</label>
+                            <textarea class="decision-retroalimentacion" data-index="0" rows="2" placeholder="Mensaje al elegir esta opción..." style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; outline: none; background: white; color: var(--text); font-size: 13px; resize: vertical;"></textarea>
+                        </div>
 
-                    <input
-                        type="text"
-                        id="decisionTexto"
-                        placeholder="Ej: María debería..."
-                        required
-                    >
+                        <div class="form-group" style="margin-bottom: 0; margin-top: 12px;">
+                            <label style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block;">Siguiente Escena (opcional)</label>
+                            <select class="decision-siguiente-escena" data-index="0" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; background: white; color: var(--text); font-size: 13px;">
+                                <option value="">- Ninguna (final) -</option>
+                                <!-- Se llena dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
 
+                    <!-- Decisión 2 -->
+                    <div class="decision-grupo" style="background: #faf9ff; border-radius: 16px; padding: 20px; border: 2px solid var(--border); transition: all 0.3s ease;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <span style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: var(--blue); color: white; border-radius: 8px; font-weight: 700; font-size: 14px;">B</span>
+                            <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">Opción B</h4>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block;">Texto de la decisión *</label>
+                            <input type="text" class="decision-texto" data-index="1" placeholder="Ej: María decide quedarse callada..." style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; outline: none; background: white; color: var(--text); font-size: 14px;">
+                        </div>
+
+                        <div class="form-row" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                                <label style="font-size: 12px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; display: block;">¿Es correcta?</label>
+                                <select class="decision-es-correcta" data-index="1" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; background: white; color: var(--text); font-size: 13px;">
+                                    <option value="false">❌ Incorrecta</option>
+                                    <option value="true">✅ Correcta</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 0 0 100px; margin-bottom: 0;">
+                                <label style="font-size: 12px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; display: block;">Puntos</label>
+                                <input type="number" class="decision-puntos" data-index="1" value="0" min="0" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; background: white; color: var(--text); font-size: 13px; text-align: center;">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0; margin-top: 12px;">
+                            <label style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block;">Retroalimentación</label>
+                            <textarea class="decision-retroalimentacion" data-index="1" rows="2" placeholder="Mensaje al elegir esta opción..." style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; outline: none; background: white; color: var(--text); font-size: 13px; resize: vertical;"></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0; margin-top: 12px;">
+                            <label style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block;">Siguiente Escena (opcional)</label>
+                            <select class="decision-siguiente-escena" data-index="1" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; background: white; color: var(--text); font-size: 13px;">
+                                <option value="">- Ninguna (final) -</option>
+                                <!-- Se llena dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Decisión 3 -->
+                    <div class="decision-grupo" style="background: #faf9ff; border-radius: 16px; padding: 20px; border: 2px solid var(--border); transition: all 0.3s ease;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <span style="width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: var(--pink); color: white; border-radius: 8px; font-weight: 700; font-size: 14px;">C</span>
+                            <h4 style="margin: 0; font-size: 15px; font-weight: 700; color: var(--text);">Opción C</h4>
+                        </div>
+                        
+                        <div class="form-group" style="margin-bottom: 12px;">
+                            <label style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block;">Texto de la decisión *</label>
+                            <input type="text" class="decision-texto" data-index="2" placeholder="Ej: María decide pedir ayuda..." style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; outline: none; background: white; color: var(--text); font-size: 14px;">
+                        </div>
+
+                        <div class="form-row" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <div class="form-group" style="flex: 1; min-width: 120px; margin-bottom: 0;">
+                                <label style="font-size: 12px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; display: block;">¿Es correcta?</label>
+                                <select class="decision-es-correcta" data-index="2" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; background: white; color: var(--text); font-size: 13px;">
+                                    <option value="false">❌ Incorrecta</option>
+                                    <option value="true">✅ Correcta</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 0 0 100px; margin-bottom: 0;">
+                                <label style="font-size: 12px; font-weight: 600; color: var(--text-light); margin-bottom: 6px; display: block;">Puntos</label>
+                                <input type="number" class="decision-puntos" data-index="2" value="0" min="0" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; background: white; color: var(--text); font-size: 13px; text-align: center;">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0; margin-top: 12px;">
+                            <label style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block;">Retroalimentación</label>
+                            <textarea class="decision-retroalimentacion" data-index="2" rows="2" placeholder="Mensaje al elegir esta opción..." style="width: 100%; padding: 12px 14px; border: 1.5px solid var(--border); border-radius: 10px; outline: none; background: white; color: var(--text); font-size: 13px; resize: vertical;"></textarea>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 0; margin-top: 12px;">
+                            <label style="font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: block;">Siguiente Escena (opcional)</label>
+                            <select class="decision-siguiente-escena" data-index="2" style="width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; outline: none; background: white; color: var(--text); font-size: 13px;">
+                                <option value="">- Ninguna (final) -</option>
+                                <!-- Se llena dinámicamente -->
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group">
-
-                    <label>
-                        ¿Es correcta?
-                    </label>
-
-                    <select id="decisionEsCorrecta">
-
-                        <option value="true">
-                            ✅ Correcta
-                        </option>
-
-                        <option value="false">
-                            ❌ Incorrecta
-                        </option>
-
-                    </select>
-
+                <div style="margin-top: 16px; padding: 12px; background: #fff8e1; border-radius: 8px; border-left: 4px solid #f59e0b;">
+                    <small style="color: #856404; font-size: 12px;">
+                        💡 Consejo: Marca como "Correcta" la opción que representa la mejor decisión. Las otras serán incorrectas.
+                    </small>
                 </div>
 
-                <div class="form-group">
+                <div id="decisionMessage" class="form-message"></div>
 
-                    <label>
-                        Puntos
-                    </label>
-
-                    <input
-                        type="number"
-                        id="decisionPuntos"
-                        value="0"
-                        min="0"
-                    >
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>
-                        Retroalimentación
-                    </label>
-
-                    <textarea
-                        id="decisionRetroalimentacion"
-                        rows="2"
-                        placeholder="Mensaje al elegir esta opción..."
-                    ></textarea>
-
-                </div>
-
-                <div class="form-group">
-
-                    <label>
-                        Siguiente Escena (opcional)
-                    </label>
-
-                    <select id="decisionSiguienteEscena">
-
-                        <option value="">
-                            - Ninguna (final) -
-                        </option>
-
-                    </select>
-
-                </div>
-
-                <div
-                    id="decisionMessage"
-                    class="form-message"
-                ></div>
-
-                <button
-                    type="submit"
-                    class="primary-button full"
-                >
-                    Crear Decisión
-                </button>
-
+<button type="button" onclick="submitDecisionesForm(event)" class="primary-button full" style="margin-top: 20px;">
+    ⚡ Crear Decisiones
+</button>
             </form>
-
         </div>
-
     </div>
 
     <!-- MODAL CREAR PREGUNTA -->
@@ -1972,7 +1599,30 @@
         </div>
 
     </div>
-
+    <!-- MODAL CAMBIAR CONTRASEÑA ESTUDIANTE -->
+    <div id="modalCambiarPasswordEstudiante" class="modal">
+        <div class="modal-card" style="max-width: 450px;">
+            <button class="close-modal" onclick="cerrarModal('modalCambiarPasswordEstudiante')">×</button>
+            <div class="modal-header">
+                <span class="modal-icon">🔑</span>
+                <h2>Cambiar Contraseña</h2>
+                <p id="cambiarPasswordEstudianteInfo">Estudiante seleccionado</p>
+            </div>
+            <form id="formCambiarPasswordEstudiante">
+                <input type="hidden" id="cambiarPasswordEstudianteId" value="">
+                <div class="form-group">
+                    <label>Nueva contraseña *</label>
+                    <input type="password" id="nuevaPasswordEstudiante" placeholder="Mínimo 6 caracteres" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label>Confirmar contraseña *</label>
+                    <input type="password" id="confirmarPasswordEstudiante" placeholder="Repite la contraseña" required minlength="6">
+                </div>
+                <div id="cambiarPasswordEstudianteMessage" class="form-message"></div>
+                <button type="submit" class="primary-button full">🔑 Cambiar contraseña</button>
+            </form>
+        </div>
+    </div>
     <script src="js/dashboard.js"></script>
 
 </body>

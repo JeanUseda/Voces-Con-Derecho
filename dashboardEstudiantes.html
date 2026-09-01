@@ -1,173 +1,574 @@
 <!DOCTYPE html>
+
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Dashboard | Voces con Derechos</title>
 
-    <link rel="stylesheet" href="css/dashboardEstudiantes.css">
+<title>Dashboard | Voces con Derechos</title>
+
+<link rel="stylesheet" href="css/dashboardEstudiantes.css">
+
+
 </head>
 
 <body>
 
-    <div class="dashboard-estudiante">
 
-        <!-- Sidebar -->
-        <aside class="sidebar">
+<div class="dashboard-estudiante">
 
-            <div class="sidebar-logo">
-                <img src="assets/logo.png" alt="Voces con Derechos">
-            </div>
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+ <aside class="sidebar">
 
-            <nav class="sidebar-menu">
-                <a href="#inicio" class="menu-item active" data-section="inicio">
-                    <span class="menu-icon">⌂</span>
-                    <span>Inicio</span>
-                </a>
 
-                <a href="#misiones" class="menu-item" data-section="misiones">
-                    <span class="menu-icon">◇</span>
-                    <span>Mis misiones</span>
-                </a>
+<div class="sidebar-brand">
 
-                <a href="#progreso" class="menu-item" data-section="progreso">
-                    <span class="menu-icon">📊</span>
-                    <span>Mi progreso</span>
-                </a>
+    <div class="sidebar-logo">
+        <img src="assets/logo.png" alt="Voces con Derechos">
+    </div>
 
-                <a href="#logros" class="menu-item" data-section="logros">
-                    <span class="menu-icon">🏆</span>
-                    <span>Mis logros</span>
-                </a>
-            </nav>
+    <div class="sidebar-school">
+        <span class="school-dot"></span>
+        <span>Espacio estudiantil</span>
+    </div>
 
-            <div class="sidebar-bottom">
-                <a href="login.html" class="menu-item" id="cerrarSesion">
-                    <span class="menu-icon">←</span>
-                    <span>Cerrar sesión</span>
-                </a>
-            </div>
+</div>
 
-        </aside>
 
-        <!-- Contenido principal -->
-        <main class="main-content">
+<nav class="sidebar-menu">
 
-            <!-- Header -->
-            <header class="topbar">
-                <div class="topbar-user">
-                    <div class="user-avatar" id="userAvatar">ES</div>
-                    <div class="user-info">
-                        <strong id="userName">Estudiante</strong>
-                        <span>Estudiante de secundaria</span>
-                    </div>
-                </div>
-            </header>
+    <div class="menu-title">
+        MI ESPACIO
+    </div>
 
-            <!-- Sección Inicio -->
-            <section id="inicio" class="dashboard-section active-section">
+    <a href="#inicio"
+       class="menu-item active"
+       data-section="inicio">
 
-                <div class="welcome">
-                    <div>
-                        <span class="section-label">PANEL DEL ESTUDIANTE</span>
-                        <h1 id="welcomeMessage">¡Hola, Estudiante! 👋</h1>
-                        <p>Completa tus misiones y aprende sobre derechos e igualdad.</p>
-                    </div>
-                    <div class="stats-mini">
-                        <span id="totalMisiones">0</span> misiones disponibles
-                    </div>
-                </div>
+        <span class="menu-icon menu-icon-home">
+            <span>📍</span>
+        </span>
 
-                <!-- Estadísticas rápidas -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon purple">◇</div>
-                        <div>
-                            <span>Misiones totales</span>
-                            <strong id="misionesTotales">0</strong>
-                        </div>
-                    </div>
+        <span class="menu-text">
+            Inicio
+        </span>
 
-                    <div class="stat-card">
-                        <div class="stat-icon pink">✓</div>
-                        <div>
-                            <span>Completadas</span>
-                            <strong id="misionesCompletadas">0</strong>
-                        </div>
-                    </div>
+    </a>
 
-                    <div class="stat-card">
-                        <div class="stat-icon blue">⭐</div>
-                        <div>
-                            <span>Puntos totales</span>
-                            <strong id="xpTotal">0</strong>
-                        </div>
-                    </div>
-                </div>
 
-                <!-- Misiones activas -->
-                <div class="content-card">
-                    <div class="card-header">
-                        <div>
-                            <h2>Tus misiones</h2>
-                            <p>Misiones disponibles para ti.</p>
-                        </div>
-                    </div>
-                    <div id="misMisiones" class="missions-grid">
-                        <div class="loading">Cargando misiones...</div>
-                    </div>
-                </div>
+    <a href="#misiones"
+       class="menu-item"
+       data-section="misiones">
 
-            </section>
+        <span class="menu-icon menu-icon-missions">
+            <span>🎯</span>
+        </span>
 
-            <!-- Sección Mis Misiones -->
-            <section id="misiones" class="dashboard-section">
-                <div class="page-header">
-                    <div>
-                        <span class="section-label">MISIONES</span>
-                        <h1>Mis misiones</h1>
-                        <p>Todas las misiones asignadas a tus clases.</p>
-                    </div>
-                </div>
-                <div id="todasMisiones" class="missions-grid">
-                    <div class="loading">Cargando misiones...</div>
-                </div>
-            </section>
+        <span class="menu-text">
+            Mis misiones
+        </span>
 
-            <!-- Sección Progreso -->
-            <section id="progreso" class="dashboard-section">
-                <div class="page-header">
-                    <div>
-                        <span class="section-label">PROGRESO</span>
-                        <h1>Mi progreso</h1>
-                        <p>Tu avance en las misiones.</p>
-                    </div>
-                </div>
-                <div id="miProgreso" class="content-card">
-                    <div class="loading">Cargando progreso...</div>
-                </div>
-            </section>
+    </a>
 
-            <!-- Sección Logros -->
-            <section id="logros" class="dashboard-section">
-                <div class="page-header">
-                    <div>
-                        <span class="section-label">LOGROS</span>
-                        <h1>Mis logros</h1>
-                        <p>Insignias y recompensas obtenidas.</p>
-                    </div>
-                </div>
-                <div id="misLogros" class="logros-grid">
-                    <div class="loading">Cargando logros...</div>
-                </div>
-            </section>
 
-        </main>
+    <a href="#logros"
+       class="menu-item"
+       data-section="logros">
+
+        <span class="menu-icon menu-icon-achievements">
+            <span>🏅</span>
+        </span>
+
+        <span class="menu-text">
+            Mis logros
+        </span>
+
+    </a>
+
+</nav>
+
+
+<div class="sidebar-learning-card">
+
+    <div class="learning-card-icon">
+        ⚖️
+    </div>
+
+    <div class="learning-card-content">
+
+        <strong>
+            Aprende tus derechos
+        </strong>
+
+        <span>
+            Aprender hoy para construir una sociedad con respeto e igualdad.
+        </span>
 
     </div>
 
-    <script src="js/dashboardEstudiantes.js"></script>
+</div>
+
+
+<div class="sidebar-bottom">
+
+    <a href="login.html"
+       class="menu-item logout-item"
+       id="cerrarSesion">
+
+        <span class="menu-icon logout-icon">
+            <span>↪</span>
+        </span>
+
+        <span class="menu-text">
+            Cerrar sesión
+        </span>
+
+    </a>
+
+</div>
+
+
+</aside>
+
+
+
+    <!-- =========================================
+         CONTENIDO PRINCIPAL
+    ========================================== -->
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+
+            <div class="topbar-left">
+                <span class="topbar-badge">
+                    ⚖ DERECHO Y DIGNIDAD
+                </span>
+            </div>
+
+            <div class="topbar-user">
+
+                <div class="user-info">
+                    <strong id="userName">
+                        Estudiante
+                    </strong>
+
+                    <span>
+                        Estudiante de secundaria
+                    </span>
+                </div>
+
+                <div class="user-avatar" id="userAvatar">
+                    ES
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- =========================================
+             INICIO
+        ========================================== -->
+        <section id="inicio"
+                 class="dashboard-section active-section">
+
+            <!-- HERO -->
+            <div class="welcome">
+
+                <div class="welcome-content">
+
+                    <span class="section-label">
+                        ✦ PANEL DEL ESTUDIANTE
+                    </span>
+
+                    <h1 id="welcomeMessage">
+                        ¡Hola, Estudiante! 👋
+                    </h1>
+
+                    <p>
+                        Aprende, participa y descubre cómo
+                        defender tus derechos y promover
+                        la igualdad.
+                    </p>
+
+                    <div class="welcome-tags">
+                        <span>⚖ Derechos</span>
+                        <span>💜 Igualdad</span>
+                        <span>🌱 Respeto</span>
+                    </div>
+
+                </div>
+
+                <div class="welcome-visual">
+
+                    <div class="visual-circle circle-one"></div>
+                    <div class="visual-circle circle-two"></div>
+
+                    <div class="visual-card">
+                        <span>⚖</span>
+                        <strong>Tu voz importa</strong>
+                        <small>Aprende tus derechos</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ESTADÍSTICAS -->
+            <div class="stats-grid">
+
+                <div class="stat-card stat-purple">
+
+                    <div class="stat-icon">
+                        ◇
+                    </div>
+
+                    <div class="stat-content">
+                        <span>Misiones totales</span>
+                        <strong id="misionesTotales">
+                            0
+                        </strong>
+                        <small>
+                            Disponibles para ti
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card stat-green">
+
+                    <div class="stat-icon">
+                        ✓
+                    </div>
+
+                    <div class="stat-content">
+                        <span>Completadas</span>
+                        <strong id="misionesCompletadas">
+                            0
+                        </strong>
+                        <small>
+                            Historias completadas
+                        </small>
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card stat-blue">
+
+                    <div class="stat-icon">
+                        ⭐
+                    </div>
+
+                    <div class="stat-content">
+                        <span>Puntos totales</span>
+                        <strong id="xpTotal">
+                            0
+                        </strong>
+                        <small>
+                            Experiencia acumulada
+                        </small>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- PROGRESO -->
+            <div class="page-header">
+
+                <div>
+                    <span class="section-label">
+                        ✦ TU APRENDIZAJE
+                    </span>
+
+                    <h1>
+                        Mi progreso
+                    </h1>
+
+                    <p>
+                        Observa cómo avanzas en tu aprendizaje.
+                    </p>
+                </div>
+
+                <div class="progress-badge">
+                    📈 En progreso
+                </div>
+
+            </div>
+
+
+            <div id="miProgreso"
+                 class="content-card progress-card">
+
+                <div class="loading">
+                    Cargando progreso...
+                </div>
+
+            </div>
+
+
+            <!-- CONTENEDOR OCULTO
+                 Se mantiene porque el JS lo utiliza.
+                 No afecta la interfaz. -->
+            <div class="hidden-missions-container">
+                <div id="misMisiones"
+                     class="missions-grid">
+                </div>
+            </div>
+
+        </section>
+
+
+        <section id="misiones"
+                class="dashboard-section">
+
+        <!-- =========================================
+            HERO - MIS MISIONES
+        ========================================== -->
+        <div class="missions-hero">
+
+            <div class="missions-hero-content">
+
+                <span class="missions-hero-label">
+                    ✦ RETOS DE APRENDIZAJE
+                </span>
+
+                <h1>
+                    ¡Es hora del reto! 🚀
+                </h1>
+
+                <p>
+                    Explora tus misiones, toma decisiones y
+                    demuestra todo lo que has aprendido sobre
+                    derechos, igualdad y dignidad.
+                </p>
+
+                <div class="missions-hero-tags">
+
+                    <span>
+                        🎯 Aprende
+                    </span>
+
+                    <span>
+                        ⚡ Decide
+                    </span>
+
+                    <span>
+                        💜 Participa
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Elemento visual -->
+            <div class="missions-hero-visual">
+
+                <div class="mission-orbit orbit-one"></div>
+
+                <div class="mission-orbit orbit-two"></div>
+
+                <div class="mission-floating-card">
+
+                    <div class="floating-icon">
+                        🎯
+                    </div>
+
+                    <strong>
+                        Tu próximo reto
+                    </strong>
+
+                    <small>
+                        Aprende jugando
+                    </small>
+
+                </div>
+
+                <div class="floating-star star-one">
+                    ✦
+                </div>
+
+                <div class="floating-star star-two">
+                    ✦
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+            TÍTULO DE LAS MISIONES
+        ========================================== -->
+        <div class="page-header missions-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    ✦ TUS ACTIVIDADES
+                </span>
+
+        
+                <p>
+                    Completa los retos asignados por tus profesores
+                    y avanza en tu aprendizaje.
+                </p>
+
+            </div>
+
+            <div class="section-header-icon mission-section-icon">
+                ◇
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+            CONTENEDOR GENERADO POR JS
+        ========================================== -->
+        <div id="todasMisiones"
+            class="misiones-grid">
+
+            <div class="loading">
+                Cargando misiones...
+            </div>
+
+        </div>
+
+
+        </section>
+
+        <section id="logros" class="dashboard-section">
+
+
+        <!-- =========================================
+            HERO - MIS LOGROS
+        ========================================== -->
+
+        <div class="achievements-hero">
+
+            <div class="achievements-hero-content">
+
+                <span class="achievements-hero-label">
+                    ✦ RECONOCIMIENTO
+                </span>
+
+                <h1>
+                    ¡Cada logro cuenta! 🏆
+                </h1>
+
+                <p>
+                    Aquí podrás ver las insignias que has conseguido
+                    mientras aprendes sobre derechos, igualdad y
+                    dignidad.
+                </p>
+
+                <div class="achievements-hero-tags">
+
+                    <span>
+                        🏅 Supera retos
+                    </span>
+
+                    <span>
+                        ⭐ Gana puntos
+                    </span>
+
+                    <span>
+                        🔓 Desbloquea
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Elemento visual -->
+
+            <div class="achievements-hero-visual">
+
+                <div class="achievement-circle circle-one"></div>
+
+                <div class="achievement-circle circle-two"></div>
+
+                <div class="achievement-trophy">
+
+                    <div class="trophy-glow">
+                        🏆
+                    </div>
+
+                </div>
+
+                <div class="achievement-star star-achievement-one">
+                    ✦
+                </div>
+
+                <div class="achievement-star star-achievement-two">
+                    ✦
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+            ENCABEZADO
+        ========================================== -->
+
+        <div class="page-header achievements-page-header">
+
+            <div>
+
+                <span class="section-label">
+                    ✦ TUS RECOMPENSAS
+                </span>
+
+
+                <p>
+                    Insignias y recompensas que has conseguido
+                    durante tu aprendizaje.
+                </p>
+
+            </div>
+
+            <div class="section-header-icon achievement-section-icon">
+                🏆
+            </div>
+
+        </div>
+
+
+        <!-- =========================================
+            CONTENEDOR GENERADO POR JS
+        ========================================== -->
+
+        <div id="misLogros" class="logros-grid">
+
+            <div class="loading">
+                Cargando logros...
+            </div>
+
+        </div>
+
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="js/dashboardEstudiantes.js"></script>
+
 
 </body>
 </html>

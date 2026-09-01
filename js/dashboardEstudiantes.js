@@ -5,48 +5,19 @@ let misionesEstudiante = [];
 let progresoEstudiante = [];
 
 // =========================================
-// ELEMENTOS
-// =========================================
-
-// const sections = document.querySelectorAll(".dashboard-section");
-// const menuItems = document.querySelectorAll(".menu-item[data-section]");
-
-// // =========================================
-// // NAVEGACIÓN
-// // =========================================
-
-// function showSection(sectionId) {
-//     sections.forEach(section => {
-//         section.classList.remove("active-section");
-//     });
-
-//     const section = document.getElementById(sectionId);
-//     if (section) {
-//         section.classList.add("active-section");
-//     }
-
-//     menuItems.forEach(item => {
-//         item.classList.toggle(
-//             "active",
-//             item.dataset.section === sectionId
-//         );
-//     });
-// }
-
-// menuItems.forEach(item => {
-//     item.addEventListener("click", (event) => {
-//         event.preventDefault();
-//         showSection(item.dataset.section);
-//     });
-// });
-
-// =========================================
 // CERRAR SESIÓN
 // =========================================
 
 document.getElementById("cerrarSesion")?.addEventListener("click", (event) => {
     event.preventDefault();
+    // ✅ Eliminar todos los datos de sesión
+    localStorage.removeItem("usuario");
     localStorage.removeItem("estudiante");
+    localStorage.removeItem("profesor");
+    localStorage.removeItem("seccionActual");
+    localStorage.removeItem("claseActualId");
+    localStorage.removeItem("filtrosEstudiantes");
+    // ✅ Redirigir al login
     window.location.href = "login.html";
 });
 
@@ -55,23 +26,111 @@ document.getElementById("cerrarSesion")?.addEventListener("click", (event) => {
 // =========================================
 
 function verificarAutenticacion() {
+    // ✅ Primero intentar con el formato unificado
+    const usuarioData = localStorage.getItem("usuario");
+    
+    if (usuarioData) {
+        try {
+            const usuario = JSON.parse(usuarioData);
+            if (usuario.rol === "estudiante") {
+                estudianteActual = usuario;
+                return true;
+            }
+        } catch (error) {
+            console.error("Error al parsear usuario:", error);
+        }
+    }
+    
+    // ✅ Compatibilidad con formato antiguo
     const estudianteData = localStorage.getItem("estudiante");
-
-    if (!estudianteData) {
-        window.location.href = "login.html";
-        return false;
+    if (estudianteData) {
+        try {
+            estudianteActual = JSON.parse(estudianteData);
+            return true;
+        } catch (error) {
+            console.error("Error al parsear estudiante:", error);
+        }
     }
 
-    try {
-        estudianteActual = JSON.parse(estudianteData);
-        return true;
-    } catch (error) {
-        console.error("Error al parsear datos del estudiante:", error);
-        window.location.href = "login.html";
-        return false;
+    window.location.href = "login.html";
+    return false;
+}
+// =========================================
+// ELEMENTOS Y NAVEGACIÓN
+// =========================================
+
+const sections = document.querySelectorAll(".dashboard-section");
+const menuItems = document.querySelectorAll(".menu-item[data-section]");
+
+function showSection(sectionId, guardar = true) {
+
+    sections.forEach(section => {
+        section.classList.remove("active-section");
+    });
+
+    const section = document.getElementById(sectionId);
+
+    if (section) {
+        section.classList.add("active-section");
+    }
+
+    menuItems.forEach(item => {
+        item.classList.toggle(
+            "active",
+            item.dataset.section === sectionId
+        );
+    });
+
+    // Guardar la sección actual
+    if (guardar) {
+        localStorage.setItem("seccionActual", sectionId);
     }
 }
 
+
+// =========================================
+// NAVEGACIÓN DEL SIDEBAR
+// =========================================
+
+menuItems.forEach(item => {
+
+    item.addEventListener("click", (event) => {
+
+        event.preventDefault();
+
+        const sectionId = item.dataset.section;
+
+        showSection(sectionId);
+
+    });
+
+});
+
+
+// =========================================
+// RECUPERAR ÚLTIMA SECCIÓN
+// =========================================
+
+function recuperarSeccion() {
+
+    const seccionGuardada =
+        localStorage.getItem("seccionActual");
+
+    // Si existe y la sección todavía está en el HTML
+    if (
+        seccionGuardada &&
+        document.getElementById(seccionGuardada)
+    ) {
+
+        showSection(seccionGuardada, false);
+
+    } else {
+
+        // Por defecto: Inicio
+        showSection("inicio", false);
+
+    }
+}
 // =========================================
 // CARGAR DATOS DEL ESTUDIANTE
 // =========================================
@@ -113,12 +172,16 @@ async function cargarMisionesEstudiante() {
 
         console.log("Misiones del estudiante:", misionesEstudiante);
 
-        document.getElementById("misionesTotales").textContent = 
-            misionesEstudiante.length;
+const misionesTotalesElement = document.getElementById("misionesTotales");
+const totalMisionesElement = document.getElementById("totalMisiones");
 
-        document.getElementById("totalMisiones").textContent = 
-            misionesEstudiante.length;
+if (misionesTotalesElement) {
+    misionesTotalesElement.textContent = misionesEstudiante.length;
+}
 
+if (totalMisionesElement) {
+    totalMisionesElement.textContent = misionesEstudiante.length;
+}
         renderizarMisiones(
             contenedorInicio, 
             misionesEstudiante.slice(0, 3),
@@ -149,7 +212,7 @@ async function cargarMisionesEstudiante() {
 }
 
 // =========================================
-// RENDERIZAR MISIONES
+// RENDERIZAR MISIONES (CUADRÍCULA)
 // =========================================
 
 function renderizarMisiones(container, misiones, esResumen = false) {
@@ -163,21 +226,50 @@ function renderizarMisiones(container, misiones, esResumen = false) {
         return;
     }
 
-    container.innerHTML = misiones.map(mision => `
-        <div class="mission-card" onclick="window.location.href='mision-detalle.html?misionId=${mision.misionId}'">
-            <div class="mission-icon">◇</div>
-            <h3>${escapeHtml(mision.titulo)}</h3>
-            <p>${escapeHtml(mision.descripcion || 'Sin descripción')}</p>
-            <span class="mission-status pendiente">
-                📌 Pendiente
-            </span>
-            ${!esResumen ? `<small style="display: block; margin-top: 8px; color: var(--text-light);">
-                Clase: ${escapeHtml(mision.claseNombre)}
-            </small>` : ''}
-        </div>
-    `).join("");
-}
+    // ✅ Asegurar que el contenedor tenga la clase grid
+    if (!container.classList.contains('misiones-grid')) {
+        container.classList.add('misiones-grid');
+    }
 
+    container.innerHTML = misiones.map(mision => {
+        const progresoMision = progresoEstudiante.find(p => p.misionId === mision.misionId);
+        const totalHistorias = progresoMision?.totalHistorias || 0;
+        const completadas = progresoMision?.historiasCompletadas || 0;
+        const estaCompletada = progresoMision?.completada || false;
+        const puntos = progresoMision?.puntosTotales || 0;
+        
+        const estadoClase = estaCompletada ? 'completada' : 'pendiente';
+        const estadoTexto = estaCompletada ? '✅ Completada' : '📌 Pendiente';
+        
+        let progresoTexto = totalHistorias > 0 
+            ? `${completadas}/${totalHistorias} historias · ${puntos} pts`
+            : `${totalHistorias} historias`;
+
+        const botonTexto = estaCompletada ? '📖 Ver historias' : '🚀 Comenzar';
+
+        return `
+            <div class="mision-card-estudiante ${estaCompletada ? 'completada' : ''}">
+                <div class="mision-header-estudiante">
+                    <div class="mision-icon-estudiante">📚</div>
+                    <div class="mision-info-estudiante">
+                        <h3>${escapeHtml(mision.titulo)}</h3>
+                        <p>${escapeHtml(mision.descripcion || 'Sin descripción')}</p>
+                    </div>
+                    <span class="mision-estado ${estadoClase}">${estadoTexto}</span>
+                </div>
+                <div class="mision-footer-estudiante">
+                    <div class="mision-stats-estudiante">
+                        <span class="progreso-texto">${progresoTexto}</span>
+                        ${mision.claseNombre ? `<span class="mision-clase-badge">🏫 ${escapeHtml(mision.claseNombre)}</span>` : ''}
+                    </div>
+                    <button class="btn-comenzar" onclick="window.location.href='mision-detalle.html?misionId=${mision.misionId}'">
+                        ${botonTexto}
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
 // =========================================
 // CARGAR PROGRESO
 // =========================================
@@ -188,23 +280,68 @@ async function cargarProgreso() {
     const container = document.getElementById("miProgreso");
 
     try {
-        const response = await fetch(
-            `${API_URL}/estudiantes/${estudianteActual.id}/progreso`
+        // 1. Obtener todas las misiones del estudiante
+        const misionesResponse = await fetch(
+            `${API_URL}/estudiantes/${estudianteActual.id}/misiones`
         );
+        const misiones = await misionesResponse.json();
 
-        if (!response.ok) {
-            throw new Error("Error al cargar progreso.");
+        // 2. Obtener progreso de CADA misión
+        progresoEstudiante = [];
+
+        for (const mision of misiones) {
+            try {
+                const response = await fetch(
+                    `${API_URL}/historias/mision/${mision.misionId}/progreso/${estudianteActual.id}`
+                );
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    progresoEstudiante.push({
+                        misionId: mision.misionId,
+                        totalHistorias: data.totalHistorias || 0,
+                        historiasCompletadas: data.historiasCompletadas || 0,
+                        puntosTotales: data.puntosTotales || 0,
+                        completada: data.completada || false
+                    });
+                }
+            } catch (error) {
+                console.error(`Error en misión ${mision.misionId}:`, error);
+                // Si falla, agregar datos por defecto
+                progresoEstudiante.push({
+                    misionId: mision.misionId,
+                    totalHistorias: 0,
+                    historiasCompletadas: 0,
+                    puntosTotales: 0,
+                    completada: false
+                });
+            }
         }
 
-        progresoEstudiante = await response.json();
+        console.log("📊 Progreso por misión:", progresoEstudiante);
 
-        console.log("Progreso del estudiante:", progresoEstudiante);
+        // 3. Renderizar misiones con el progreso actualizado
+        await cargarMisionesEstudiante();
 
+        // 4. Renderizar tabla de progreso
         if (!progresoEstudiante.length) {
             container.innerHTML = `
                 <div class="empty-state">
                     <strong>Aún no has iniciado ninguna misión</strong>
                     <p>Selecciona una misión y comienza tu aprendizaje.</p>
+                </div>
+            `;
+            return;
+        }
+
+        // Mostrar solo las misiones que tienen historias
+        const misionesConProgreso = progresoEstudiante.filter(p => p.totalHistorias > 0);
+
+        if (misionesConProgreso.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <strong>Aún no hay datos de progreso</strong>
+                    <p>Comienza una misión para ver tu avance.</p>
                 </div>
             `;
             return;
@@ -216,30 +353,43 @@ async function cargarProgreso() {
                     <thead>
                         <tr style="border-bottom: 2px solid var(--border);">
                             <th style="text-align: left; padding: 12px 8px;">Misión</th>
-                            <th style="text-align: left; padding: 12px 8px;">Estado</th>
+                            <th style="text-align: center; padding: 12px 8px;">Progreso</th>
                             <th style="text-align: center; padding: 12px 8px;">Puntos</th>
-                            <th style="text-align: left; padding: 12px 8px;">Fecha</th>
+                            <th style="text-align: center; padding: 12px 8px;">Estado</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${progresoEstudiante.map(p => `
-                            <tr style="border-bottom: 1px solid var(--border);">
-                                <td style="padding: 12px 8px; font-weight: 500;">
-                                    ${escapeHtml(p.titulo)}
-                                </td>
-                                <td style="padding: 12px 8px;">
-                                    <span class="mission-status ${p.estado === 'completada' ? 'completada' : 'pendiente'}">
-                                        ${p.estado === 'completada' ? '✅ Completada' : '⏳ En progreso'}
-                                    </span>
-                                </td>
-                                <td style="text-align: center; padding: 12px 8px;">
-                                    ${p.puntos || 0}
-                                </td>
-                                <td style="padding: 12px 8px; color: var(--text-light); font-size: 13px;">
-                                    ${p.fechaInicio ? formatDate(p.fechaInicio) : '—'}
-                                </td>
-                            </tr>
-                        `).join("")}
+                        ${misionesConProgreso.map(p => {
+                            // Obtener el nombre de la misión
+                            const mision = misiones.find(m => m.misionId === p.misionId);
+                            const porcentaje = p.totalHistorias > 0 
+                                ? Math.round((p.historiasCompletadas / p.totalHistorias) * 100) 
+                                : 0;
+                            
+                            return `
+                                <tr style="border-bottom: 1px solid var(--border);">
+                                    <td style="padding: 12px 8px; font-weight: 500;">
+                                        ${escapeHtml(mision?.titulo || 'Misión')}
+                                    </td>
+                                    <td style="padding: 12px 8px; text-align: center;">
+                                        <div style="display: flex; align-items: center; gap: 10px; justify-content: center;">
+                                            <div style="flex: 1; max-width: 100px; height: 6px; background: var(--border); border-radius: 10px; overflow: hidden;">
+                                                <div style="width: ${porcentaje}%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--pink)); border-radius: 10px; transition: width 0.5s;"></div>
+                                            </div>
+                                            <span style="font-size: 13px; font-weight: 600;">${porcentaje}%</span>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 12px 8px; text-align: center; font-weight: 600; color: var(--primary);">
+                                        ${p.puntosTotales}
+                                    </td>
+                                    <td style="padding: 12px 8px; text-align: center;">
+                                        <span class="mission-status ${p.completada ? 'completada' : 'pendiente'}">
+                                            ${p.completada ? '✅ Completada' : '⏳ En progreso'}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('')}
                     </tbody>
                 </table>
             </div>
@@ -274,8 +424,16 @@ async function actualizarEstadisticas() {
 
         const misiones = await response.json();
         
-        document.getElementById("misionesTotales").textContent = misiones.length;
-        document.getElementById("totalMisiones").textContent = misiones.length;
+        const misionesTotalesElement = document.getElementById("misionesTotales");
+        const totalMisionesElement = document.getElementById("totalMisiones");
+
+        if (misionesTotalesElement) {
+            misionesTotalesElement.textContent = misiones.length;
+        }
+
+        if (totalMisionesElement) {
+            totalMisionesElement.textContent = misiones.length;
+        }
 
         let totalCompletadas = 0;
         let totalPuntos = 0;
@@ -334,7 +492,6 @@ async function cargarLogros() {
         </div>
     `;
 }
-
 // =========================================
 // UTILIDADES
 // =========================================
@@ -366,6 +523,8 @@ async function initializeDashboard() {
     if (!verificarAutenticacion()) return;
 
     cargarDatosEstudiante();
+
+    recuperarSeccion();
 
     await Promise.all([
         cargarMisionesEstudiante(),

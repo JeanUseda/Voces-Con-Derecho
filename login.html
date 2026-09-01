@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,120 +14,113 @@
 
     <main class="login-page">
 
-        <!-- Decoración izquierda -->
-        <div class="login-decoration">
+        <!-- =========================================
+             FONDO DECORATIVO
+        ========================================== -->
 
-            <div class="decoration-content">
+        <div class="background-decoration">
 
-                <img
-                    src="assets/logo.png"
-                    alt="Voces con Derechos"
-                    class="login-logo"
-                >
+            <div class="background-circle circle-one"></div>
+            <div class="background-circle circle-two"></div>
+            <div class="background-circle circle-three"></div>
 
-                <h1>
-                    Bienvenido
-                    <br>
-                    de vuelta.
-                    <br>
-                    <span>¡Sigue aprendiendo!</span>
-                </h1>
+            <div class="background-orb orb-one"></div>
+            <div class="background-orb orb-two"></div>
+            <div class="background-orb orb-three"></div>
 
-                <p>
-                    Inicia sesión para continuar aprendiendo
-                    sobre derechos e igualdad.
-                </p>
-
-                <img
-                    src="assets/hero.png"
-                    alt=""
-                    class="decoration-image"
-                >
-
-            </div>
+            <div class="background-shape shape-one"></div>
+            <div class="background-shape shape-two"></div>
 
         </div>
 
-        <!-- Formulario -->
+
+        <!-- =========================================
+             CONTENIDO
+        ========================================== -->
+
         <div class="login-container">
 
             <div class="login-card">
 
+                <!-- Logo -->
+
+                <div class="brand">
+
+                    <img
+                        src="assets/logo.png"
+                        alt="Voces con Derechos"
+                        class="login-logo"
+                    >
+
+                </div>
+
+
+                <!-- Volver -->
+
                 <a href="index.html" class="back-link">
-                    ← Volver al inicio
+                    <span>←</span>
+                    Volver al inicio
                 </a>
+
+
+                <!-- Header -->
 
                 <div class="login-header">
 
-                    <h2>Iniciar sesión</h2>
+                    <div class="login-icon">
+                        🔐
+                    </div>
+
+                    <span class="section-label">
+                        ACCESO A LA PLATAFORMA
+                    </span>
+
+                    <h2>
+                        Iniciar sesión
+                    </h2>
 
                     <p>
-                        Ingresa tus credenciales para continuar.
+                        Ingresa tus credenciales para continuar
+                        aprendiendo y explorando la plataforma.
                     </p>
 
                 </div>
 
-                <!-- SELECTOR DE ROL -->
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600;">
-                        ¿Qué tipo de usuario eres?
-                    </label>
-                    <div style="display: flex; gap: 12px;">
-                        <button
-                            type="button"
-                            id="rolEstudiante"
-                            class="rol-selector active"
-                            style="
-                                flex: 1;
-                                padding: 12px;
-                                border: 2px solid var(--primary);
-                                border-radius: 10px;
-                                background: var(--purple-soft);
-                                color: var(--primary);
-                                font-weight: 600;
-                                cursor: pointer;
-                                transition: 0.2s;
-                            "
-                        >
-                            🎓 Estudiante
-                        </button>
-                        <button
-                            type="button"
-                            id="rolProfesor"
-                            class="rol-selector"
-                            style="
-                                flex: 1;
-                                padding: 12px;
-                                border: 2px solid var(--border);
-                                border-radius: 10px;
-                                background: white;
-                                color: var(--text-light);
-                                font-weight: 600;
-                                cursor: pointer;
-                                transition: 0.2s;
-                            "
-                        >
-                            👨‍🏫 Profesor
-                        </button>
-                    </div>
-                </div>
+
+                <!-- =========================================
+                     FORMULARIO
+                ========================================== -->
 
                 <form id="loginForm">
+
+                    <!-- Correo -->
 
                     <div class="form-group">
 
                         <label for="email">
-                            Correo electrónico / Usuario
+                            Correo electrónico
                         </label>
 
-                        <input
-                            type="text"
-                            id="email"
-                            placeholder="ejemplo@correo.com"
-                            required
-                        >
+                        <div class="input-wrapper">
+
+                            <span class="input-icon">
+                                ✉
+                            </span>
+
+                            <input
+                                type="email"
+                                id="email"
+                                placeholder="ejemplo@correo.com"
+                                autocomplete="email"
+                                required
+                            >
+
+                        </div>
 
                     </div>
+
+
+                    <!-- Contraseña -->
 
                     <div class="form-group">
 
@@ -136,10 +130,15 @@
 
                         <div class="password-container">
 
+                            <span class="input-icon">
+                                🔒
+                            </span>
+
                             <input
                                 type="password"
                                 id="password"
                                 placeholder="Ingresa tu contraseña"
+                                autocomplete="current-password"
                                 required
                             >
 
@@ -154,32 +153,50 @@
                         </div>
 
                     </div>
+
+
+                    <!-- Botón -->
 
                     <button
                         type="submit"
                         class="login-button"
                         id="loginButton"
                     >
-                        Iniciar sesión
-                        <span>→</span>
+
+                        <span>
+                            Iniciar sesión
+                        </span>
+
+                        <strong>
+                            →
+                        </strong>
+
                     </button>
 
                 </form>
+
+
+                <!-- Mensaje -->
 
                 <div
                     id="loginMessage"
                     class="login-message"
                 ></div>
 
-                <div class="login-footer">
 
-                    <p id="footerText">
-                        ¿Aún no tienes cuenta?
+                <!-- Información de seguridad -->
+
+                <div class="login-info">
+
+                    <span>
+                        🔒
+                    </span>
+
+                    <p>
+                        Tu información se mantiene protegida.
+                        Utiliza tus credenciales personales para
+                        acceder a tu cuenta.
                     </p>
-
-                    <a href="registro.html" id="footerLink">
-                        Regístrate aquí
-                    </a>
 
                 </div>
 
@@ -189,191 +206,9 @@
 
     </main>
 
+
     <script src="js/login.js"></script>
 
 </body>
+
 </html>
-
-
-
-
-
-
-<!-- <!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Iniciar sesión | Voces con Derechos</title>
-
-    <link rel="stylesheet" href="css/login.css">
-</head>
-
-<body>
-
-    <main class="login-page">
-
-        <!-- Decoración izquierda 
-        <div class="login-decoration">
-
-            <div class="decoration-content">
-
-                <img
-                    src="assets/logo.png"
-                    alt="Voces con Derechos"
-                    class="login-logo"
-                >
-
-                <h1>
-                    Aprende.
-                    <br>
-                    Participa.
-                    <br>
-                    <span>Transforma.</span>
-                </h1>
-
-                <p>
-                    Aprende sobre derechos, igualdad y respeto
-                    de una manera interactiva.
-                </p>
-
-                <img
-                    src="assets/hero.png"
-                    alt=""
-                    class="decoration-image"
-                >
-
-            </div>
-
-        </div>
-
-
-        <!-- Formulario -
-        <div class="login-container">
-
-            <div class="login-card">
-
-                <a href="index.html" class="back-link">
-                    ← Volver al inicio
-                </a>
-
-                <div class="login-header">
-
-                    <h2>Bienvenido</h2>
-
-                    <p>
-                        Inicia sesión para continuar aprendiendo.
-                    </p>
-
-                </div>
-
-
-                <form id="loginForm">
-
-                    <div class="form-group">
-
-                        <label for="usuario">
-                            Usuario
-                        </label>
-
-                        <input
-                            type="text"
-                            id="usuario"
-                            name="usuario"
-                            placeholder="Ingresa tu usuario"
-                            required
-                        >
-
-                    </div>
-
-
-                    <div class="form-group">
-
-                        <label for="password">
-                            Contraseña
-                        </label>
-
-                        <div class="password-container">
-
-                            <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                placeholder="Ingresa tu contraseña"
-                                required
-                            >
-
-                            <button
-                                type="button"
-                                id="togglePassword"
-                                class="toggle-password"
-                            >
-                                Mostrar
-                            </button>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="form-options">
-
-                        <label class="remember">
-
-                            <input
-                                type="checkbox"
-                                id="remember"
-                            >
-
-                            <span>Recordarme</span>
-
-                        </label>
-
-                        <a href="#" class="forgot-password">
-                            ¿Olvidaste tu contraseña?
-                        </a>
-
-                    </div>
-
-
-                    <button
-                        type="submit"
-                        class="login-button"
-                    >
-                        Iniciar sesión
-                        <span>→</span>
-                    </button>
-
-                </form>
-
-
-                <div
-                    id="loginMessage"
-                    class="login-message"
-                ></div>
-
-
-                <div class="login-footer">
-
-                    <p>
-                        ¿Aún no tienes una cuenta?
-                    </p>
-
-                    <a href="#">
-                        Solicita acceso a tu docente
-                    </a>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </main>
-
-
-    <script src="js/login.js"></script>
-
-</body>
-</html> -->
