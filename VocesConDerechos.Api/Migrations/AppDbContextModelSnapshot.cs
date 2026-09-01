@@ -201,7 +201,12 @@ namespace VocesConDerechos.Api.Migrations
                     b.Property<string>("Pin")
                         .HasColumnType("text");
 
+                    b.Property<int?>("ProfesorId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProfesorId");
 
                     b.ToTable("Estudiantes");
                 });
@@ -333,6 +338,10 @@ namespace VocesConDerechos.Api.Migrations
                     b.Property<bool>("Activo")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Apellido")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
@@ -345,6 +354,10 @@ namespace VocesConDerechos.Api.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Rol")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -541,6 +554,15 @@ namespace VocesConDerechos.Api.Migrations
                     b.Navigation("Historia");
 
                     b.Navigation("Pregunta");
+                });
+
+            modelBuilder.Entity("VocesConDerechos.Api.Models.Estudiante", b =>
+                {
+                    b.HasOne("VocesConDerechos.Api.Models.Profesor", "Profesor")
+                        .WithMany()
+                        .HasForeignKey("ProfesorId");
+
+                    b.Navigation("Profesor");
                 });
 
             modelBuilder.Entity("VocesConDerechos.Api.Models.Historia", b =>

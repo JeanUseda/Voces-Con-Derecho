@@ -19,7 +19,8 @@ public class Estudiante
     public DateTime FechaRegistro { get; set; } = DateTime.UtcNow;
 
     public bool Activo { get; set; } = true;
-
+    public int? ProfesorId { get; set; }
+    public Profesor? Profesor { get; set; }
     // Relaciones
     public ICollection<ClaseEstudiante> Clases { get; set; } = new List<ClaseEstudiante>();
 
