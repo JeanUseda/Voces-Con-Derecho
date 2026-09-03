@@ -104,11 +104,20 @@ async function cargarHistoria(historiaId) {
 
         await cargarProgresoExistente(historiaId);
 
-        if (historiaData.escenas && historiaData.escenas.length > 0) {
-            mostrarEscena(historiaData.escenas[0]);
-        } else {
-            throw new Error("La historia no tiene escenas.");
-        }
+const yaCompletada = await cargarProgresoExistente(historiaId);
+
+if (yaCompletada) {
+    // Si ya estaba completada, mostrar resultado
+    mostrarResultadoFinal(true);
+    return;
+}
+
+if (historiaData.escenas && historiaData.escenas.length > 0) {
+    // ✅ MOSTRAR INTRODUCCIÓN EN LUGAR DE LA ESCENA DIRECTA
+    mostrarIntroduccion();
+} else {
+    throw new Error("La historia no tiene escenas.");
+}
 
     } catch (error) {
         console.error("Error cargando historia:", error);
@@ -525,7 +534,58 @@ async function tomarDecision(decisionId) {
 
     await guardarProgreso();
 }
+// ==========================================
+// MOSTRAR INTRODUCCIÓN
+// ==========================================
 
+function mostrarIntroduccion() {
+    const introContainer = document.getElementById("introduccionContainer");
+    const juegoMain = document.getElementById("juegoMain");
+    
+    if (introContainer) introContainer.style.display = "flex";
+    if (juegoMain) juegoMain.style.display = "none";
+    
+    // Llenar datos de la introducción
+    document.getElementById("introTitulo").textContent = historiaData.titulo;
+    document.getElementById("introDescripcion").textContent = historiaData.descripcion || 'Prepárate para esta aventura de aprendizaje.';
+    
+    // Total de escenas
+    const totalEscenas = historiaData.escenas?.length || 0;
+    document.getElementById("introTotalEscenas").textContent = totalEscenas;
+    
+    // Puntos máximos (suma de puntos de decisiones correctas + preguntas)
+    let puntosMaximos = 0;
+    historiaData.escenas?.forEach(escena => {
+        escena.decisiones?.forEach(d => {
+            if (d.esCorrecta) puntosMaximos += d.puntos || 0;
+        });
+        if (escena.pregunta) {
+            puntosMaximos += escena.pregunta.puntos || 0;
+        }
+    });
+    document.getElementById("introTotalPuntos").textContent = puntosMaximos;
+    
+    // Objetivo
+    document.getElementById("introObjetivo").textContent = 
+        `Completa la historia tomando decisiones correctas y respondiendo la pregunta final. ¡Gana ${puntosMaximos} puntos!`;
+}
+
+// ==========================================
+// COMENZAR HISTORIA
+// ==========================================
+
+function comenzarHistoria() {
+    const introContainer = document.getElementById("introduccionContainer");
+    const juegoMain = document.getElementById("juegoMain");
+    
+    if (introContainer) introContainer.style.display = "none";
+    if (juegoMain) juegoMain.style.display = "block";
+    
+    // Mostrar la primera escena
+    if (historiaData.escenas && historiaData.escenas.length > 0) {
+        mostrarEscena(historiaData.escenas[0]);
+    }
+}
 // ==========================================
 // MOSTRAR PREGUNTA - CORREGIDO
 // ==========================================

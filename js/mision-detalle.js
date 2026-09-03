@@ -50,6 +50,12 @@ async function cargarDatosMision() {
         if (misionResponse.ok) {
             const mision = await misionResponse.json();
             document.getElementById("misionTitulo").textContent = mision.titulo || `Misión ${misionIdActual}`;
+            
+            // ✅ ACTUALIZAR HERO
+            const heroTitulo = document.getElementById("misionHeroTitulo");
+            const heroDescripcion = document.getElementById("misionHeroDescripcion");
+            if (heroTitulo) heroTitulo.textContent = mision.titulo || `Misión ${misionIdActual}`;
+            if (heroDescripcion) heroDescripcion.textContent = mision.descripcion || 'Prepárate para aprender sobre derechos, igualdad y dignidad.';
         }
 
         // Cargar historias de la misión

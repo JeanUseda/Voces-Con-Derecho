@@ -24,8 +24,43 @@
             </div>
         </header>
 
-        <!-- Contenido principal -->
-        <main class="jugar-main">
+        <!-- =========================================
+             PANTALLA DE INTRODUCCIÓN
+        ========================================== -->
+        <div id="introduccionContainer" class="introduccion-container">
+            <div class="intro-card">
+                <div class="intro-icon" id="introIcon">📖</div>
+                <h1 id="introTitulo">Cargando historia...</h1>
+                <p id="introDescripcion">Prepárate para esta aventura...</p>
+                
+                <div class="intro-info">
+                    <div class="intro-stat">
+                        <span>🎬</span>
+                        <strong id="introTotalEscenas">0</strong>
+                        <small>Escenas</small>
+                    </div>
+                    <div class="intro-stat">
+                        <span>⭐</span>
+                        <strong id="introTotalPuntos">0</strong>
+                        <small>Puntos máximos</small>
+                    </div>
+                </div>
+
+                <div class="intro-objetivo">
+                    <h3>🎯 Objetivo</h3>
+                    <p id="introObjetivo">Completa la historia tomando buenas decisiones.</p>
+                </div>
+
+                <button class="btn-comenzar" onclick="comenzarHistoria()">
+                    🚀 Comenzar aventura
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================
+             CONTENIDO DEL JUEGO (oculto al inicio)
+        ========================================== -->
+        <main class="jugar-main" id="juegoMain" style="display: none;">
 
             <!-- Progreso -->
             <div class="progreso-barra">
@@ -34,52 +69,24 @@
 
             <!-- Escena -->
             <div id="escenaContainer" class="escena-container">
-
                 <div class="escena-content">
-
-                    <!-- Texto -->
                     <div class="escena-texto">
                         <p id="escenaTexto">Cargando escena...</p>
                     </div>
-
-                    <!-- Decisiones -->
-                    <div id="decisionesContainer" class="decisiones-container">
-                        <!-- Se llenan dinámicamente -->
-                    </div>
-
-                    <!-- Pregunta (se muestra al final) -->
+                    <div id="decisionesContainer" class="decisiones-container"></div>
                     <div id="preguntaContainer" class="pregunta-container" style="display: none;">
                         <h3>📝 Pregunta</h3>
                         <p id="preguntaEnunciado"></p>
-                        <div id="respuestasContainer" class="respuestas-container">
-                            <!-- Se llenan dinámicamente -->
-                        </div>
+                        <div id="respuestasContainer" class="respuestas-container"></div>
                     </div>
-
-                    <!-- Feedback -->
                     <div id="feedbackContainer" class="feedback-container" style="display: none;">
                         <div id="feedbackMensaje" class="feedback-mensaje"></div>
                         <button id="btnContinuar" class="btn-primario" onclick="continuarHistoria()">
                             Continuar →
                         </button>
                     </div>
-
-                    <!-- Resultado final -->
-                    <div id="resultadoContainer" class="resultado-container" style="display: none;">
-                        <div class="resultado-icon">🎉</div>
-                        <h2 id="resultadoTitulo">¡Historia completada!</h2>
-                        <p id="resultadoPuntos">Has ganado 0 puntos</p>
-                        <p id="resultadoMensaje" class="resultado-mensaje"></p>
-                        <button class="btn-primario" onclick="volverDashboard()">
-                            Volver al dashboard
-                        </button>
-                        <button id="btnSiguienteHistoria" class="btn-primario" style="display: none; margin-top: 10px; background: var(--success);">
-                            Siguiente historia →
-                        </button>
-                    </div>
-
+                    <div id="resultadoContainer" class="resultado-container" style="display: none;"></div>
                 </div>
-
             </div>
 
         </main>
