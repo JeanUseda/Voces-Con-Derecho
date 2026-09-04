@@ -6,6 +6,14 @@
 
     <title>Voces con Derechos</title>
 
+    <!-- Tipografías -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -14,7 +22,7 @@
 
         <!-- NAVBAR -->
   
-    <header class="navbar">
+    <header class="navbar" id="navbar">
 
         <div class="navbar-container">
 
@@ -39,6 +47,12 @@
                 <span>›</span>
             </a>
 
+            <button class="nav-toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
         </div>
 
     </header>
@@ -51,24 +65,30 @@
 
         <section class="hero" id="inicio">
 
+            <div class="hero-blobs" aria-hidden="true">
+                <span class="blob blob-1"></span>
+                <span class="blob blob-2"></span>
+                <span class="blob blob-3"></span>
+            </div>
+
             <div class="hero-container">
 
                 <!-- Texto -->
                 <div class="hero-content">
 
-                    <h1>
+                    <h1 class="reveal-load reveal-1">
                         Voces
                         <br>
                         <span>con Derechos</span>
                     </h1>
 
-                    <p>
+                    <p class="reveal-load reveal-2">
                         Aprender hoy para construir
                         <br class="desktop-only">
                         una sociedad con respeto e igualdad.
                     </p>
 
-                    <a href="login.html" class="hero-button">
+                    <a href="login.html" class="hero-button reveal-load reveal-3">
                         Comenzar
                         <span>›</span>
                     </a>
@@ -77,13 +97,34 @@
 
 
                 <!-- Imagen -->
-                <div class="hero-image-container">
+                <div class="hero-image-container reveal-load reveal-3">
 
-                    <img
-                        src="assets/img/hero.png"
-                        alt="Ilustración de Voces con Derechos"
-                        class="hero-image"
-                    >
+                    <div class="icon-cluster" role="img" aria-label="Ilustración de Voces con Derechos: diversidad, igualdad y educación">
+
+                        <div class="icon-orb orb-center">
+                            <i class="fa-solid fa-venus"></i>
+                        </div>
+
+                        <div class="icon-orb orb-1">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </div>
+
+                        <div class="icon-orb orb-2">
+                            <i class="fa-solid fa-hand-holding-heart"></i>
+                        </div>
+
+                        <div class="icon-orb orb-3">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+
+                        <div class="icon-orb orb-4">
+                            <i class="fa-solid fa-people-group"></i>
+                        </div>
+
+                        <span class="ring ring-1"></span>
+                        <span class="ring ring-2"></span>
+
+                    </div>
 
                 </div>
 
@@ -95,40 +136,96 @@
         
              <!-- VALORES -->
        
-        <section class="values">
+        <section class="values reveal-on-scroll">
 
             <div class="values-container">
 
                 <div class="value">
 
-                    <div class="value-icon respect">
-                        ♡
-                    </div>
+                    <div class="value-card">
 
-                    <h3>Respeto</h3>
+                        <div class="value-card-face value-card-front">
+                            <div class="value-icon respect">
+                                <i class="fa-solid fa-heart"></i>
+                            </div>
+                            <h3>Respeto</h3>
+                        </div>
+
+                        <div class="value-card-face value-card-back">
+                            <p>Valoramos la dignidad de cada persona, sin excepción.</p>
+                        </div>
+
+                    </div>
 
                 </div>
 
 
                 <div class="value">
 
-                    <div class="value-icon equality">
-                        ⚖
-                    </div>
+                    <div class="value-card">
 
-                    <h3>Igualdad</h3>
+                        <div class="value-card-face value-card-front">
+                            <div class="value-icon equality">
+                                <i class="fa-solid fa-scale-balanced"></i>
+                            </div>
+                            <h3>Igualdad</h3>
+                        </div>
+
+                        <div class="value-card-face value-card-back">
+                            <p>Las mismas oportunidades y derechos para todas las personas.</p>
+                        </div>
+
+                    </div>
 
                 </div>
 
 
                 <div class="value">
 
-                    <div class="value-icon empathy">
-                        ♧
+                    <div class="value-card">
+
+                        <div class="value-card-face value-card-front">
+                            <div class="value-icon empathy">
+                                <i class="fa-solid fa-people-arrows"></i>
+                            </div>
+                            <h3>Empatía</h3>
+                        </div>
+
+                        <div class="value-card-face value-card-back">
+                            <p>Escuchamos y comprendemos la experiencia de los demás.</p>
+                        </div>
+
                     </div>
 
-                    <h3>Empatía</h3>
+                </div>
 
+            </div>
+
+        </section>
+
+
+            <!-- ESTADÍSTICAS -->
+
+        <section class="stats reveal-on-scroll" id="impacto">
+
+            <div class="stats-container">
+
+                <div class="stat">
+                    <i class="fa-solid fa-user-graduate stat-icon"></i>
+                    <span class="stat-number" data-target="10000" data-suffix="+">0</span>
+                    <p class="stat-label">Estudiantes alcanzados</p>
+                </div>
+
+                <div class="stat">
+                    <i class="fa-solid fa-earth-americas stat-icon"></i>
+                    <span class="stat-number" data-target="5">0</span>
+                    <p class="stat-label">Países</p>
+                </div>
+
+                <div class="stat">
+                    <i class="fa-solid fa-book-open stat-icon"></i>
+                    <span class="stat-number" data-target="20">0</span>
+                    <p class="stat-label">Recursos didácticos</p>
                 </div>
 
             </div>
@@ -137,28 +234,100 @@
 
             <!-- SECCIONES FUTURAS -->
 
-        <section id="aprender" class="placeholder-section">
+        <section id="aprender" class="placeholder-section reveal-on-scroll">
+            <i class="fa-solid fa-book-open-reader section-icon"></i>
             <h2>Aprender</h2>
             <p>
                 Contenido educativo sobre derechos, igualdad y respeto.
             </p>
         </section>
 
-        <section id="juegos" class="placeholder-section">
+        <section id="juegos" class="placeholder-section reveal-on-scroll">
+            <i class="fa-solid fa-gamepad section-icon"></i>
             <h2>Juegos</h2>
             <p>
                 Aprende mediante misiones y experiencias interactivas.
             </p>
         </section>
 
-        <section id="recursos" class="placeholder-section">
+        <section id="recursos" class="placeholder-section reveal-on-scroll">
+            <i class="fa-solid fa-folder-open section-icon"></i>
             <h2>Recursos</h2>
             <p>
                 Recursos educativos para estudiantes y docentes.
             </p>
         </section>
 
-        <section id="nosotros" class="placeholder-section">
+
+            <!-- TESTIMONIOS -->
+
+        <section class="testimonials reveal-on-scroll" id="testimonios">
+
+            <div class="testimonials-container">
+
+                <h2 class="testimonials-title">Voces que nos inspiran</h2>
+
+                <div class="testimonial-slider">
+
+                    <div class="testimonial-track" id="testimonialTrack">
+
+                        <blockquote class="testimonial-card">
+                            <i class="fa-solid fa-quote-left quote-icon"></i>
+                            <p>“Gracias a estos recursos, mis estudiantes entienden mejor por qué la igualdad nos beneficia a todos.”</p>
+                            <footer>
+                                <span class="testimonial-name">Marta Solís</span>
+                                <span class="testimonial-role">Docente de secundaria</span>
+                            </footer>
+                        </blockquote>
+
+                        <blockquote class="testimonial-card">
+                            <i class="fa-solid fa-quote-left quote-icon"></i>
+                            <p>“Aprendí a reconocer mis propios derechos y a defenderlos con respeto y confianza.”</p>
+                            <footer>
+                                <span class="testimonial-name">Camila Reyes</span>
+                                <span class="testimonial-role">Estudiante, 16 años</span>
+                            </footer>
+                        </blockquote>
+
+                        <blockquote class="testimonial-card">
+                            <i class="fa-solid fa-quote-left quote-icon"></i>
+                            <p>“Una plataforma que convierte valores importantes en actividades cercanas y fáciles de entender.”</p>
+                            <footer>
+                                <span class="testimonial-name">Luis Fernández</span>
+                                <span class="testimonial-role">Padre de familia</span>
+                            </footer>
+                        </blockquote>
+
+                        <blockquote class="testimonial-card">
+                            <i class="fa-solid fa-quote-left quote-icon"></i>
+                            <p>“El enfoque en empatía nos ayudó a mejorar la convivencia dentro y fuera del aula.”</p>
+                            <footer>
+                                <span class="testimonial-name">Ana Belén Torres</span>
+                                <span class="testimonial-role">Orientadora escolar</span>
+                            </footer>
+                        </blockquote>
+
+                    </div>
+
+                    <button class="testimonial-arrow prev" id="testimonialPrev" aria-label="Testimonio anterior">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
+
+                    <button class="testimonial-arrow next" id="testimonialNext" aria-label="Testimonio siguiente">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
+
+                </div>
+
+                <div class="testimonial-dots" id="testimonialDots"></div>
+
+            </div>
+
+        </section>
+
+
+        <section id="nosotros" class="placeholder-section reveal-on-scroll">
+            <i class="fa-solid fa-people-group section-icon"></i>
             <h2>Sobre nosotros</h2>
             <p>
                 Voces con Derechos es una plataforma educativa enfocada
@@ -167,19 +336,88 @@
             </p>
         </section>
 
+
+            <!-- ALIADOS -->
+
+        <section class="allies reveal-on-scroll" id="aliados">
+
+            <div class="allies-container">
+
+                <h2 class="allies-title">Organizaciones aliadas</h2>
+
+                <div class="allies-grid">
+
+                    <div class="ally">
+                        <i class="fa-solid fa-hands-holding-child"></i>
+                        <span>Red Global por la Igualdad</span>
+                    </div>
+
+                    <div class="ally">
+                        <i class="fa-solid fa-dove"></i>
+                        <span>Fundación Voces Unidas</span>
+                    </div>
+
+                    <div class="ally">
+                        <i class="fa-solid fa-hand-fist"></i>
+                        <span>Alianza Derechos Hoy</span>
+                    </div>
+
+                    <div class="ally">
+                        <i class="fa-solid fa-seedling"></i>
+                        <span>Colectivo Semillas de Cambio</span>
+                    </div>
+
+                    <div class="ally">
+                        <i class="fa-solid fa-school"></i>
+                        <span>Red EducaDerechos</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
     </main>
 
 
         <!-- FOOTER -->
     <footer>
 
-        <p>
-            © 2026 Voces con Derechos
-        </p>
+        <div class="footer-container">
 
-        <p>
-            Aprender hoy para construir una sociedad con respeto e igualdad.
-        </p>
+            <div class="footer-main">
+
+                <p>
+                    © 2026 Voces con Derechos
+                </p>
+
+                <p>
+                    Aprender hoy para construir una sociedad con respeto e igualdad.
+                </p>
+
+            </div>
+
+            <div class="footer-social">
+
+                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="X"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+
+            </div>
+
+            <form class="footer-subscribe" onsubmit="return false;">
+                <label for="footerEmail">Recibe novedades</label>
+                <div class="footer-subscribe-field">
+                    <input type="email" id="footerEmail" placeholder="Tu correo electrónico">
+                    <button type="submit" aria-label="Suscribirse">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
+            </form>
+
+        </div>
 
     </footer>
 
