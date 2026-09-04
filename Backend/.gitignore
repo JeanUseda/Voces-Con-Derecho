@@ -1,0 +1,23 @@
+# .NET
+
+bin/
+obj/
+
+# Configuración local / secretos
+
+appsettings.Development.json
+.env
+
+# Docker / datos locales
+
+data_voces/
+
+# IDE
+
+.vscode/
+*.user
+*.suo
+
+# Sistema
+
+.DS_Store

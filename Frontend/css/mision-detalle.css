@@ -1,0 +1,523 @@
+/* =========================================================
+VOCES CON DERECHOS - DETALLE DE MISIÓN
+========================================================= */
+
+:root {
+    --primary: #6846d9;
+    --primary-dark: #4327a4;
+    --primary-light: #8d73ed;
+    --blue: #3d8fe8;
+    --blue-dark: #2368b5;
+    --green: #28a875;
+    --green-dark: #17845b;
+    --purple: #7655df;
+    --pink: #e75a9b;
+    
+    --purple-soft: #f1edff;
+    --blue-soft: #eaf5ff;
+    --green-soft: #e8f8f1;
+    --pink-soft: #fff0f7;
+    
+    --background: #f6f7fb;
+    --white: #ffffff;
+    
+    --text: #282044;
+    --text-light: #777394;
+    --text-muted: #9a96ad;
+    
+    --border: #e9e7f2;
+    --success: #28a875;
+    --danger: #d9366f;
+    --warning: #f59e0b;
+    
+    --shadow-sm: 0 3px 12px rgba(43, 31, 91, 0.05);
+    --shadow: 0 10px 30px rgba(54, 40, 112, 0.08);
+    --shadow-hover: 0 18px 40px rgba(54, 40, 112, 0.14);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Arial, Helvetica, sans-serif;
+    color: var(--text);
+    background: var(--background);
+    min-height: 100vh;
+}
+
+/* =========================================================
+CONTAINER
+========================================================= */
+
+.mision-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px 25px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================================================
+HEADER
+========================================================= */
+
+.mision-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    box-shadow: var(--shadow-sm);
+    flex-wrap: wrap;
+    gap: 10px;
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 15px;
+    z-index: 10;
+}
+
+.btn-volver {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    transition: 0.2s;
+    background: var(--purple-soft);
+}
+
+.btn-volver:hover {
+    background: var(--primary);
+    color: white;
+    transform: translateX(-3px);
+    box-shadow: 0 6px 15px rgba(86, 54, 201, 0.25);
+}
+
+.mision-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.mision-info span:first-child {
+    font-weight: 800;
+    font-size: 18px;
+    letter-spacing: -0.3px;
+}
+
+#progresoMision {
+    background: var(--green-soft);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--green-dark);
+}
+
+/* =========================================================
+HERO DE MISIÓN
+========================================================= */
+
+.mision-hero {
+    position: relative;
+    min-height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    margin: 25px 0 20px;
+    padding: 25px 30px;
+    border-radius: 20px;
+    overflow: hidden;
+    background: linear-gradient(120deg, #eee9ff 0%, #f6f4ff 48%, #eaf6ff 100%);
+    border: 1px solid #e5e0f6;
+    box-shadow: var(--shadow);
+}
+
+.mision-hero::before {
+    content: "";
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    right: -50px;
+    top: -100px;
+    border-radius: 50%;
+    background: rgba(104, 70, 217, 0.10);
+}
+
+.mision-hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.mision-hero-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    color: var(--primary);
+    background: rgba(255, 255, 255, 0.8);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.mision-hero h1 {
+    font-size: 28px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    color: var(--text);
+    margin-bottom: 8px;
+}
+
+.mision-hero p {
+    color: var(--text-light);
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 500px;
+}
+
+.mision-hero-icon {
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    font-size: 35px;
+    box-shadow: 0 10px 25px rgba(63, 46, 125, 0.12);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* =========================================================
+PROGRESO
+========================================================= */
+
+.progreso-barra {
+    width: 100%;
+    height: 10px;
+    background: var(--border);
+    border-radius: 10px;
+    margin: 10px 0 25px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.progreso-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--pink));
+    border-radius: 10px;
+    transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+}
+
+.progreso-fill::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 15px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 0 10px 10px 0;
+}
+
+/* =========================================================
+HISTORIAS GRID
+========================================================= */
+
+.historias-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    flex: 1;
+}
+
+/* =========================================================
+TARJETA DE HISTORIA
+========================================================= */
+
+.historia-card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 20px 22px;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    background: var(--white);
+    transition: 0.3s ease;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+}
+
+/* Barra lateral */
+.historia-card::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    background: var(--border);
+    transition: background 0.3s ease;
+}
+
+.historia-card:hover:not(.bloqueada):not(.completada)::before {
+    background: linear-gradient(180deg, var(--primary), var(--blue));
+}
+
+.historia-card:hover:not(.bloqueada):not(.completada) {
+    border-color: rgba(104, 70, 217, 0.4);
+    transform: translateX(8px);
+    box-shadow: var(--shadow-hover);
+}
+
+/* Número */
+.historia-card .numero {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 20px;
+    flex-shrink: 0;
+    background: var(--purple-soft);
+    color: var(--primary);
+    transition: 0.3s ease;
+}
+
+.historia-card:hover:not(.bloqueada):not(.completada) .numero {
+    background: linear-gradient(135deg, var(--primary), var(--blue));
+    color: white;
+    transform: scale(1.1);
+}
+
+/* Info */
+.historia-card .info {
+    flex: 1;
+    min-width: 0;
+}
+
+.historia-card .info h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    letter-spacing: -0.2px;
+}
+
+.historia-card .info p {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.4;
+}
+
+/* Estado */
+.historia-card .estado {
+    padding: 7px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: 0.3s ease;
+}
+
+.historia-card .estado.jugar {
+    background: linear-gradient(135deg, var(--primary), var(--blue));
+    color: white;
+    box-shadow: 0 6px 15px rgba(86, 54, 201, 0.25);
+}
+
+.historia-card .estado.completada {
+    background: var(--green-soft);
+    color: var(--green-dark);
+}
+
+.historia-card .estado.bloqueada {
+    background: #f0eef5;
+    color: var(--text-muted);
+}
+
+/* Flecha */
+.historia-card .flecha {
+    font-size: 22px;
+    color: var(--primary);
+    animation: flechaPulse 1.5s ease-in-out infinite;
+}
+
+@keyframes flechaPulse {
+    0%, 100% { transform: translateX(0); opacity: 0.6; }
+    50% { transform: translateX(5px); opacity: 1; }
+}
+
+/* =========================================================
+ESTADOS DE HISTORIA
+========================================================= */
+
+.historia-card.disponible {
+    border-color: rgba(104, 70, 217, 0.3);
+}
+
+.historia-card.disponible::before {
+    background: var(--primary);
+}
+
+.historia-card.completada {
+    border-color: #c8e6d5;
+    background: #f8fffa;
+    cursor: default;
+}
+
+.historia-card.completada::before {
+    background: var(--success);
+}
+
+.historia-card.completada .numero {
+    background: var(--green-soft);
+    color: var(--green-dark);
+}
+
+.historia-card.bloqueada {
+    opacity: 0.55;
+    cursor: not-allowed;
+    background: #faf9fd;
+}
+
+.historia-card.bloqueada::before {
+    background: #ddd8ee;
+}
+
+.historia-card.bloqueada .numero {
+    background: #f0eef5;
+    color: var(--text-muted);
+}
+
+/* =========================================================
+LOADING / EMPTY
+========================================================= */
+
+.loading {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-light);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.loading::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--border);
+    border-top-color: var(--primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    background: white;
+    border-radius: 20px;
+    border: 2px dashed #ddd8ee;
+}
+
+.empty-state strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+
+.empty-state p {
+    color: var(--text-light);
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+/* =========================================================
+RESPONSIVE
+========================================================= */
+
+@media (max-width: 600px) {
+    .mision-container {
+        padding: 15px 12px;
+    }
+
+    .mision-header {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px;
+    }
+
+    .btn-volver {
+        justify-content: center;
+    }
+
+    .mision-info {
+        justify-content: center;
+    }
+
+    .mision-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .mision-hero h1 {
+        font-size: 22px;
+    }
+
+    .mision-hero-icon {
+        width: 55px;
+        height: 55px;
+        font-size: 28px;
+    }
+
+    .historia-card {
+        flex-wrap: wrap;
+        padding: 15px;
+        gap: 12px;
+    }
+
+    .historia-card .numero {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+        border-radius: 10px;
+    }
+
+    .historia-card .info h3 {
+        font-size: 15px;
+    }
+
+    .historia-card .estado {
+        font-size: 11px;
+        padding: 5px 12px;
+    }
+}

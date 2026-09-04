@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Jugar | Voces con Derechos</title>
+
+    <link rel="stylesheet" href="css/jugar-historia.css">
+</head>
+
+<body>
+
+    <div class="jugar-container">
+
+        <!-- Header -->
+        <header class="jugar-header">
+            <a href="dashboardEstudiantes.html" class="btn-volver">
+                ← Volver al dashboard
+            </a>
+            <div class="jugar-info">
+                <span id="historiaTitulo">Cargando historia...</span>
+                <span id="puntosInfo">⭐ 0 puntos</span>
+            </div>
+        </header>
+
+        <!-- =========================================
+             PANTALLA DE INTRODUCCIÓN
+        ========================================== -->
+        <div id="introduccionContainer" class="introduccion-container">
+            <div class="intro-card">
+                <div class="intro-icon" id="introIcon">📖</div>
+                <h1 id="introTitulo">Cargando historia...</h1>
+                <p id="introDescripcion">Prepárate para esta aventura...</p>
+                
+                <div class="intro-info">
+                    <div class="intro-stat">
+                        <span>🎬</span>
+                        <strong id="introTotalEscenas">0</strong>
+                        <small>Escenas</small>
+                    </div>
+                    <div class="intro-stat">
+                        <span>⭐</span>
+                        <strong id="introTotalPuntos">0</strong>
+                        <small>Puntos máximos</small>
+                    </div>
+                </div>
+
+                <div class="intro-objetivo">
+                    <h3>🎯 Objetivo</h3>
+                    <p id="introObjetivo">Completa la historia tomando buenas decisiones.</p>
+                </div>
+
+                <button class="btn-comenzar" onclick="comenzarHistoria()">
+                    🚀 Comenzar aventura
+                </button>
+            </div>
+        </div>
+
+        <!-- =========================================
+             CONTENIDO DEL JUEGO (oculto al inicio)
+        ========================================== -->
+        <main class="jugar-main" id="juegoMain" style="display: none;">
+
+            <!-- Progreso -->
+            <div class="progreso-barra">
+                <div class="progreso-fill" id="progresoFill" style="width: 0%;"></div>
+            </div>
+
+            <!-- Escena -->
+            <div id="escenaContainer" class="escena-container">
+                <div class="escena-content">
+                    <div class="escena-texto">
+                        <p id="escenaTexto">Cargando escena...</p>
+                    </div>
+                    <div id="decisionesContainer" class="decisiones-container"></div>
+                    <div id="preguntaContainer" class="pregunta-container" style="display: none;">
+                        <h3>📝 Pregunta</h3>
+                        <p id="preguntaEnunciado"></p>
+                        <div id="respuestasContainer" class="respuestas-container"></div>
+                    </div>
+                    <div id="feedbackContainer" class="feedback-container" style="display: none;">
+                        <div id="feedbackMensaje" class="feedback-mensaje"></div>
+                        <button id="btnContinuar" class="btn-primario" onclick="continuarHistoria()">
+                            Continuar →
+                        </button>
+                    </div>
+                    <div id="resultadoContainer" class="resultado-container" style="display: none;"></div>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="js/jugar-historia.js"></script>
+
+</body>
+</html>

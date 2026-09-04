@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Misión | Voces con Derechos</title>
+
+    <link rel="stylesheet" href="css/mision-detalle.css">
+</head>
+
+<body>
+
+    <div class="mision-container">
+
+        <!-- Header -->
+        <header class="mision-header">
+            <a href="dashboardEstudiantes.html" class="btn-volver">
+                ← Volver al dashboard
+            </a>
+            <div class="mision-info">
+                <span id="misionTitulo">Cargando misión...</span>
+                <span id="progresoMision">0/0 completadas</span>
+            </div>
+        </header>
+
+        <!-- HERO DE MISIÓN -->
+        <div class="mision-hero">
+            <div class="mision-hero-content">
+                <span class="mision-hero-label">✦ TU AVENTURA</span>
+                <h1 id="misionHeroTitulo">Cargando misión...</h1>
+                <p id="misionHeroDescripcion">Prepárate para aprender sobre derechos, igualdad y dignidad.</p>
+            </div>
+            <div class="mision-hero-icon">🎯</div>
+        </div>
+
+        <!-- Contenido -->
+        <main class="mision-main">
+
+            <!-- Progreso general -->
+            <div class="progreso-barra">
+                <div class="progreso-fill" id="progresoFill" style="width: 0%;"></div>
+            </div>
+
+            <!-- Lista de historias -->
+            <div id="historiasContainer" class="historias-grid">
+                <div class="loading">Cargando historias...</div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="js/mision-detalle.js"></script>
+
+</body>
+</html>

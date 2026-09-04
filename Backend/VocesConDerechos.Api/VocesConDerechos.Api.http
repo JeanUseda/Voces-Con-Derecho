@@ -1,0 +1,6 @@
+@VocesConDerechos.Api_HostAddress = http://localhost:5019
+
+GET {{VocesConDerechos.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
